@@ -19,7 +19,7 @@ import cryptography.fernet
 import cryptography.hazmat.primitives.kdf.scrypt
 
 # Local Application Imports --------------------------------------------------------------------------------------------
-from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
+from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 

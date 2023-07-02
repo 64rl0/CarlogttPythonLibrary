@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from typing import Type
 
 # Local Folder (Relative) Imports --------------------------------------------------------------------------------------
-from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
+from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 

@@ -17,10 +17,10 @@ from abc import ABC, abstractmethod
 # Third Party Library Imports ------------------------------------------------------------------------------------------
 import mysql.connector
 
-# Local Application Imports --------------------------------------------------------------------------------------------
-from CarloCodes.my_utils_library import exceptions
-from CarloCodes.my_utils_library.my_utils_library import utils
-from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
+# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+from .. import utils
+from ..exceptions import db_exceptions
+from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ class MySQLdatabase(Database):
         self._db_connection = None
         self._db_cursor = None
 
-    @utils.retry_decorator(exception_to_check=exceptions.MySQLConnectionError, logger=my_app_logger)
+    @utils.retry_decorator(exception_to_check=db_exceptions.MySQLConnectionError, logger=my_app_logger)
     def _open_db_connection(self) -> None:
         try:
             self._db_connection = mysql.connector.connect(
@@ -78,9 +78,9 @@ class MySQLdatabase(Database):
         except mysql.connector.Error as e:
             message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message) from e
 
-    @utils.retry_decorator(exception_to_check=exceptions.MySQLConnectionError, logger=my_app_logger)
+    @utils.retry_decorator(exception_to_check=db_exceptions.MySQLConnectionError, logger=my_app_logger)
     def _close_db_connection(self) -> None:
         try:
             self._db_cursor.close()
@@ -88,7 +88,7 @@ class MySQLdatabase(Database):
         except mysql.connector.Error as e:
             message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message) from e
 
     # TODO: @retry_decorator(exception_to_check=MySQLConnectionError) - this goes in a loop of 4x4 16 times
     def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
@@ -100,7 +100,7 @@ class MySQLdatabase(Database):
         except mysql.connector.OperationalError as e:
             message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message) from e
         finally:
             self._close_db_connection()
 
@@ -119,7 +119,7 @@ class MySQLdatabase(Database):
         except mysql.connector.OperationalError as e:
             message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message) from e
         # This Exception handles the case where the table is not found.
         except mysql.connector.errors.ProgrammingError as e:
             my_app_logger.error(f"While connecting to {HOST!r} operation failed! error: {str(e)}")
@@ -142,7 +142,7 @@ class SQLite(Database):
         except sqlite3.OperationalError as e:
             message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message) from e
 
     def _close_db_connection(self) -> None:
         self._db_cursor.close()
@@ -157,7 +157,7 @@ class SQLite(Database):
         except sqlite3.OperationalError as e:
             message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message) from e
         finally:
             self._close_db_connection()
 
@@ -179,6 +179,6 @@ class SQLite(Database):
         except sqlite3.OperationalError as e:
             message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
-            raise exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message) from e
         finally:
             self._close_db_connection()
