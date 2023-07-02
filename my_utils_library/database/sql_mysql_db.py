@@ -18,8 +18,9 @@ from abc import ABC, abstractmethod
 import mysql.connector
 
 # Local Application Imports --------------------------------------------------------------------------------------------
-from .. import exceptions, utils
-from ..logger import master_logger
+from CarloCodes.my_utils_library import exceptions
+from CarloCodes.my_utils_library.my_utils_library import utils
+from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 

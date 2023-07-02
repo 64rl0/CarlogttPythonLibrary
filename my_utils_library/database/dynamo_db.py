@@ -20,8 +20,8 @@ from botocore.client import BaseClient
 from botocore.exceptions import EndpointConnectionError
 
 # Local Application Imports --------------------------------------------------------------------------------------------
-from .. import exceptions
-from ..logger import master_logger
+from CarloCodes.my_utils_library.my_utils_library import exceptions
+from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 

@@ -14,7 +14,7 @@ import random
 import string
 
 # Local Application Imports --------------------------------------------------------------------------------------------
-from ..logger import master_logger
+from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
