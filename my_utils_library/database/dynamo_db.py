@@ -19,11 +19,12 @@ import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import EndpointConnectionError
 
-# Local Application Imports --------------------------------------------------------------------------------------------
-from CarloCodes.my_utils_library.my_utils_library import exceptions
-from CarloCodes.my_utils_library.my_utils_library.logger import master_logger
+# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+from .. import db_exceptions
+from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
+
 
 # List of public names in the module
 # __all__ = [...]
@@ -103,7 +104,7 @@ def _get_boto_dynamo_client() -> BaseClient:
         return client
 
     except EndpointConnectionError as e:
-        raise exceptions.DynamoDBConnectionError(str(e)) from e
+        raise db_exceptions.DynamoDBConnectionError(str(e)) from e
 
 
 def get_all_tables() -> list[str, ...]:

@@ -27,6 +27,7 @@ from io import StringIO
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
+
 # List of public names in the module
 __all__ = ["master_logger"]
 
