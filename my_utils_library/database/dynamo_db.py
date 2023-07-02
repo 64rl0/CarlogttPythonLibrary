@@ -20,7 +20,7 @@ from botocore.client import BaseClient
 from botocore.exceptions import EndpointConnectionError
 
 # Local Folder (Relative) Imports --------------------------------------------------------------------------------------
-from .. import db_exceptions
+from ..exceptions import db_exceptions
 from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
