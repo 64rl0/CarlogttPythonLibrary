@@ -11,6 +11,8 @@ This module ...
 # Importing required libraries and modules for the application.
 
 # Standard Library Imports ---------------------------------------------------------------------------------------------
+import io
+import sys
 from contextlib import contextmanager
 from typing import Type
 
@@ -29,14 +31,65 @@ my_app_logger = master_logger.get_child_logger(__name__)
 
 @contextmanager
 def suppress_errors(*exceptions: Type[Exception]):
+    """
+    Context manager to suppress specified exceptions.
+
+    Args:
+        exceptions:
+            Variable length exception list which includes the exception classes of exceptions to be suppressed.
+
+    Yields:
+        None
+
+    Example:
+        ::
+
+            with suppress_errors(ZeroDivisionError):
+                1/0  # This will not raise an exception
+    """
+
     try:
         yield
+
     except exceptions:
         pass
+
+
+@contextmanager
+def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
+    """
+    Context manager to redirect stdout to file.
+
+    Args:
+        fileobj:
+            Opened file object to redirect stdout to.
+
+    Yields:
+        None
+
+    Example:
+        ::
+
+            with open("file.txt", 'w'):
+                with redirect_stdout_to_file():
+                    print("Hello World!")  # This will print to file.
+    """
+
+    current_stdout = sys.stdout
+    sys.stdout = fileobj
+
+    try:
+        yield
+
+    finally:
+        sys.stdout = current_stdout
 
 
 if __name__ == '__main__':
     pass
     # print(*suppress_errors())
+    # with suppress_errors(ValueError):
+    #     raise ValueError()
+    #
     # with suppress_errors(ValueError):
     #     raise ValueError()
