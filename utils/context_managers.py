@@ -10,9 +10,6 @@ This module ...
 # IMPORTS --------------------------------------------------------------------------------------------------------------
 # Importing required libraries and modules for the application.
 
-# Special Imports ------------------------------------------------------------------------------------------------------
-from __future__ import annotations
-
 # Standard Library Imports ---------------------------------------------------------------------------------------------
 from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
 from contextlib import contextmanager

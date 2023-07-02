@@ -1,0 +1,7 @@
+# Project utils dependencies
+python-dotenv
+cryptography
+
+# Database dependencies
+boto3
+mysql-connector-python
