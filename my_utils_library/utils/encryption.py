@@ -20,6 +20,7 @@ import cryptography.hazmat.primitives.kdf.scrypt
 
 # Local Application Imports --------------------------------------------------------------------------------------------
 from ..logger import master_logger
+from .. import config
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -29,9 +30,6 @@ from ..logger import master_logger
 
 # Setting up logger for current module
 my_app_logger = master_logger.get_child_logger(__name__)
-
-# Reading environment variables
-FERNET_KEY = os.environ.get('FERNET_KEY', "")
 
 
 def _get_scrypt_kdf(salt: bytes) -> cryptography.hazmat.primitives.kdf.scrypt.Scrypt:
@@ -152,7 +150,7 @@ def validate_hash_match(raw_string: str, hashed_string_to_match: bytes) -> bool:
 
 
 def encrypt_string(string_to_encrypt: str) -> str:
-    cipher_suite = cryptography.fernet.Fernet(FERNET_KEY)
+    cipher_suite = cryptography.fernet.Fernet(config.FERNET_KEY)
 
     b_string_to_encrypt = string_to_encrypt.encode()
     b_encrypted = cipher_suite.encrypt(b_string_to_encrypt)
@@ -166,7 +164,7 @@ def encrypt_string(string_to_encrypt: str) -> str:
 
 
 def decrypt_string(string_to_decrypt: str) -> str:
-    cipher_suite = cryptography.fernet.Fernet(FERNET_KEY)
+    cipher_suite = cryptography.fernet.Fernet(config.FERNET_KEY)
 
     # Add two '==' at the end removed by the 'encrypt_string' function
     s_encrypted = string_to_decrypt + '=='

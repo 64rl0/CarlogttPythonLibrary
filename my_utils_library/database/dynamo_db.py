@@ -20,6 +20,7 @@ from botocore.client import BaseClient
 from botocore.exceptions import EndpointConnectionError
 
 # Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+from .. import config
 from ..exceptions import db_exceptions
 from ..logger import master_logger
 
@@ -31,9 +32,6 @@ from ..logger import master_logger
 
 # Setting up logger for current module
 my_app_logger = master_logger.get_child_logger(__name__)
-
-# DynamoDB configuration
-AWS_ENVIRONMENT = os.environ.get('AWS_ENVIRONMENT')
 
 
 class NormalizeMethod(Enum):
@@ -95,7 +93,7 @@ def _get_boto_dynamo_client() -> BaseClient:
     try:
         boto_session: boto3.session.Session
 
-        boto_session = boto3.session.Session(profile_name=AWS_ENVIRONMENT)
+        boto_session = boto3.session.Session(profile_name=config.AWS_ENVIRONMENT)
         client = boto_session.client(service_name='dynamodb')
 
         # This will raise a EndpointConnectionError if there is a network error with the database

@@ -1,5 +1,7 @@
 # MyUtilsLibrary
 
+![Python Logo](https://www.python.org/static/community_logos/python-logo.png "Sample inline image")
+
 MyUtilsLibrary is a collection of utility functions designed to simplify common tasks in Python.
 
 

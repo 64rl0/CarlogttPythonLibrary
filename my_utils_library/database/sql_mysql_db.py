@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 import mysql.connector
 
 # Local Folder (Relative) Imports --------------------------------------------------------------------------------------
-from .. import utils
+from .. import config, utils
 from ..exceptions import db_exceptions
 from ..logger import master_logger
 
@@ -30,17 +30,6 @@ from ..logger import master_logger
 
 # Setting up logger for current module
 my_app_logger = master_logger.get_child_logger(__name__)
-
-# mySQL config
-HOST = os.environ.get('MYSQL_HOST')
-USERNAME = os.environ.get('MYSQL_USERNAME')
-PASSWORD = os.environ.get('MYSQL_PASSWORD')
-PORT = os.environ.get('MYSQL_PORT')
-DATABASE_SCHEMA = os.environ.get('MYSQL_DATABASE_SCHEMA')
-
-# sqlite config
-SQLITE_DB_FILENAME = os.environ.get('SQLITE_DB_FILENAME')
-SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), SQLITE_DB_FILENAME)
 
 
 class Database(ABC):
@@ -72,12 +61,16 @@ class MySQLdatabase(Database):
     def _open_db_connection(self) -> None:
         try:
             self._db_connection = mysql.connector.connect(
-                host=HOST, user=USERNAME, password=PASSWORD, port=PORT, database=DATABASE_SCHEMA
+                host=config.HOST,
+                user=config.USERNAME,
+                password=config.PASSWORD,
+                port=config.PORT,
+                database=config.DATABASE_SCHEMA,
             )
             if self._db_connection.is_connected():
                 self._db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
         except mysql.connector.Error as e:
-            message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
@@ -87,7 +80,7 @@ class MySQLdatabase(Database):
             self._db_cursor.close()
             self._db_connection.close()
         except mysql.connector.Error as e:
-            message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
@@ -99,7 +92,7 @@ class MySQLdatabase(Database):
             self._db_connection.commit()
             my_app_logger.info("Database upload successful!")
         except mysql.connector.OperationalError as e:
-            message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
         finally:
@@ -118,12 +111,12 @@ class MySQLdatabase(Database):
                 record_objects = self._db_cursor.fetchall()
             return record_objects
         except mysql.connector.OperationalError as e:
-            message = f"While connecting to {HOST!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.HOST!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
         # This Exception handles the case where the table is not found.
         except mysql.connector.errors.ProgrammingError as e:
-            my_app_logger.error(f"While connecting to {HOST!r} operation failed! error: {str(e)}")
+            my_app_logger.error(f"While connecting to {config.HOST!r} operation failed! error: {str(e)}")
         finally:
             self._close_db_connection()
 
@@ -135,13 +128,13 @@ class SQLite(Database):
 
     def _open_db_connection(self) -> None:
         try:
-            self._db_connection = sqlite3.connect(SQLITE_DB_PATH)
+            self._db_connection = sqlite3.connect(config.SQLITE_DB_PATH)
             # Row to the row_factory of connection creates what some people call a 'dictionary cursor'
             # Instead of tuples it starts returning 'dictionary'
             self._db_connection.row_factory = sqlite3.Row
             self._db_cursor = self._db_connection.cursor()
         except sqlite3.OperationalError as e:
-            message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
@@ -156,7 +149,7 @@ class SQLite(Database):
             self._db_cursor.connection.commit()
             my_app_logger.info(f"Database upload successful!")
         except sqlite3.OperationalError as e:
-            message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
         finally:
@@ -178,7 +171,7 @@ class SQLite(Database):
                 record_objects: list[dict[str, str], ...] = [dict(i) for i in record_objects]
             return record_objects
         except sqlite3.OperationalError as e:
-            message = f"While connecting to {SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            message = f"While connecting to {config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             my_app_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
         finally:

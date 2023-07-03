@@ -25,19 +25,14 @@ import uuid
 from enum import Enum
 from io import StringIO
 
+# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+from .. import config
+
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
 
 # List of public names in the module
 __all__ = ["master_logger"]
-
-# Logger global variables
-LOGGER_NAME = os.environ.get('LOGGER_NAME')
-LOGGER_FILENAME = os.environ.get('LOGGER_FILENAME')
-LOGGER_LEVEL = os.environ.get('LOGGER_LEVEL')
-LOGGER_PATH = os.path.join(os.environ.get("LOGGER_PATH"), LOGGER_FILENAME)
-CONSOLE_STREAM = sys.stderr
-STRINGIO_STREAM = StringIO()
 
 
 class Level(Enum):
@@ -90,13 +85,13 @@ class Logger:
 
 
 # Initiate master logger for Flask app
-master_logger = Logger(LOGGER_NAME, LOGGER_LEVEL)
-master_logger.add_file_handler(LOGGER_PATH)
-master_logger.add_console_handler(CONSOLE_STREAM)
-master_logger.add_stringio_handler(STRINGIO_STREAM)
+master_logger = Logger(config.LOGGER_NAME, config.LOGGER_LEVEL)
+master_logger.add_file_handler(config.LOGGER_PATH)
+master_logger.add_console_handler(config.CONSOLE_STREAM)
+master_logger.add_stringio_handler(config.STRINGIO_STREAM)
 
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     # Setting up logger for current module for testing purposes only when run as main
-my_app_logger = master_logger.get_child_logger(__name__)
-my_app_logger.error("this is a test log")
+    my_app_logger = master_logger.get_child_logger(__name__)
+    my_app_logger.error("this is a test log")
