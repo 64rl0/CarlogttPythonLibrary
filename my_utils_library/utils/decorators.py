@@ -15,9 +15,6 @@ import logging
 import time
 from typing import Any, Callable, Type
 
-# Local Application Imports --------------------------------------------------------------------------------------------
-from ..logger import master_logger
-
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
 
@@ -25,7 +22,7 @@ from ..logger import master_logger
 # __all__ = [...]
 
 # Setting up logger for current module
-my_app_logger = master_logger.get_child_logger(__name__)
+module_logger = logging.getLogger(__name__)
 
 
 def retry_decorator(
@@ -33,7 +30,6 @@ def retry_decorator(
     tries: int = 4,
     delay_secs: int = 3,
     delay_multiplier: int = 2,
-    logger: logging.Logger = None,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
@@ -45,13 +41,11 @@ def retry_decorator(
     :type delay_secs: int
     :param delay_multiplier: delay multiplier e.g. value of 2 will double the delay each retry
     :type delay_multiplier: int
-    :param logger: logger to use. If None, print
-    :type logger: logging.Logger instance
     """
 
     def decorator_retry(original_func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(original_func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def new_func(*args: Any, **kwargs: Any) -> Any:
             local_tries, local_delay_secs = tries, delay_secs
 
             while local_tries > 1:
@@ -61,11 +55,9 @@ def retry_decorator(
                 except exception_to_check as e:
                     message = f"{str(e)}, Retrying in {local_delay_secs} seconds..."
 
-                    if logger:
-                        logger.error(message)
-
-                    else:
-                        print(message)
+                    # Log error
+                    logging.error(message)
+                    print(message)
 
                     time.sleep(local_delay_secs)
                     local_tries -= 1
@@ -73,7 +65,7 @@ def retry_decorator(
 
             return original_func(*args, **kwargs)
 
-        return wrapper
+        return new_func
 
     return decorator_retry
 
@@ -85,7 +77,7 @@ def benchmark_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]]
 
     def decorator_benchmark(original_func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(original_func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def new_func(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
             result = original_func(*args, **kwargs)
             end_time = time.perf_counter()
@@ -94,7 +86,7 @@ def benchmark_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]]
 
             return result
 
-        return wrapper
+        return new_func
 
     return decorator_benchmark
 
@@ -106,14 +98,14 @@ def logging_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]], 
 
     def decorator_logging(original_func: Callable[..., Any]) -> Callable[..., Any]:
         @functools.wraps(original_func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def new_func(*args: Any, **kwargs: Any) -> Any:
             logger.info(f"Initiating {original_func.__name__}")
             result = original_func(*args, **kwargs)
             logger.info(f"Finished {original_func.__name__}")
 
             return result
 
-        return wrapper
+        return new_func
 
     return decorator_logging
 

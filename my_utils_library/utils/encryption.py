@@ -12,15 +12,15 @@ It offers encryption algorithms and techniques specifically designed for securel
 
 # Standard Library Imports ---------------------------------------------------------------------------------------------
 import base64
+import logging
 import os
 
 # Third Party Library Imports ------------------------------------------------------------------------------------------
 import cryptography.fernet
 import cryptography.hazmat.primitives.kdf.scrypt
 
-# Local Application Imports --------------------------------------------------------------------------------------------
-from ..logger import master_logger
-from .. import config
+# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+from .. import _config
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ from .. import config
 # __all__ = [...]
 
 # Setting up logger for current module
-my_app_logger = master_logger.get_child_logger(__name__)
+module_logger = logging.getLogger(__name__)
 
 
 def _get_scrypt_kdf(salt: bytes) -> cryptography.hazmat.primitives.kdf.scrypt.Scrypt:
@@ -142,7 +142,7 @@ def validate_hash_match(raw_string: str, hashed_string_to_match: bytes) -> bool:
             return True
 
         except Exception as e:
-            my_app_logger.warning(f"Hash validation failed w/ error: {e}")
+            module_logger.warning(f"Hash validation failed w/ error: {e}")
 
             return False
 
@@ -150,7 +150,7 @@ def validate_hash_match(raw_string: str, hashed_string_to_match: bytes) -> bool:
 
 
 def encrypt_string(string_to_encrypt: str) -> str:
-    cipher_suite = cryptography.fernet.Fernet(config.FERNET_KEY)
+    cipher_suite = cryptography.fernet.Fernet(_config.FERNET_KEY)
 
     b_string_to_encrypt = string_to_encrypt.encode()
     b_encrypted = cipher_suite.encrypt(b_string_to_encrypt)
@@ -164,7 +164,7 @@ def encrypt_string(string_to_encrypt: str) -> str:
 
 
 def decrypt_string(string_to_decrypt: str) -> str:
-    cipher_suite = cryptography.fernet.Fernet(config.FERNET_KEY)
+    cipher_suite = cryptography.fernet.Fernet(_config.FERNET_KEY)
 
     # Add two '==' at the end removed by the 'encrypt_string' function
     s_encrypted = string_to_decrypt + '=='
@@ -177,7 +177,7 @@ def decrypt_string(string_to_decrypt: str) -> str:
         return s_decrypted
 
     except Exception as e:
-        my_app_logger.warning(f"Decryption failed w/ error: {e}")
+        module_logger.warning(f"Decryption failed w/ error: {e}")
 
         return ""
 

@@ -26,7 +26,7 @@ from enum import Enum
 from io import StringIO
 
 # Local Folder (Relative) Imports --------------------------------------------------------------------------------------
-from .. import config
+from .. import _config
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -85,10 +85,10 @@ class Logger:
 
 
 # Initiate master logger for Flask app
-master_logger = Logger(config.LOGGER_NAME, config.LOGGER_LEVEL)
-master_logger.add_file_handler(config.LOGGER_PATH)
-master_logger.add_console_handler(config.CONSOLE_STREAM)
-master_logger.add_stringio_handler(config.STRINGIO_STREAM)
+master_logger = Logger(_config.LOGGER_NAME, _config.LOGGER_LEVEL)
+master_logger.add_file_handler(_config.LOGGER_PATH)
+master_logger.add_console_handler(_config.CONSOLE_STREAM)
+master_logger.add_stringio_handler(_config.STRINGIO_STREAM)
 
 
 if __name__ == '__main__':

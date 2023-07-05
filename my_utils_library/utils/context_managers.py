@@ -12,12 +12,10 @@ This module ...
 
 # Standard Library Imports ---------------------------------------------------------------------------------------------
 import io
+import logging
 import sys
 from contextlib import contextmanager
 from typing import Type
-
-# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
-from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -26,7 +24,7 @@ from ..logger import master_logger
 # __all__ = [...]
 
 # Setting up logger for current module
-my_app_logger = master_logger.get_child_logger(__name__)
+module_logger = logging.getLogger(__name__)
 
 
 @contextmanager

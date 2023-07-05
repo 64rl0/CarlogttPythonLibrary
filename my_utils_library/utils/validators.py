@@ -12,12 +12,12 @@ It offers various validators to ensure the correctness and integrity of differen
 
 # Standard Library Imports ---------------------------------------------------------------------------------------------
 import datetime
+import logging
 import re
 import string
 
-# Local Application Imports --------------------------------------------------------------------------------------------
+# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
 from . import encryption
-from ..logger import master_logger
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ from ..logger import master_logger
 # __all__ = [...]
 
 # Setting up logger for current module
-my_app_logger = master_logger.get_child_logger(__name__)
+module_logger = logging.getLogger(__name__)
 
 
 def validate_non_empty_strings(**strings: str) -> dict[str, str]:
