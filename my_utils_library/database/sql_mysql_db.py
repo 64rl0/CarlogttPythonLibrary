@@ -14,6 +14,7 @@ import logging
 import os
 import sqlite3
 from abc import ABC, abstractmethod
+from collections.abc import Generator
 
 # Third Party Library Imports ------------------------------------------------------------------------------------------
 import mysql.connector
@@ -48,7 +49,7 @@ class Database(ABC):
     @abstractmethod
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> list[dict[str, str], ...]:
+    ) -> Generator[dict[str, str], None, None]:
         pass
 
 
@@ -101,22 +102,31 @@ class MySQLdatabase(Database):
     # TODO: @retry_decorator(exception_to_check=MySQLConnectionError) - this goes in a loop of 4x4 16 times
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> list[dict[str, str], ...]:
+    ) -> Generator[dict[str, str], None, None]:
         self._open_db_connection()
+        # TODO: this is not working, needs to be review as the SQLite here below
         try:
             self._db_cursor.execute(sql_query, sql_values)
+
             if fetch_one:
                 record_objects = self._db_cursor.fetchone()
+
             else:
                 record_objects = self._db_cursor.fetchall()
-            return record_objects
+
+            records = (record for record in record_objects)
+
+            yield from records
+
         except mysql.connector.OperationalError as e:
             message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
+
         # This Exception handles the case where the table is not found.
         except mysql.connector.errors.ProgrammingError as e:
             module_logger.error(f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}")
+
         finally:
             self._close_db_connection()
 
@@ -144,35 +154,47 @@ class SQLite(Database):
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
         self._open_db_connection()
+
         try:
             self._db_cursor.execute(sql_query, sql_values)
             self._db_cursor.connection.commit()
             module_logger.info(f"Database upload successful!")
+
         except sqlite3.OperationalError as e:
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
+
         finally:
             self._close_db_connection()
 
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> list[dict[str, str], ...]:
+    ) -> Generator[dict[str, str], None, None]:
         self._open_db_connection()
+
         try:
             self._db_cursor.execute(sql_query, sql_values)
+
+            # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
             if fetch_one:
-                record_objects: sqlite3.Row = self._db_cursor.fetchone()
-                # This converts the sqlite3.Row object, created by row_factory, into a dictionary
-                record_objects: list[dict[str, str]] = [dict(record_objects)]
+                for row in self._db_cursor:
+                    yield dict(row)
+                    break
+
             else:
-                record_objects: list[sqlite3.Row, ...] = self._db_cursor.fetchall()
-                # This converts the sqlite3.Row object, created by row_factory, into a dictionary
-                record_objects: list[dict[str, str], ...] = [dict(i) for i in record_objects]
-            return record_objects
+                for row in self._db_cursor:
+                    yield dict(row)
+
         except sqlite3.OperationalError as e:
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
+
         finally:
-            self._close_db_connection()
+            try:
+                self._close_db_connection()
+
+            except sqlite3.ProgrammingError as e:
+                # Skip error database already closed
+                pass
