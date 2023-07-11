@@ -35,37 +35,30 @@ module_logger = logging.getLogger(__name__)
 
 class Database(ABC):
     @abstractmethod
-    def _open_db_connection(self) -> None:
+    def open_db_connection(self) -> None:
         pass
 
     @abstractmethod
-    def _close_db_connection(self) -> None:
+    def close_db_connection(self) -> None:
         pass
 
     @abstractmethod
-    def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
+    def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
         pass
 
     @abstractmethod
     def fetch_from_db(
-        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> Generator[dict[str, str], None, None]:
-        pass
-
-    @abstractmethod
-    def fetch_from_an_open_db(
-            self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
     ) -> Generator[dict[str, str], None, None]:
         pass
 
 
-class MySQLdatabase(Database):
+class MySQL(Database):
     def __init__(self):
         self._db_connection = None
-        self._db_cursor = None
 
     @utils.retry_decorator(exception_to_check=db_exceptions.MySQLConnectionError)
-    def _open_db_connection(self) -> None:
+    def open_db_connection(self) -> None:
         try:
             self._db_connection = mysql.connector.connect(
                 host=_config.HOST,
@@ -74,58 +67,65 @@ class MySQLdatabase(Database):
                 port=_config.PORT,
                 database=_config.DATABASE_SCHEMA,
             )
-            if self._db_connection.is_connected():
-                self._db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
+
         except mysql.connector.Error as e:
             message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
     @utils.retry_decorator(exception_to_check=db_exceptions.MySQLConnectionError)
-    def _close_db_connection(self) -> None:
+    def close_db_connection(self) -> None:
         try:
-            self._db_cursor.close()
             self._db_connection.close()
+
         except mysql.connector.Error as e:
-            message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
+            message = f"While closing {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
-    # TODO: @retry_decorator(exception_to_check=MySQLConnectionError) - this goes in a loop of 4x4 16 times
-    def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
-        self._open_db_connection()
+    def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
+        if not db_is_open:
+            self.open_db_connection()
+
         try:
-            self._db_cursor.execute(sql_query, sql_values)
+            db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
+            db_cursor.execute(sql_query, sql_values)
+
             self._db_connection.commit()
             module_logger.info("Database upload successful!")
+
         except mysql.connector.OperationalError as e:
-            message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
+            message = f"While sending to {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
-        finally:
-            self._close_db_connection()
 
-    # TODO: @retry_decorator(exception_to_check=MySQLConnectionError) - this goes in a loop of 4x4 16 times
+        finally:
+            db_cursor.close()
+
+            if not db_is_open:
+                self.close_db_connection()
+
     def fetch_from_db(
-        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
     ) -> Generator[dict[str, str], None, None]:
-        self._open_db_connection()
-        # TODO: this is not working, needs to be review as the SQLite here below
+        if not db_is_open:
+            self.open_db_connection()
+
         try:
-            self._db_cursor.execute(sql_query, sql_values)
+            db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
+            db_cursor.execute(sql_query, sql_values)
 
             if fetch_one:
-                record_objects = self._db_cursor.fetchone()
+                for row in db_cursor:
+                    yield row
+                    break
 
             else:
-                record_objects = self._db_cursor.fetchall()
-
-            records = (record for record in record_objects)
-
-            yield from records
+                for row in db_cursor:
+                    yield row
 
         except mysql.connector.OperationalError as e:
-            message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
+            message = f"While fetching from {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
@@ -134,94 +134,86 @@ class MySQLdatabase(Database):
             module_logger.error(f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}")
 
         finally:
-            self._close_db_connection()
+            db_cursor.close()
 
-    def fetch_from_an_open_db(
-            self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> Generator[dict[str, str], None, None]:
-        # TODO: implement this method as per below
-        pass
+            if not db_is_open:
+                self.close_db_connection()
 
 
 class SQLite(Database):
     def __init__(self):
         self._db_connection = None
-        self._db_cursor_1 = None
-        self._db_cursor_2 = None
 
-    def _open_db_connection(self) -> None:
+    def open_db_connection(self) -> None:
         try:
             self._db_connection = sqlite3.connect(_config.SQLITE_DB_PATH)
             # Row to the row_factory of connection creates what some people call a 'dictionary cursor'
             # Instead of tuples it starts returning 'dictionary'
             self._db_connection.row_factory = sqlite3.Row
-            self._db_cursor_1 = self._db_connection.cursor()
-            self._db_cursor_2 = self._db_connection.cursor()
+
         except sqlite3.OperationalError as e:
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
-    def _close_db_connection(self) -> None:
-        self._db_cursor_1.close()
-        self._db_cursor_2.close()
-        self._db_connection.close()
+    def close_db_connection(self) -> None:
+        try:
+            self._db_connection.close()
 
-    def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
-        self._open_db_connection()
+        except sqlite3.OperationalError as e:
+            message = f"While closing {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            module_logger.error(message)
+            raise db_exceptions.SQLiteConnectionError(message) from e
+
+    def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
+        if not db_is_open:
+            self.open_db_connection()
 
         try:
-            self._db_cursor_1.execute(sql_query, sql_values)
-            self._db_cursor_1.connection.commit()
+            db_cursor = self._db_connection.cursor()
+            db_cursor.execute(sql_query, sql_values)
+
+            db_cursor.connection.commit()
             module_logger.info(f"Database upload successful!")
 
         except sqlite3.OperationalError as e:
-            message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            message = f"While sending to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
         finally:
-            self._close_db_connection()
+            db_cursor.close()
+
+            if not db_is_open:
+                self.close_db_connection()
 
     def fetch_from_db(
-        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
     ) -> Generator[dict[str, str], None, None]:
-        self._open_db_connection()
+        if not db_is_open:
+            self.open_db_connection()
 
         try:
-            self._db_cursor_1.execute(sql_query, sql_values)
+            db_cursor = self._db_connection.cursor()
+            db_cursor.execute(sql_query, sql_values)
 
             # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
             if fetch_one:
-                for row in self._db_cursor_1:
+                for row in db_cursor:
                     yield dict(row)
                     break
 
             else:
-                for row in self._db_cursor_1:
+                for row in db_cursor:
                     yield dict(row)
 
         except sqlite3.OperationalError as e:
-            print("error received")
-            message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
+            message = f"While fetching from {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
         finally:
-            self._close_db_connection()
+            db_cursor.close()
 
-    def fetch_from_an_open_db(
-        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
-    ) -> Generator[dict[str, str], None, None]:
-
-        self._db_cursor_2.execute(sql_query, sql_values)
-
-        # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
-        if fetch_one:
-            for row in self._db_cursor_2:
-                yield dict(row)
-                break
-
-        else:
-            for row in self._db_cursor_2:
-                yield dict(row)
+            if not db_is_open:
+                self.close_db_connection()
