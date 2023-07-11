@@ -52,6 +52,12 @@ class Database(ABC):
     ) -> Generator[dict[str, str], None, None]:
         pass
 
+    @abstractmethod
+    def fetch_from_an_open_db(
+            self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+    ) -> Generator[dict[str, str], None, None]:
+        pass
+
 
 class MySQLdatabase(Database):
     def __init__(self):
@@ -130,11 +136,18 @@ class MySQLdatabase(Database):
         finally:
             self._close_db_connection()
 
+    def fetch_from_an_open_db(
+            self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+    ) -> Generator[dict[str, str], None, None]:
+        # TODO: implement this method as per below
+        pass
+
 
 class SQLite(Database):
     def __init__(self):
         self._db_connection = None
-        self._db_cursor = None
+        self._db_cursor_1 = None
+        self._db_cursor_2 = None
 
     def _open_db_connection(self) -> None:
         try:
@@ -142,22 +155,24 @@ class SQLite(Database):
             # Row to the row_factory of connection creates what some people call a 'dictionary cursor'
             # Instead of tuples it starts returning 'dictionary'
             self._db_connection.row_factory = sqlite3.Row
-            self._db_cursor = self._db_connection.cursor()
+            self._db_cursor_1 = self._db_connection.cursor()
+            self._db_cursor_2 = self._db_connection.cursor()
         except sqlite3.OperationalError as e:
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
     def _close_db_connection(self) -> None:
-        self._db_cursor.close()
+        self._db_cursor_1.close()
+        self._db_cursor_2.close()
         self._db_connection.close()
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str) -> None:
         self._open_db_connection()
 
         try:
-            self._db_cursor.execute(sql_query, sql_values)
-            self._db_cursor.connection.commit()
+            self._db_cursor_1.execute(sql_query, sql_values)
+            self._db_cursor_1.connection.commit()
             module_logger.info(f"Database upload successful!")
 
         except sqlite3.OperationalError as e:
@@ -174,27 +189,39 @@ class SQLite(Database):
         self._open_db_connection()
 
         try:
-            self._db_cursor.execute(sql_query, sql_values)
+            self._db_cursor_1.execute(sql_query, sql_values)
 
             # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
             if fetch_one:
-                for row in self._db_cursor:
+                for row in self._db_cursor_1:
                     yield dict(row)
                     break
 
             else:
-                for row in self._db_cursor:
+                for row in self._db_cursor_1:
                     yield dict(row)
 
         except sqlite3.OperationalError as e:
+            print("error received")
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
         finally:
-            try:
-                self._close_db_connection()
+            self._close_db_connection()
 
-            except sqlite3.ProgrammingError as e:
-                # Skip error database already closed
-                pass
+    def fetch_from_an_open_db(
+        self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False
+    ) -> Generator[dict[str, str], None, None]:
+
+        self._db_cursor_2.execute(sql_query, sql_values)
+
+        # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
+        if fetch_one:
+            for row in self._db_cursor_2:
+                yield dict(row)
+                break
+
+        else:
+            for row in self._db_cursor_2:
+                yield dict(row)
