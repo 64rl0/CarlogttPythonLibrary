@@ -88,11 +88,24 @@ class MySQL(Database):
         return
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
+        """
+        Send data to MySQL database.
+
+        Args:
+            sql_query:
+            sql_values:
+            db_is_open:
+
+        Returns: None
+
+        """
+
         if not db_is_open:
             self.open_db_connection()
 
+        db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
+
         try:
-            db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
             db_cursor.execute(sql_query, sql_values)
 
             self._db_connection.commit()
@@ -114,11 +127,25 @@ class MySQL(Database):
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
     ) -> Generator[dict[str, str], None, None]:
+        """
+        Fetch data from MySQL database.
+
+        Args:
+            sql_query:
+            sql_values:
+            fetch_one:
+            db_is_open:
+
+        Returns:
+
+        """
+
         if not db_is_open:
             self.open_db_connection()
 
+        db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
+
         try:
-            db_cursor = self._db_connection.cursor(prepared=True, dictionary=True)
             db_cursor.execute(sql_query, sql_values)
 
             if fetch_one:
@@ -178,11 +205,24 @@ class SQLite(Database):
         return
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
+        """
+        Send data to SQLite database.
+
+        Args:
+            sql_query:
+            sql_values:
+            db_is_open:
+
+        Returns: None
+
+        """
+
         if not db_is_open:
             self.open_db_connection()
 
+        db_cursor = self._db_connection.cursor()
+
         try:
-            db_cursor = self._db_connection.cursor()
             db_cursor.execute(sql_query, sql_values)
 
             db_cursor.connection.commit()
@@ -204,11 +244,25 @@ class SQLite(Database):
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
     ) -> Generator[dict[str, str], None, None]:
+        """
+        Fetch data from SQLite database.
+
+        Args:
+            sql_query:
+            sql_values:
+            fetch_one:
+            db_is_open:
+
+        Returns:
+
+        """
+
         if not db_is_open:
             self.open_db_connection()
 
+        db_cursor = self._db_connection.cursor()
+
         try:
-            db_cursor = self._db_connection.cursor()
             db_cursor.execute(sql_query, sql_values)
 
             # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
