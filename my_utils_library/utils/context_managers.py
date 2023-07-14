@@ -83,6 +83,28 @@ def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
         sys.stdout = current_stdout
 
 
+@contextmanager
+def redirect_stdout_to_stderr():
+    """
+    Context manager to redirect stdout to stderr.
+
+    Example:
+        ::
+
+            with redirect_stdout_to_stderr():
+                print("Hello World!")  # This will print to stderr.
+    """
+
+    current_stdout = sys.stdout
+    sys.stdout = sys.stderr
+
+    try:
+        yield
+
+    finally:
+        sys.stdout = current_stdout
+
+
 if __name__ == '__main__':
     pass
     # print(*suppress_errors())

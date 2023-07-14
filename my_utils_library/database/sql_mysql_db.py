@@ -73,6 +73,8 @@ class MySQL(Database):
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
 
+        return
+
     @utils.retry_decorator(exception_to_check=db_exceptions.MySQLConnectionError)
     def close_db_connection(self) -> None:
         try:
@@ -82,6 +84,8 @@ class MySQL(Database):
             message = f"While closing {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.MySQLConnectionError(message) from e
+
+        return
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
         if not db_is_open:
@@ -104,6 +108,8 @@ class MySQL(Database):
 
             if not db_is_open:
                 self.close_db_connection()
+
+        return
 
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
@@ -139,6 +145,8 @@ class MySQL(Database):
             if not db_is_open:
                 self.close_db_connection()
 
+        return
+
 
 class SQLite(Database):
     def __init__(self):
@@ -156,6 +164,8 @@ class SQLite(Database):
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
 
+        return
+
     def close_db_connection(self) -> None:
         try:
             self._db_connection.close()
@@ -164,6 +174,8 @@ class SQLite(Database):
             message = f"While closing {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
             raise db_exceptions.SQLiteConnectionError(message) from e
+
+        return
 
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
         if not db_is_open:
@@ -186,6 +198,8 @@ class SQLite(Database):
 
             if not db_is_open:
                 self.close_db_connection()
+
+        return
 
     def fetch_from_db(
         self, sql_query: str, sql_values: tuple | str, *, fetch_one: bool = False, db_is_open: bool = False
@@ -217,3 +231,5 @@ class SQLite(Database):
 
             if not db_is_open:
                 self.close_db_connection()
+
+        return
