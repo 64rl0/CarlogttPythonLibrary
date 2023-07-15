@@ -149,9 +149,7 @@ class MySQL(Database):
             db_cursor.execute(sql_query, sql_values)
 
             if fetch_one:
-                for row in db_cursor:
-                    yield row
-                    break
+                yield db_cursor.fetchone()
 
             else:
                 for row in db_cursor:
@@ -167,7 +165,8 @@ class MySQL(Database):
             module_logger.error(f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}")
 
         finally:
-            db_cursor.close()
+            db_cursor.reset()
+            # db_cursor.close()
 
             if not db_is_open:
                 self.close_db_connection()
@@ -267,9 +266,7 @@ class SQLite(Database):
 
             # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
             if fetch_one:
-                for row in db_cursor:
-                    yield dict(row)
-                    break
+                yield dict(db_cursor.fetchone())
 
             else:
                 for row in db_cursor:
