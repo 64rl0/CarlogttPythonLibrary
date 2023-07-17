@@ -232,7 +232,12 @@ class SQLite(Database):
 
             # The dict() converts the sqlite3.Row object, created by row_factory, into a dictionary
             if fetch_one:
-                yield dict(db_cursor.fetchone())
+                try:
+                    yield dict(db_cursor.fetchone())
+
+                # if the fetch is not found the dict(None) would raise TypeError
+                except TypeError:
+                    yield {}
 
             else:
                 for row in db_cursor:
