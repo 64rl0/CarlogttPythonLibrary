@@ -90,14 +90,6 @@ class MySQL(Database):
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
         """
         Send data to MySQL database.
-
-        Args:
-            sql_query:
-            sql_values:
-            db_is_open:
-
-        Returns: None
-
         """
 
         if not db_is_open:
@@ -129,15 +121,6 @@ class MySQL(Database):
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from MySQL database.
-
-        Args:
-            sql_query:
-            sql_values:
-            fetch_one:
-            db_is_open:
-
-        Returns:
-
         """
 
         if not db_is_open:
@@ -206,14 +189,6 @@ class SQLite(Database):
     def send_to_db(self, sql_query: str, sql_values: tuple | str, db_is_open: bool = False) -> None:
         """
         Send data to SQLite database.
-
-        Args:
-            sql_query:
-            sql_values:
-            db_is_open:
-
-        Returns: None
-
         """
 
         if not db_is_open:
@@ -245,15 +220,6 @@ class SQLite(Database):
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from SQLite database.
-
-        Args:
-            sql_query:
-            sql_values:
-            fetch_one:
-            db_is_open:
-
-        Returns:
-
         """
 
         if not db_is_open:
