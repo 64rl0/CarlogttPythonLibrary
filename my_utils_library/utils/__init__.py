@@ -14,6 +14,7 @@ from .context_managers import *
 from .decorators import *
 from .encryption import *
 from .string_tools import *
+from .user_input import *
 from .validators import *
 
 # END IMPORTS ----------------------------------------------------------------------------------------------------------
