@@ -235,7 +235,7 @@ class SQLite(Database):
                 try:
                     yield dict(db_cursor.fetchone())
 
-                # if the fetch is not found the dict(None) would raise TypeError
+                # if the fetch is not found and returns None, the dict(None) would raise TypeError
                 except TypeError:
                     yield {}
 
