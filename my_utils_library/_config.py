@@ -34,16 +34,15 @@ DATABASE_SCHEMA = os.environ.get('MYSQL_DATABASE_SCHEMA', '')
 
 # sqlite configuration
 SQLITE_DB_FILENAME = os.environ.get('SQLITE_DB_FILENAME', '')
-SQLITE_DB_PATH = os.path.join(os.path.dirname(__file__), SQLITE_DB_FILENAME)
+SQLITE_DB_PATH = os.environ.get('SQLITE_DB_PATH', '')
 
 # DynamoDB configuration
 AWS_ENVIRONMENT = os.environ.get('AWS_ENVIRONMENT', '')
 
 # Logger configuration
 LOGGER_NAME = os.environ.get('LOGGER_NAME', '')
-LOGGER_FILENAME = os.environ.get('LOGGER_FILENAME', '')
+LOGGER_PATH = os.environ.get("LOGGER_PATH", '')
 LOGGER_LEVEL = os.environ.get('LOGGER_LEVEL', '')
-LOGGER_PATH = os.path.join(os.environ.get("LOGGER_PATH", ''), LOGGER_FILENAME)
 CONSOLE_STREAM = sys.stderr
 STRINGIO_STREAM = StringIO()
 
