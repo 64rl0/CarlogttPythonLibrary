@@ -71,7 +71,7 @@ class MySQL(Database):
         except mysql.connector.Error as e:
             message = f"While connecting to {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message)
 
         return
 
@@ -83,7 +83,7 @@ class MySQL(Database):
         except mysql.connector.Error as e:
             message = f"While closing {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message)
 
         return
 
@@ -106,7 +106,7 @@ class MySQL(Database):
         except mysql.connector.OperationalError as e:
             message = f"While sending to {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message)
 
         finally:
             db_cursor.close()
@@ -141,7 +141,7 @@ class MySQL(Database):
         except mysql.connector.OperationalError as e:
             message = f"While fetching from {_config.HOST!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.MySQLConnectionError(message) from e
+            raise db_exceptions.MySQLConnectionError(message)
 
         # This Exception handles the case where the table is not found.
         except mysql.connector.errors.ProgrammingError as e:
@@ -164,14 +164,18 @@ class SQLite(Database):
     def open_db_connection(self) -> None:
         try:
             self._db_connection = sqlite3.connect(_config.SQLITE_DB_PATH)
+
             # Row to the row_factory of connection creates what some people call a 'dictionary cursor'
             # Instead of tuples it starts returning 'dictionary'
             self._db_connection.row_factory = sqlite3.Row
 
+            # foreign key constraint must be enabled by the application at runtime using the PRAGMA command
+            self._db_connection.execute("PRAGMA foreign_keys = ON;")
+
         except sqlite3.OperationalError as e:
             message = f"While connecting to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message)
 
         return
 
@@ -182,7 +186,7 @@ class SQLite(Database):
         except sqlite3.OperationalError as e:
             message = f"While closing {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message)
 
         return
 
@@ -202,10 +206,10 @@ class SQLite(Database):
             db_cursor.connection.commit()
             module_logger.info(f"Database upload successful!")
 
-        except sqlite3.OperationalError as e:
+        except (sqlite3.OperationalError, sqlite3.IntegrityError) as e:
             message = f"While sending to {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message)
 
         finally:
             db_cursor.close()
@@ -246,7 +250,7 @@ class SQLite(Database):
         except sqlite3.OperationalError as e:
             message = f"While fetching from {_config.SQLITE_DB_FILENAME!r} operation failed! error: {str(e)}"
             module_logger.error(message)
-            raise db_exceptions.SQLiteConnectionError(message) from e
+            raise db_exceptions.SQLiteConnectionError(message)
 
         finally:
             db_cursor.close()
