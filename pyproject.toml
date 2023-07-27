@@ -46,7 +46,7 @@ indented_import_headings = false
 #force_alphabetical_sort_within_sections = true
 # If enabled, isort will strip comments that exist within import lines. - doesn't seem to work so commented out
 #ignore_comments = true
-src_paths = ['my_utils_library']
+src_paths = ['src/*']
 known_future_library = ['__future__', 'config']
 extra_standard_library = []
 known_third_party = []
