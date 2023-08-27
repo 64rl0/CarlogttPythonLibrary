@@ -54,7 +54,6 @@ def _dev_only_create_table():
 
 
 def _get_dynamo_db_attribute_type(value: Any) -> str:
-
     dynamo_db_attribute_type = {
         bytes: "B",
         bool: "BOOL",
@@ -96,16 +95,15 @@ def _serialize_additional_items(method: NormalizeMethod, **items: Any) -> dict[s
     additional_items = {}
 
     for key, value in items.items():
-
         normalized_key = utils.snake_case(key)
         type_identifier = _get_dynamo_db_attribute_type(value)
         normalized_value = _normalize_value_for_dynamo_db(value)
 
         # Now add it to the additional_items serialized dictionary
-        if method == NormalizeMethod.Store:
+        if method is NormalizeMethod.Store:
             additional_items[normalized_key] = {type_identifier: normalized_value}
 
-        elif method == NormalizeMethod.Update:
+        elif method is NormalizeMethod.Update:
             additional_items[normalized_key] = {"Value": {type_identifier: normalized_value}}
 
     return additional_items
