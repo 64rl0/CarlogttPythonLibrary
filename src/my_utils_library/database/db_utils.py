@@ -26,7 +26,7 @@ from typing import Any, Generic
 module_logger = logging.getLogger(__name__)
 
 
-def sql_query_reader(file_path: str | Path):
+def sql_query_reader(file_path: str | Path) -> str:
     query = Path(file_path).read_text()
 
     return query
