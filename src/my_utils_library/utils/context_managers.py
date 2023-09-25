@@ -68,8 +68,8 @@ def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
     Example:
         ::
 
-            with open("file.txt", 'w'):
-                with redirect_stdout_to_file():
+            with open("file.txt", 'w') as file:
+                with redirect_stdout_to_file(file):
                     print("Hello World!")  # This will print to file.
     """
 
