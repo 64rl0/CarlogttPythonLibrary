@@ -24,15 +24,15 @@ from typing import Any, Callable, Type
 # Setting up logger for current module
 module_logger = logging.getLogger(__name__)
 
-
-original_f = Callable[..., Any]
-inner_f = Callable[..., Any]
-decorator_f = Callable[[original_f], inner_f]
+# Annotations
+OriginalFunction = Callable[..., Any]
+InnerFunction = Callable[..., Any]
+DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
 def retry_decorator(
     exception_to_check: Type[Exception], tries: int = 4, delay_secs: int = 3, delay_multiplier: int = 2
-) -> decorator_f:
+) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     :param exception_to_check: the exception to check. may be a tuple of exceptions to check
@@ -41,7 +41,7 @@ def retry_decorator(
     :param delay_multiplier: delay multiplier e.g. value of 2 will double the delay each retry
     """
 
-    def decorator_retry(original_func: original_f) -> inner_f:
+    def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
         @functools.wraps(original_func)
         def inner(*args: Any, **kwargs: Any) -> Any:
             local_tries, local_delay_secs = tries, delay_secs
@@ -68,12 +68,12 @@ def retry_decorator(
     return decorator_retry
 
 
-def benchmark_decorator(logger: logging.Logger) -> decorator_f:
+def benchmark_decorator(logger: logging.Logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     """
 
-    def decorator_benchmark(original_func: original_f) -> inner_f:
+    def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
         @functools.wraps(original_func)
         def inner(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
@@ -89,12 +89,12 @@ def benchmark_decorator(logger: logging.Logger) -> decorator_f:
     return decorator_benchmark
 
 
-def logging_decorator(logger: logging.Logger) -> decorator_f:
+def logging_decorator(logger: logging.Logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     """
 
-    def decorator_logging(original_func: original_f) -> inner_f:
+    def decorator_logging(original_func: OriginalFunction) -> InnerFunction:
         @functools.wraps(original_func)
         def inner(*args: Any, **kwargs: Any) -> Any:
             logger.info(f"Initiating {original_func.__name__}")
