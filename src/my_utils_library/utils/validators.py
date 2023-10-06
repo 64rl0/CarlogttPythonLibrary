@@ -124,7 +124,3 @@ def validate_reset_code_match(
             return encryption.validate_hash_match(reset_code_user_input, hashed_reset_code)
 
     return False
-
-
-if __name__ == '__main__':
-    pass

@@ -103,13 +103,3 @@ def redirect_stdout_to_stderr():
 
     finally:
         sys.stdout = current_stdout
-
-
-if __name__ == '__main__':
-    pass
-    # print(*suppress_errors())
-    # with suppress_errors(ValueError):
-    #     raise ValueError()
-    #
-    # with suppress_errors(ValueError):
-    #     raise ValueError()

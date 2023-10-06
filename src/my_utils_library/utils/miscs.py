@@ -26,7 +26,3 @@ module_logger = logging.getLogger(__name__)
 
 def ref_count(obj_id: int) -> int:
     return ctypes.c_long.from_address(obj_id).value
-
-
-if __name__ == '__main__':
-    pass

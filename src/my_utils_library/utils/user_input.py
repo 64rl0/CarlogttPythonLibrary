@@ -126,7 +126,3 @@ def get_user_input_confirmation_y_n(question: str = "Continue: (y/n): ", true: s
 
                 else:
                     return False
-
-
-if __name__ == '__main__':
-    pass

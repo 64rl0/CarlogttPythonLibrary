@@ -76,8 +76,3 @@ def snake_case(string_to_normalize: str) -> str:
     result = "".join(result).strip("_")
 
     return result
-
-
-if __name__ == '__main__':
-    s = "  Hello __  this i7Is--My Name  "
-    print(snake_case(s))

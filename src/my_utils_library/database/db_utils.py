@@ -30,7 +30,3 @@ def sql_query_reader(file_path: str | Path) -> str:
     query = Path(file_path).read_text()
 
     return query
-
-
-if __name__ == '__main__':
-    pass

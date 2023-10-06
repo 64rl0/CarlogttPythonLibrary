@@ -193,7 +193,3 @@ def generate_random_secret_key(bytes_length: int) -> str:
     s_random_bytes = b_random_bytes.decode()
 
     return s_random_bytes
-
-
-if __name__ == '__main__':
-    pass

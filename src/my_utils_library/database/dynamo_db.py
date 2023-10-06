@@ -207,18 +207,3 @@ def delete_item_values_from_table(table: str, partition_key_key: str, partition_
     response = client.update_item(TableName=table, Key=partition_key, AttributeUpdates=attribute_updates)
 
     return response
-
-
-if __name__ == '__main__':
-    pass
-    # AWS_ENVIRONMENT = "cg_dev"
-    # _dev_only_create_table()
-    # print(get_all_tables())
-    # print(get_all_items_from_table('Users'))
-    # print(update_item_in_table(table="Users",
-    #                            username="carlo3",
-    #                            hashed_password=b'$2b$12$Ny/Kcyv5j8SJi8MNjU1lKOutKTxQYCoiqoWBPRRtm80NrXkw/KHCW',
-    #                            reset_code="1234asdf",
-    #                            new_key="new_value"))
-    # print(get_all_items_from_table('Users'))
-    # print(item_exists_in_table('Users', 'carlo'))

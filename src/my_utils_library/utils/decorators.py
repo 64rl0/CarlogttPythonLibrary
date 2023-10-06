@@ -25,27 +25,25 @@ from typing import Any, Callable, Type
 module_logger = logging.getLogger(__name__)
 
 
+original_f = Callable[..., Any]
+inner_f = Callable[..., Any]
+decorator_f = Callable[[original_f], inner_f]
+
+
 def retry_decorator(
-    exception_to_check: Type[Exception],
-    tries: int = 4,
-    delay_secs: int = 3,
-    delay_multiplier: int = 2,
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    exception_to_check: Type[Exception], tries: int = 4, delay_secs: int = 3, delay_multiplier: int = 2
+) -> decorator_f:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     :param exception_to_check: the exception to check. may be a tuple of exceptions to check
-    :type exception_to_check: Exception or tuple
     :param tries: number of times to try (not retry) before giving up
-    :type tries: int
     :param delay_secs: initial delay between retries in seconds
-    :type delay_secs: int
     :param delay_multiplier: delay multiplier e.g. value of 2 will double the delay each retry
-    :type delay_multiplier: int
     """
 
-    def decorator_retry(original_func: Callable[..., Any]) -> Callable[..., Any]:
+    def decorator_retry(original_func: original_f) -> inner_f:
         @functools.wraps(original_func)
-        def new_func(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: Any, **kwargs: Any) -> Any:
             local_tries, local_delay_secs = tries, delay_secs
 
             while local_tries > 1:
@@ -65,19 +63,19 @@ def retry_decorator(
 
             return original_func(*args, **kwargs)
 
-        return new_func
+        return inner
 
     return decorator_retry
 
 
-def benchmark_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def benchmark_decorator(logger: logging.Logger) -> decorator_f:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     """
 
-    def decorator_benchmark(original_func: Callable[..., Any]) -> Callable[..., Any]:
+    def decorator_benchmark(original_func: original_f) -> inner_f:
         @functools.wraps(original_func)
-        def new_func(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
             result = original_func(*args, **kwargs)
             end_time = time.perf_counter()
@@ -86,29 +84,25 @@ def benchmark_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]]
 
             return result
 
-        return new_func
+        return inner
 
     return decorator_benchmark
 
 
-def logging_decorator(logger: logging.Logger) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def logging_decorator(logger: logging.Logger) -> decorator_f:
     """
     Retry calling the decorated function using an exponential backoff multiplier.
     """
 
-    def decorator_logging(original_func: Callable[..., Any]) -> Callable[..., Any]:
+    def decorator_logging(original_func: original_f) -> inner_f:
         @functools.wraps(original_func)
-        def new_func(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: Any, **kwargs: Any) -> Any:
             logger.info(f"Initiating {original_func.__name__}")
             result = original_func(*args, **kwargs)
             logger.info(f"Finished {original_func.__name__}")
 
             return result
 
-        return new_func
+        return inner
 
     return decorator_logging
-
-
-if __name__ == '__main__':
-    pass

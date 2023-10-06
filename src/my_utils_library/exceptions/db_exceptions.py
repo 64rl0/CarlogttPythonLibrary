@@ -25,7 +25,3 @@ class SQLiteConnectionError(Exception):
 
 class DynamoDBConnectionError(Exception):
     """This is the base exception class to handle DynamoDB connection errors."""
-
-
-if __name__ == '__main__':
-    pass
