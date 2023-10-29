@@ -1,25 +1,25 @@
-# MODULE NAME ----------------------------------------------------------------------------------------------------------
+# MODULE NAME
 # validators.py
-# ----------------------------------------------------------------------------------------------------------------------
 
 """
-This module provides a set of functions and utilities for data validation.
-It offers various validators to ensure the correctness and integrity of different types of data inputs.
+This module provides a set of functions and utilities for data
+validation. It offers various validators to ensure the correctness and
+integrity of different types of data inputs.
 """
 
-# IMPORTS --------------------------------------------------------------------------------------------------------------
+# IMPORTS
 # Importing required libraries and modules for the application.
 
-# Standard Library Imports ---------------------------------------------------------------------------------------------
+# Standard Library Imports
 import datetime
 import logging
 import re
 import string
 
-# Local Folder (Relative) Imports --------------------------------------------------------------------------------------
+# Local Folder (Relative) Imports
 from . import encryption
 
-# END IMPORTS ----------------------------------------------------------------------------------------------------------
+# END IMPORTS
 
 
 # List of public names in the module
@@ -30,7 +30,10 @@ module_logger = logging.getLogger(__name__)
 
 
 def validate_non_empty_strings(**strings: str) -> dict[str, str]:
-    """Return a non-empty string without whitespace at the beginning and end of the string"""
+    """
+    Return a non-empty string without whitespace at the beginning and
+    end of the string.
+    """
 
     strings_validated = {}
 
@@ -53,9 +56,10 @@ def validate_non_empty_strings(**strings: str) -> dict[str, str]:
 
 def validate_username_requirements(username_to_validate: str) -> str:
     """
-    Check if username requirements are met and return a non-empty string without whitespace at the beginning
-    and end of the string
+    Check if username requirements are met and return a non-empty
+    string without whitespace at the beginning and end of the string.
     """
+
     if not username_to_validate:
         raise ValueError("Username cannot be empty")
 
@@ -67,15 +71,17 @@ def validate_username_requirements(username_to_validate: str) -> str:
                 raise ValueError("Username contains invalid characters.")
 
         if len(username) < 5 or len(username) > 16:
-            raise ValueError("Username must be at least 5 characters and maximum 16 characters long.")
+            raise ValueError(
+                "Username must be at least 5 characters and maximum 16 characters long."
+            )
 
     return username
 
 
 def validate_password_requirements(password_to_validate: str) -> str:
     """
-    Check if password requirements are met and return a non-empty string without whitespace at the beginning
-    and end of the string
+    Check if password requirements are met and return a non-empty
+    string without whitespace at the beginning and end of the string.
     """
 
     if not password_to_validate:
@@ -113,7 +119,10 @@ def validate_password_requirements(password_to_validate: str) -> str:
 
 
 def validate_reset_code_match(
-    hashed_reset_code: bytes, reset_code_user_input: str, reset_code_expiry: datetime.datetime
+    hashed_reset_code: bytes,
+    reset_code_user_input: str,
+    reset_code_expiry: datetime.datetime,
+    fernet_key: str,
 ) -> bool:
     """validate_reset_code_match"""
 
@@ -121,6 +130,8 @@ def validate_reset_code_match(
         now = datetime.datetime.utcnow()
 
         if now < reset_code_expiry:
-            return encryption.validate_hash_match(reset_code_user_input, hashed_reset_code)
+            return encryption.validate_hash_match(
+                reset_code_user_input, hashed_reset_code, fernet_key
+            )
 
     return False

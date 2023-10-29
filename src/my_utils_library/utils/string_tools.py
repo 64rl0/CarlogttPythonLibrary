@@ -1,27 +1,28 @@
-# MODULE NAME ----------------------------------------------------------------------------------------------------------
+# MODULE NAME
 # string_tools.py
-# ----------------------------------------------------------------------------------------------------------------------
+# Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
+# Copyright (c) Amazon.com Inc. All Rights Reserved.
+# AMAZON.COM CONFIDENTIAL
 
 """
 This module contains useful functions to work with strings.
 """
 
-# IMPORTS --------------------------------------------------------------------------------------------------------------
+# IMPORTS
 # Importing required libraries and modules for the application.
 
-# Standard Library Imports ---------------------------------------------------------------------------------------------
-import logging
+# Standard Library Imports
 import random
 import string
 
-# END IMPORTS ----------------------------------------------------------------------------------------------------------
+# END IMPORTS
 
 
 # List of public names in the module
-# __all__ = [...]
-
-# Setting up logger for current module
-module_logger = logging.getLogger(__name__)
+__all__ = [
+    'get_random_string',
+    'snake_case',
+]
 
 
 def get_random_string(length: int) -> str:
@@ -31,26 +32,25 @@ def get_random_string(length: int) -> str:
 
 def snake_case(string_to_normalize: str) -> str:
     """
-    Normalize the given string by converting uppercase letters to lowercase and replacing whitespaces with underscores.
-    The resulting string is stripped of leading and trailing underscores.
+    Normalize the given string by converting uppercase letters to
+    lowercase and replacing whitespaces with underscores. The resulting
+    string is stripped of leading and trailing underscores.
 
-    Args:
-        string_to_normalize:
-            The original string that needs to be normalized.
-
-    Returns:
-        The normalized string with all uppercase characters converted to lowercase and all whitespaces replaced by
-        underscores.
+    :param string_to_normalize: The original string that needs to be
+           normalized.
+    :return: The normalized string with all uppercase characters
+             converted to lowercase and all whitespaces replaced by
+             underscores.
     """
-    result = []
+
+    result: list[str] = []
 
     for idx, ch in enumerate(string_to_normalize):
-
         # Replace all whitespaces with underscore
         if ch in string.whitespace:
             ch = "_"
 
-            # if the last character is already an underscore then skip it
+            # if the last char is already an underscore then skip it
             if result and result[-1] == "_":
                 continue
 
@@ -58,21 +58,22 @@ def snake_case(string_to_normalize: str) -> str:
         elif ch in ["_", "-"]:
             ch = "_"
 
-            # if the last character is already an underscore then skip it
+            # if the last char is already an underscore then skip it
             if result and result[-1] == "_":
                 continue
 
-        # Convert uppercase characters to lowercase
+        # Convert uppercase chars to lowercase
         elif ch in string.ascii_uppercase:
             ch = ch.casefold()
 
-            # if the last character is already an underscore then skip it
+            # if the last char is already an underscore then skip it
             if result and not result[-1] == "_":
                 result.append("_")
 
         result.append(ch)
 
-    # Clean up possible leading and trailing underscores coming from the composition loop
-    result = "".join(result).strip("_")
+    # Clean up possible leading and trailing underscores coming from
+    # the composition loop
+    result_str = "".join(result).strip("_")
 
-    return result
+    return result_str

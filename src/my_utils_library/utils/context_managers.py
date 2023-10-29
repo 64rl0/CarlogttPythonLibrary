@@ -1,30 +1,31 @@
-# MODULE DETAILS ----------------------------------------------------------------------------------------------------------
+# MODULE DETAILS
 # context_managers.py
 # Created 7/2/23 - 2:21 PM UK Time (London) by carlogtt
-# ----------------------------------------------------------------------------------------------------------------------
+# Copyright (c) Amazon.com Inc. All Rights Reserved.
+# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...
 """
 
-# IMPORTS --------------------------------------------------------------------------------------------------------------
+# IMPORTS
 # Importing required libraries and modules for the application.
 
-# Standard Library Imports ---------------------------------------------------------------------------------------------
+# Standard Library Imports
 import io
-import logging
 import sys
 from contextlib import contextmanager
 from typing import Type
 
-# END IMPORTS ----------------------------------------------------------------------------------------------------------
+# END IMPORTS
 
 
 # List of public names in the module
-# __all__ = [...]
-
-# Setting up logger for current module
-module_logger = logging.getLogger(__name__)
+__all__ = [
+    'suppress_errors',
+    'redirect_stdout_to_file',
+    'redirect_stdout_to_stderr',
+]
 
 
 @contextmanager
@@ -32,12 +33,8 @@ def suppress_errors(*exceptions: Type[Exception]):
     """
     Context manager to suppress specified exceptions.
 
-    Args:
-        exceptions:
-            Variable length exception list which includes the exception classes of exceptions to be suppressed.
-
-    Yields:
-        None
+    :param exceptions: Variable length exception list which includes
+           the exception classes of exceptions to be suppressed.
 
     Example:
         ::
@@ -58,12 +55,7 @@ def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
     """
     Context manager to redirect stdout to file.
 
-    Args:
-        fileobj:
-            Opened file object to redirect stdout to.
-
-    Yields:
-        None
+    :param fileobj: Opened file object to redirect stdout to.
 
     Example:
         ::

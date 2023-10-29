@@ -1,28 +1,32 @@
-# MODULE NAME ----------------------------------------------------------------------------------------------------------
+# MODULE DETAILS
 # decorators.py
-# ----------------------------------------------------------------------------------------------------------------------
+# Created 7/2/23 - 2:21 PM UK Time (London) by carlogtt
+# Copyright (c) Amazon.com Inc. All Rights Reserved.
+# AMAZON.COM CONFIDENTIAL
 
 """
-This module contains useful decorators that can be used in the application.
+This module contains useful decorators that can be used in the
+application.
 """
 
-# IMPORTS --------------------------------------------------------------------------------------------------------------
+# IMPORTS
 # Importing required libraries and modules for the application.
 
-# Standard Library Imports ---------------------------------------------------------------------------------------------
+# Standard Library Imports
 import functools
 import logging
 import time
-from typing import Any, Callable, Type
+from typing import Any, Callable
 
-# END IMPORTS ----------------------------------------------------------------------------------------------------------
+# END IMPORTS
 
 
 # List of public names in the module
-# __all__ = [...]
+__all__ = [
+    'benchmark_decorator',
+    'logging_decorator',
+]
 
-# Setting up logger for current module
-module_logger = logging.getLogger(__name__)
 
 # Annotations
 OriginalFunction = Callable[..., Any]
@@ -30,47 +34,10 @@ InnerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
-def retry_decorator(
-    exception_to_check: Type[Exception], tries: int = 4, delay_secs: int = 3, delay_multiplier: int = 2
-) -> DecoratorFunction:
-    """
-    Retry calling the decorated function using an exponential backoff multiplier.
-    :param exception_to_check: the exception to check. may be a tuple of exceptions to check
-    :param tries: number of times to try (not retry) before giving up
-    :param delay_secs: initial delay between retries in seconds
-    :param delay_multiplier: delay multiplier e.g. value of 2 will double the delay each retry
-    """
-
-    def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
-        @functools.wraps(original_func)
-        def inner(*args: Any, **kwargs: Any) -> Any:
-            local_tries, local_delay_secs = tries, delay_secs
-
-            while local_tries > 1:
-                try:
-                    return original_func(*args, **kwargs)
-
-                except exception_to_check as e:
-                    message = f"{str(e)}, Retrying in {local_delay_secs} seconds..."
-
-                    # Log error
-                    logging.error(message)
-                    print(message)
-
-                    time.sleep(local_delay_secs)
-                    local_tries -= 1
-                    local_delay_secs *= delay_multiplier
-
-            return original_func(*args, **kwargs)
-
-        return inner
-
-    return decorator_retry
-
-
 def benchmark_decorator(logger: logging.Logger) -> DecoratorFunction:
     """
-    Retry calling the decorated function using an exponential backoff multiplier.
+    Retry calling the decorated function using an exponential
+    backoff multiplier.
     """
 
     def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
@@ -91,7 +58,8 @@ def benchmark_decorator(logger: logging.Logger) -> DecoratorFunction:
 
 def logging_decorator(logger: logging.Logger) -> DecoratorFunction:
     """
-    Retry calling the decorated function using an exponential backoff multiplier.
+    Retry calling the decorated function using an exponential
+    backoff multiplier.
     """
 
     def decorator_logging(original_func: OriginalFunction) -> InnerFunction:

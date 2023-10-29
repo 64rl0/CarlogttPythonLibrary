@@ -1,0 +1,85 @@
+# MODULE DETAILS
+# database_utils.py
+# Created 9/25/23 - 1:49 PM UK Time (London) by carlogtt
+# Copyright (c) Amazon.com Inc. All Rights Reserved.
+# AMAZON.COM CONFIDENTIAL
+
+"""
+This module ...
+"""
+
+# IMPORTS
+# Importing required libraries and modules for the application.
+
+# Standard Library Imports
+import functools
+import logging
+import time
+from pathlib import Path
+from typing import Any, Callable, Type, Union
+
+# END IMPORTS
+
+
+# List of public names in the module
+__all__ = [
+    'retry_decorator',
+    'sql_query_reader',
+]
+
+# Annotations
+OriginalFunction = Callable[..., Any]
+InnerFunction = Callable[..., Any]
+DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
+
+
+def retry_decorator(
+    exception_to_check: Type[Exception],
+    tries: int = 4,
+    delay_secs: int = 3,
+    delay_multiplier: int = 2,
+) -> DecoratorFunction:
+    """
+    Retry calling the decorated function using an exponential backoff
+    multiplier.
+
+    :param exception_to_check: the exception to check. may be a tuple
+           of exceptions to check
+    :param tries: number of times to try (not retry) before giving up
+    :param delay_secs: initial delay between retries in seconds
+    :param delay_multiplier: delay multiplier e.g. value of 2 will
+           double the delay each retry
+    """
+
+    def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
+        @functools.wraps(original_func)
+        def inner(*args: Any, **kwargs: Any) -> Any:
+            nonlocal tries
+            nonlocal delay_secs
+
+            while tries > 1:
+                try:
+                    return original_func(*args, **kwargs)
+
+                except exception_to_check as e:
+                    message = f"{str(e)}, Retrying in {delay_secs} seconds..."
+
+                    # Log error
+                    logging.error(message)
+                    print(message)
+
+                    time.sleep(delay_secs)
+                    tries -= 1
+                    delay_secs *= delay_multiplier
+
+            return original_func(*args, **kwargs)
+
+        return inner
+
+    return decorator_retry
+
+
+def sql_query_reader(file_path: Union[Path, str]) -> str:
+    query = Path(file_path).read_text()
+
+    return query

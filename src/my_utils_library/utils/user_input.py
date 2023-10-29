@@ -1,19 +1,18 @@
-# MODULE DETAILS ----------------------------------------------------------------------------------------------------------
+# MODULE DETAILS
 # user_input.py
 # Created 7/20/23 - 3:12 PM UK Time (London) by carlogtt
-# ----------------------------------------------------------------------------------------------------------------------
 
 """
 This module ...
 """
 
-# IMPORTS --------------------------------------------------------------------------------------------------------------
+# IMPORTS
 # Importing required libraries and modules for the application.
 
-# Standard Library Imports ---------------------------------------------------------------------------------------------
+# Standard Library Imports
 import logging
 
-# END IMPORTS ----------------------------------------------------------------------------------------------------------
+# END IMPORTS
 
 
 # List of public names in the module
@@ -41,7 +40,9 @@ def get_user_input_and_validate_int(question: str = "Enter a number: ") -> int:
             return int(input_value)
 
 
-def get_user_input_confirmation_y_n(question: str = "Continue: (y/n): ", true: str = "y", false: str = "n") -> bool:
+def get_user_input_confirmation_y_n(
+    question: str = "Continue: (y/n): ", true: str = "y", false: str = "n"
+) -> bool:
     """
     Request the user for a confirmation to continue
     question = "question as a str"

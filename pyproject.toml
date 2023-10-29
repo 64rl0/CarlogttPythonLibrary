@@ -24,17 +24,18 @@ test = []
 
 
 [tool.black]
-line-length = 120
+line-length = 100
 # Black  normalize ' to " - setting to 1 will disable normalization
 skip-string-normalization = 1
+preview = true
 
 
 [tool.isort]
-line_length = 120
+line_length = 100
 use_parentheses = true
 sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'MYLIB', 'FIRSTPARTY', 'LOCALFOLDER']
 multi_line_output = 3
-import_headings = {future="Special Imports ------------------------------------------------------------------------------------------------------", stdlib="Standard Library Imports ---------------------------------------------------------------------------------------------", thirdparty="Third Party Library Imports ------------------------------------------------------------------------------------------", mylib ="My Library Imports ---------------------------------------------------------------------------------------------------", firstparty="Local Application Imports --------------------------------------------------------------------------------------------", localfolder="Local Folder (Relative) Imports --------------------------------------------------------------------------------------"}
+import_headings = {future="Special Imports", stdlib="Standard Library Imports", thirdparty="Third Party Library Imports", mylib ="My Library Imports", firstparty="Local Application Imports", localfolder="Local Folder (Relative) Imports"}
 ensure_newline_before_comments = true
 include_trailing_comma = true
 split_on_trailing_comma = true
