@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # database_dynamo.py
 # Created 9/30/23 - 4:38 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -8,8 +14,18 @@
 This module ...
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import decimal
@@ -19,17 +35,15 @@ from typing import Any, Generator, Mapping, MutableMapping, Optional, Sequence, 
 
 # Third Party Library Imports
 import boto3
-import botocore.client
-import botocore.exceptions
 from mypy_boto3_dynamodb.client import DynamoDBClient
 from mypy_boto3_dynamodb.type_defs import AttributeValueTypeDef as DynamoDBAttribute
 from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef as DynamoDBAttributeUpdate
 
 # Local Folder (Relative) Imports
-from .. import utils
-from ..exceptions import *
+from .. import exceptions, utils
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module
@@ -37,7 +51,7 @@ __all__ = [
     'DynamoDB',
 ]
 
-# Annotations
+# Type aliases
 # A list is just a list of attribute values
 # Placeholder, replace Any with DynamoDBAttributeValue later
 DynamoDBList = Sequence[Any]
@@ -100,13 +114,11 @@ DynamoDBAttributeValueDeserialized = Union[
 DynamoDBList = Sequence[DynamoDBAttributeValue]  # type: ignore
 DynamoDBMap = Mapping[str, DynamoDBAttributeValue]  # type: ignore
 
-
 DynamoDBListSerialized = Sequence[DynamoDBAttributeValueSerialized]  # type: ignore
 DynamoDBMapSerialized = Mapping[str, DynamoDBAttributeValueSerialized]  # type: ignore
 
 DynamoDBListDeserialized = Sequence[DynamoDBAttributeValueDeserialized]  # type: ignore
 DynamoDBMapDeserialized = Mapping[str, DynamoDBAttributeValueDeserialized]  # type: ignore
-
 
 # General DynamoDB type annotations
 DynamoDBItem = dict[str, DynamoDBAttribute]
@@ -183,7 +195,7 @@ class DynamoDB:
                 return {"NS": [str(el) for el in attribute_value]}
 
             else:
-                raise DynamoDBError(
+                raise exceptions.DynamoDBError(
                     f"Value type for {attribute_value!r} is not supported by DynamoDB set. Set must"
                     " be homogeneous."
                 )
@@ -201,7 +213,7 @@ class DynamoDB:
             return {"M": dict_value}
 
         else:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 f"Value type {type(attribute_value)!r} for {attribute_value!r} is not supported by "
                 "DynamoDB serialization."
             )
@@ -279,7 +291,7 @@ class DynamoDB:
             }
 
         else:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 f"Value {dynamodb_attribute!r} is not supported for DynamoDB deserialization."
             )
 
@@ -368,7 +380,7 @@ class DynamoDB:
             ), "'current_counter_value' should be an 'int'"
 
         except (AssertionError, TypeError, KeyError):
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 f"table: {table!r} doesn't have the '__COUNTER__' item, "
                 "or the key of the counter value is not named 'current_counter_value'."
             )
@@ -399,12 +411,14 @@ class DynamoDB:
 
         try:
             boto_session = boto3.session.Session(profile_name=self._aws_profile_name)
-            client = boto_session.client(service_name=self._aws_service_name, region_name=self._aws_region_name)  # type: ignore
+            client = boto_session.client(  # type: ignore
+                service_name=self._aws_service_name, region_name=self._aws_region_name
+            )
 
             return client
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
     def create_table_on_db(self):
         """
@@ -433,7 +447,7 @@ class DynamoDB:
             dynamodb_response = self._client.list_tables()
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         response = dynamodb_response['TableNames']
 
@@ -481,7 +495,7 @@ class DynamoDB:
                     break
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
     def get_count_of_all_items_in_table(self, table: str) -> int:
         """
@@ -510,7 +524,7 @@ class DynamoDB:
             dynamodb_response = self._client.get_item(TableName=table, Key=partition_key)
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         dynamodb_item = dynamodb_response.get('Item')
 
@@ -539,7 +553,7 @@ class DynamoDB:
         """
 
         if partition_key_value is not None and auto_generate_partition_key_value is True:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 "If a partition_key_value is passed, auto_generate_partition_key_value MUST be"
                 " disabled."
             )
@@ -561,13 +575,13 @@ class DynamoDB:
             auto_generated_partition_key_value_string = str(auto_generated_partition_key_value)
 
         elif partition_key_value is None and auto_generate_partition_key_value is False:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 "If auto_generate_partition_key_value is disabled, a partition_key_value MUST be"
                 " passed."
             )
 
         else:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 "Unable to determine a valid operation with the provided 'partition_key_value' and"
                 " 'auto_generate_partition_key_value'."
             )
@@ -587,7 +601,7 @@ class DynamoDB:
             )
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         # If the new item was put successfully in DynamoDB, then update
         # the atomic counter
@@ -599,7 +613,7 @@ class DynamoDB:
                     new_counter_value=auto_generated_partition_key_value,
                 )
 
-            except DynamoDBError:
+            except exceptions.DynamoDBError:
                 # Failed to update the atomic counter, so we need to
                 # delete the item just put in DynamoDB
                 try:
@@ -611,10 +625,10 @@ class DynamoDB:
                 # nothing else we can do if not request human action to
                 # realign the __COUNTER__ with the total items in the db
                 # THIS IS A CRITICAL ERROR!
-                except DynamoDBError:
+                except exceptions.DynamoDBError:
                     message = "DynamoDB misaligned __COUNTER__ item. The __COUNTER__ is behind by 1"
                     logging.log(logging.CRITICAL, message)
-                    raise DynamoDBError(f"[CRITICAL ERROR] {message}")
+                    raise exceptions.DynamoDBError(f"[CRITICAL ERROR] {message}")
 
                 # If the deletion of the item from the db is successful
                 # then we raise the exception we are handling as we
@@ -632,7 +646,7 @@ class DynamoDB:
         # Check the response actually exists and is returned from the
         # request
         if response is None:
-            raise DynamoDBError("Operation failed!")
+            raise exceptions.DynamoDBError("Operation failed!")
 
         return response
 
@@ -663,7 +677,7 @@ class DynamoDB:
         # However, if no values are passed as **items we raise an
         # exception as there is nothing to update
         if not items:
-            raise DynamoDBError(
+            raise exceptions.DynamoDBError(
                 "Operation failed! - No values to update were passed to the DynamoDB"
                 " update_item_in_table method."
             )
@@ -717,9 +731,9 @@ class DynamoDB:
 
         except Exception as ex:
             if "ConditionalCheckFailedException" in str(ex):
-                raise DynamoDBUpdateConflictError(f"Conflict Detected! - {str(ex)}")
+                raise exceptions.DynamoDBUpdateConflictError(f"Conflict Detected! - {str(ex)}")
 
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         # If we get here it means that the item has been updated
         # successfully therefore we retrieve and return it
@@ -732,7 +746,7 @@ class DynamoDB:
         # Check the response actually exists and is returned from the
         # request
         if response is None:
-            raise DynamoDBError("Operation failed!")
+            raise exceptions.DynamoDBError("Operation failed!")
 
         return response
 
@@ -755,7 +769,7 @@ class DynamoDB:
                 response.append(dynamodb_response)
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         return response
 
@@ -783,6 +797,6 @@ class DynamoDB:
             )
 
         except Exception as ex:
-            raise DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
 
         return dynamodb_response

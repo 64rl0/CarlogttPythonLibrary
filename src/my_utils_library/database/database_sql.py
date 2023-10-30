@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # database_sql.py
 # Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -8,8 +14,18 @@
 This module ...
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import logging
@@ -25,10 +41,11 @@ from mysql.connector import MySQLConnection
 from mysql.connector.pooling import PooledMySQLConnection
 
 # Local Folder (Relative) Imports
-from ..exceptions import *
+from .. import exceptions
 from . import database_utils
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module
@@ -37,7 +54,7 @@ __all__ = [
     'QueryHandler',
 ]
 
-# Annotations
+# Type aliases
 # TODO: disabled as not supported by python 3.9. re-enable once VS can
 #  be updated to 3.10 or above
 # MySQLConn = Union[
@@ -76,7 +93,7 @@ class MySQL:
     def _db_active_connection(self, value) -> None:
         self._db_connection = value
 
-    @database_utils.retry_decorator(exception_to_check=MySQLError)
+    @database_utils.retry_decorator(exception_to_check=exceptions.MySQLError)
     def open_db_connection(self) -> None:
         try:
             self._db_active_connection = mysql.connector.connect(
@@ -90,11 +107,11 @@ class MySQL:
         except mysql.connector.Error as e:
             message = f"While connecting to {self._host!r} operation failed! error: {str(e)}"
             logging.log(logging.ERROR, message)
-            raise MySQLError(message)
+            raise exceptions.MySQLError(message)
 
         return
 
-    @database_utils.retry_decorator(exception_to_check=MySQLError)
+    @database_utils.retry_decorator(exception_to_check=exceptions.MySQLError)
     def close_db_connection(self) -> None:
         try:
             self._db_active_connection.close()
@@ -102,7 +119,7 @@ class MySQL:
         except mysql.connector.Error as e:
             message = f"While closing {self._host!r} operation failed! error: {str(e)}"
             logging.log(logging.ERROR, message)
-            raise MySQLError(message)
+            raise exceptions.MySQLError(message)
 
         return
 
@@ -122,7 +139,7 @@ class MySQL:
         except mysql.connector.OperationalError as e:
             message = f"While sending to {self._host!r} operation failed! error: {str(e)}"
             logging.log(logging.ERROR, message)
-            raise MySQLError(message)
+            raise exceptions.MySQLError(message)
 
         finally:
             db_cursor.close()
@@ -152,13 +169,13 @@ class MySQL:
         except mysql.connector.OperationalError as e:
             message = f"While fetching from {self._host!r} operation failed! error: {str(e)}"
             logging.log(logging.ERROR, message)
-            raise MySQLError(message)
+            raise exceptions.MySQLError(message)
 
         # This Exception handles the case where the table is not found.
         except mysql.connector.errors.ProgrammingError as e:
             message = f"While connecting to {self._host!r} operation failed! error: {str(e)}"
             logging.log(logging.ERROR, message)
-            raise MySQLError(message)
+            raise exceptions.MySQLError(message)
 
         finally:
             # It typically discards the results of the last query and

@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # exceptions.py
 # Created 9/25/23 - 6:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -10,17 +16,27 @@ be used to handle specific error scenarios in a more precise and
 controlled manner. These exceptions are tailored to the needs of the
 library and can be raised when certain exceptional conditions occur
 during the program's execution.
-
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import json
 import logging
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module

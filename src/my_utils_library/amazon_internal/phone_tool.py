@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # phone_tool.py
 # Created 8/31/23 - 8:39 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -8,8 +14,18 @@
 This module ...
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import json
@@ -19,6 +35,7 @@ import requests
 import requests_midway
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module

@@ -1,5 +1,14 @@
-# MODULE NAME
+# ======================================================================
+# MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # encryption.py
+# Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
+# Copyright (c) Amazon.com Inc. All Rights Reserved.
+# AMAZON.COM CONFIDENTIAL
 
 """
 This module provides functions and utilities for password encryption.
@@ -7,8 +16,18 @@ It offers encryption algorithms and techniques specifically designed for
 securely storing and handling passwords.
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import base64
@@ -20,6 +39,7 @@ import cryptography.fernet
 import cryptography.hazmat.primitives.kdf.scrypt
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module

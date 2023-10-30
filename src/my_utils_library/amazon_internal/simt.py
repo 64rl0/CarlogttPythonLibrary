@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # simt.py
 # Created 10/25/23 - 3:55 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -8,8 +14,18 @@
 This module ...
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import functools
@@ -21,9 +37,10 @@ import boto3
 import botocore.config
 
 # Local Folder (Relative) Imports
-from ..exceptions import *
+from .. import exceptions
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module
@@ -122,7 +139,7 @@ class SimTicketHandler:
             return client
 
         except Exception as ex:
-            raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
     def get_ticket_details(self):
         """
@@ -146,10 +163,10 @@ class SimTicketHandler:
                 return tickety_response['ticket']
 
             except KeyError as ex:
-                raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
         except Exception as ex:
-            raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
     def update_ticket(self, payload: dict[str, Any]) -> None:
         """
@@ -172,7 +189,7 @@ class SimTicketHandler:
             )
 
         except Exception as ex:
-            raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
         time.sleep(0.5)
 
@@ -193,7 +210,7 @@ class SimTicketHandler:
                 exception_message += str(ex) + " - "
 
         if exception_message:
-            raise SimTHandlerError(exception_message)
+            raise exceptions.SimTHandlerError(exception_message)
 
     def create_ticket_comment(
         self,
@@ -237,7 +254,7 @@ class SimTicketHandler:
                 return tickety_response['commentId']
 
             except KeyError as ex:
-                raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
         except Exception as ex:
-            raise SimTHandlerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")

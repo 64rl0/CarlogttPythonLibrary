@@ -1,4 +1,10 @@
+# ======================================================================
 # MODULE DETAILS
+# This section provides metadata about the module, including its
+# creation date, author, copyright information, and a brief description
+# of the module's purpose and functionality.
+# ======================================================================
+
 # database_utils.py
 # Created 9/25/23 - 1:49 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -8,8 +14,18 @@
 This module ...
 """
 
+# ======================================================================
+# EXCEPTIONS
+# This section documents any exceptions made  code quality rules.
+# These exceptions may be necessary due to specific coding requirements
+# or to bypass false positives.
+# ======================================================================
+#
+
+# ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
+# ======================================================================
 
 # Standard Library Imports
 import functools
@@ -19,6 +35,7 @@ from pathlib import Path
 from typing import Any, Callable, Type, Union
 
 # END IMPORTS
+# ======================================================================
 
 
 # List of public names in the module
@@ -27,7 +44,7 @@ __all__ = [
     'sql_query_reader',
 ]
 
-# Annotations
+# Type aliases
 OriginalFunction = Callable[..., Any]
 InnerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
