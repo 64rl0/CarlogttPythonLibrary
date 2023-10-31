@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -31,7 +31,6 @@ This module ...
 import io
 import sys
 from contextlib import contextmanager
-from typing import Type
 
 # END IMPORTS
 # ======================================================================
@@ -46,7 +45,7 @@ __all__ = [
 
 
 @contextmanager
-def suppress_errors(*exceptions: Type[Exception]):
+def suppress_errors(*exceptions: type[Exception]):
     """
     Context manager to suppress specified exceptions.
 

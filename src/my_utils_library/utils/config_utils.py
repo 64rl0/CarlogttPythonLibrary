@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -33,8 +33,6 @@ import os
 
 # Third Party Library Imports
 import boto3
-from bender import apollo_environment_info
-from bender.apollo_error import ApolloError
 from botocore.exceptions import ClientError
 
 # END IMPORTS
@@ -43,26 +41,19 @@ from botocore.exceptions import ClientError
 
 # List of public names in the module
 __all__ = [
-    'get_application_root',
     'get_secret',
 ]
-
-
-def get_application_root() -> str:
-    try:
-        return os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
-    except ApolloError:
-        return os.path.abspath(apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)
 
 
 def get_secret(secret_name: str, aws_secrets_manager_region: str = "eu-west-1") -> str:
     """
     Get secret from AWS Secrets Manager.
+    Return ONLY the value of the 'password' field!
 
     :param secret_name: secret to retrieve from secrets manager.
     :param aws_secrets_manager_region: this is the aws account region
            where the secret manager is located.
-    :return: secret value as a string.
+    :return: ONLY the value of the 'password' field!
     """
 
     # AWS_PROFILE is injected locally for local development testing

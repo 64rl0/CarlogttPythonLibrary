@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -31,8 +31,9 @@ This module ...
 import functools
 import logging
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, Type, Union
+from typing import Any, Union
 
 # END IMPORTS
 # ======================================================================
@@ -51,7 +52,7 @@ DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
 def retry_decorator(
-    exception_to_check: Type[Exception],
+    exception_to_check: type[Exception],
     tries: int = 4,
     delay_secs: int = 3,
     delay_multiplier: int = 2,

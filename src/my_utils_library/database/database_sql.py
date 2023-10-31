@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -28,9 +28,12 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import abc
 import logging
 import pathlib
-from typing import Generator, Optional, Union
+import sqlite3
+from collections.abc import Generator
+from typing import Optional, Union
 
 # Third Party Library Imports
 # TODO: disabled as not supported by python 3.9. re-enable once VS can
@@ -50,7 +53,9 @@ from . import database_utils
 
 # List of public names in the module
 __all__ = [
+    'Database',
     'MySQL',
+    'SQLite',
     'QueryHandler',
 ]
 
@@ -65,7 +70,27 @@ __all__ = [
 MySQLConn = Union[MySQLConnection, PooledMySQLConnection]
 
 
-class MySQL:
+class Database(abc.ABC):
+    @abc.abstractmethod
+    def open_db_connection(self) -> None:
+        pass
+
+    @abc.abstractmethod
+    def close_db_connection(self) -> None:
+        pass
+
+    @abc.abstractmethod
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str], str]) -> None:
+        pass
+
+    @abc.abstractmethod
+    def fetch_from_db(
+        self, sql_query: str, sql_values: Union[tuple[str], str], *, fetch_one: bool = False
+    ) -> Generator[dict[str, str], None, None]:
+        pass
+
+
+class MySQL(Database):
     def __init__(self, host: str, user: str, password: str, port: str, database_schema: str):
         self._host = host
         self._user = user
@@ -109,8 +134,6 @@ class MySQL:
             logging.log(logging.ERROR, message)
             raise exceptions.MySQLError(message)
 
-        return
-
     @database_utils.retry_decorator(exception_to_check=exceptions.MySQLError)
     def close_db_connection(self) -> None:
         try:
@@ -121,9 +144,7 @@ class MySQL:
             logging.log(logging.ERROR, message)
             raise exceptions.MySQLError(message)
 
-        return
-
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple, str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str], str]) -> None:
         """
         Send data to MySQL database.
         """
@@ -145,10 +166,8 @@ class MySQL:
             db_cursor.close()
             self.close_db_connection()
 
-        return
-
     def fetch_from_db(
-        self, sql_query: str, sql_values: Union[tuple, str], *, fetch_one: bool = False
+        self, sql_query: str, sql_values: Union[tuple[str], str], *, fetch_one: bool = False
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from MySQL database.
@@ -187,23 +206,129 @@ class MySQL:
             db_cursor.reset()
             self.close_db_connection()
 
-        return
+
+class SQLite(Database):
+    def __init__(self, sqlite_db_path: Union[str, pathlib.Path], filename: str):
+        self._sqlite_db_path = sqlite_db_path
+        self._filename = filename
+        self._db_connection: Optional[sqlite3.Connection] = None
+
+    def open_db_connection(self) -> None:
+        try:
+            self._db_connection = sqlite3.connect(self._sqlite_db_path)
+
+            # Row to the row_factory of connection creates what some
+            # people call a 'dictionary cursor'
+            # Instead of tuples it starts returning 'dictionary'
+            self._db_connection.row_factory = sqlite3.Row
+
+            # foreign key constraint must be enabled by the application
+            # at runtime using the PRAGMA command
+            self._db_connection.execute("PRAGMA foreign_keys = ON;")
+
+        except sqlite3.OperationalError as e:
+            message = f"While connecting to {self._filename} operation failed! error: {str(e)}"
+            logging.error(message)
+            raise exceptions.SQLiteError(message)
+
+    def close_db_connection(self) -> None:
+        try:
+            assert self._db_connection is not None, "Database connection is not open!"
+            self._db_connection.close()
+
+        except sqlite3.OperationalError as e:
+            message = f"While closing {self._filename} operation failed! error: {str(e)}"
+            logging.error(message)
+            raise exceptions.SQLiteError(message)
+
+    def send_to_db(
+        self, sql_query: str, sql_values: Union[tuple[str], str], db_is_open: bool = False
+    ) -> None:
+        """
+        Send data to SQLite database.
+        """
+
+        if not db_is_open:
+            self.open_db_connection()
+
+        assert self._db_connection is not None, "Database connection is not open!"
+        db_cursor = self._db_connection.cursor()
+
+        try:
+            db_cursor.execute(sql_query, sql_values)
+
+            db_cursor.connection.commit()
+            logging.info("Database upload successful!")
+
+        except (sqlite3.OperationalError, sqlite3.IntegrityError) as e:
+            message = f"While sending to {self._filename} operation failed! error: {str(e)}"
+            logging.error(message)
+            raise exceptions.SQLiteError(message)
+
+        finally:
+            db_cursor.close()
+
+            if not db_is_open:
+                self.close_db_connection()
+
+    def fetch_from_db(
+        self,
+        sql_query: str,
+        sql_values: Union[tuple[str], str],
+        *,
+        fetch_one: bool = False,
+        db_is_open: bool = False,
+    ) -> Generator[dict[str, str], None, None]:
+        """
+        Fetch data from SQLite database.
+        """
+
+        if not db_is_open:
+            self.open_db_connection()
+
+        assert self._db_connection is not None, "Database connection is not open!"
+        db_cursor = self._db_connection.cursor()
+
+        try:
+            db_cursor.execute(sql_query, sql_values)
+
+            # The dict() converts the sqlite3.Row object, created by
+            # row_factory, into a dictionary
+            if fetch_one:
+                try:
+                    yield dict(db_cursor.fetchone())
+
+                # if the fetch is not found and returns None, the
+                # dict(None) would raise TypeError
+                except TypeError:
+                    yield {}
+
+            else:
+                for row in db_cursor:
+                    yield dict(row)
+
+        except sqlite3.OperationalError as e:
+            message = f"While fetching from {self._filename} operation failed! error: {str(e)}"
+            logging.error(message)
+            raise exceptions.SQLiteError(message)
+
+        finally:
+            db_cursor.close()
+
+            if not db_is_open:
+                self.close_db_connection()
 
 
 class QueryHandler:
-    def __init__(self, database: MySQL, sql_queries_folder: pathlib.Path) -> None:
+    def __init__(self, database: Database, sql_queries_folder: pathlib.Path) -> None:
         self._database = database
         self._sql_queries_folder = sql_queries_folder
 
     def open_db_connection(self) -> None:
         self._database.open_db_connection()
 
-        return
-
     def close_db_connection(self) -> None:
         self._database.close_db_connection()
-
-        return
 
     def create_table_on_db(self) -> None:
         sql_query = database_utils.sql_query_reader(
@@ -212,8 +337,6 @@ class QueryHandler:
         sql_values = ""
 
         self._database.send_to_db(sql_query, sql_values)
-
-        return
 
     def fetch_record_from_db(self) -> dict[str, str]:
         sql_query = database_utils.sql_query_reader(
@@ -244,8 +367,6 @@ class QueryHandler:
 
         self._database.send_to_db(sql_query, sql_values)
 
-        return
-
     def update_record_on_db(self) -> None:
         sql_query = database_utils.sql_query_reader(
             self._sql_queries_folder / 'update_record_on_db.sql'
@@ -253,8 +374,6 @@ class QueryHandler:
         sql_values = ""
 
         self._database.send_to_db(sql_query, sql_values)
-
-        return
 
     def delete_record_from_db(self) -> None:
         sql_query = database_utils.sql_query_reader(
@@ -264,8 +383,6 @@ class QueryHandler:
 
         self._database.send_to_db(sql_query, sql_values)
 
-        return
-
     def delete_all_records_from_db(self) -> None:
         sql_query = database_utils.sql_query_reader(
             self._sql_queries_folder / 'delete_all_records_from_db.sql'
@@ -273,8 +390,6 @@ class QueryHandler:
         sql_values = ""
 
         self._database.send_to_db(sql_query, sql_values)
-
-        return
 
     def count_all_db_records(self) -> int:
         sql_query = database_utils.sql_query_reader(

@@ -18,7 +18,7 @@ securely storing and handling passwords.
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================

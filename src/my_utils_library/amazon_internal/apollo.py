@@ -5,8 +5,8 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
-# phone_tool.py
-# Created 8/31/23 - 8:39 PM UK Time (London) by carlogtt
+# apollo.py
+# Created 10/30/23 - 11:01 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made or code quality rules.
+# This section documents any exceptions made code or quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -28,11 +28,11 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-import json
+import os
 
 # Third Party Library Imports
-import requests
-import requests_midway
+from bender import apollo_environment_info
+from bender.apollo_error import ApolloError
 
 # END IMPORTS
 # ======================================================================
@@ -40,31 +40,12 @@ import requests_midway
 
 # List of public names in the module
 __all__ = [
-    'phone_tool_lookup',
+    'get_application_root',
 ]
 
 
-def phone_tool_lookup(alias: str) -> dict[str, str]:
-    """
-    This function will retrieve the Phone Tool user data based on the
-    user alias.
-
-    :param alias: The Amazon user alias used to look up on Phone Tool.
-    :return: All the data available in Phone Tool inside a dictionary.
-    """
-
+def get_application_root() -> str:
     try:
-        url = f"https://phonetool.amazon.com/users/{alias}.json"
-        auth = requests_midway.RequestsMidway()
-        response = requests.get(url=url, auth=auth)
-
-    except requests_midway.requests_midway.RequestsMidwayException as e:
-        return {'RequestsMidwayException raised:': str(e)}
-
-    if response.ok:
-        json_data = json.loads(response.text)
-
-    else:
-        json_data = {'error_code': str(response.status_code)}
-
-    return json_data
+        return os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
+    except ApolloError:
+        return os.path.abspath(apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)

@@ -18,7 +18,7 @@ integrity of different types of data inputs.
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -31,7 +31,6 @@ integrity of different types of data inputs.
 
 # Standard Library Imports
 import datetime
-import logging
 import re
 import string
 
@@ -43,10 +42,12 @@ from . import encryption
 
 
 # List of public names in the module
-# __all__ = [...]
-
-# Setting up logger for current module
-module_logger = logging.getLogger(__name__)
+__all__ = [
+    'validate_non_empty_strings',
+    'validate_username_requirements',
+    'validate_password_requirements',
+    'validate_reset_code_match',
+]
 
 
 def validate_non_empty_strings(**strings: str) -> dict[str, str]:
@@ -144,7 +145,9 @@ def validate_reset_code_match(
     reset_code_expiry: datetime.datetime,
     fernet_key: str,
 ) -> bool:
-    """validate_reset_code_match"""
+    """
+    validate_reset_code_match.
+    """
 
     if hashed_reset_code and reset_code_expiry:
         now = datetime.datetime.utcnow()

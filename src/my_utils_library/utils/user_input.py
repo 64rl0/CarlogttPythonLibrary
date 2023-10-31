@@ -16,29 +16,27 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
-#
+# isort: skip_file
 
 # ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Standard Library Imports
-import logging
 
 # END IMPORTS
 # ======================================================================
 
 
 # List of public names in the module
-# __all__ = [...]
-
-# Setting up logger for current module
-module_logger = logging.getLogger(__name__)
+__all__ = [
+    'get_user_input_and_validate_int',
+    'get_user_input_confirmation_y_n',
+]
 
 
 def get_user_input_and_validate_int(question: str = "Enter a number: ") -> int:

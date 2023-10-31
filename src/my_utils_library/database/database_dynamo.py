@@ -16,7 +16,7 @@ This module ...
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -31,7 +31,8 @@ This module ...
 import decimal
 import logging
 import numbers
-from typing import Any, Generator, Mapping, MutableMapping, Optional, Sequence, Union
+from collections.abc import Generator, Mapping, MutableMapping, Sequence
+from typing import Any, Optional, Union
 
 # Third Party Library Imports
 import boto3

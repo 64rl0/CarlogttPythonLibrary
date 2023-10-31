@@ -17,7 +17,7 @@ simplify common tasks in Python.
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made  code quality rules.
+# This section documents any exceptions made or code quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
@@ -31,11 +31,17 @@ simplify common tasks in Python.
 # ======================================================================
 
 # Local Folder (Relative) Imports
-from .amazon_internal import *
 from .database import *
 from .exceptions import *
 from .logger import *
 from .utils import *
+
+# Amazon Internal Only Imports
+try:
+    from .amazon_internal import *
+
+except ImportError:
+    pass
 
 # END IMPORTS
 # ======================================================================
