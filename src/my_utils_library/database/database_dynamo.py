@@ -5,6 +5,10 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
+#   __|    \    _ \  |      _ \   __| __ __| __ __|
+#  (      _ \     /  |     (   | (_ |    |      |
+# \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
+
 # database_dynamo.py
 # Created 9/30/23 - 4:38 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -702,13 +706,11 @@ class DynamoDB:
             condition_attribute_key, condition_attribute_value = condition_attribute.popitem()
 
             # If condition attribute exists pass it to the DynamoDB call
-            dynamodb_update_item_args.update(
-                {
-                    'ConditionExpression': (
-                        f"{condition_attribute_key} = :condition_attribute_value_placeholder"
-                    )
-                }
-            )
+            dynamodb_update_item_args.update({
+                'ConditionExpression': (
+                    f"{condition_attribute_key} = :condition_attribute_value_placeholder"
+                )
+            })
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
@@ -717,13 +719,11 @@ class DynamoDB:
             )
 
         # Update DynamoDB call arguments
-        dynamodb_update_item_args.update(
-            {
-                'Key': partition_key_serialized,
-                'UpdateExpression': update_attributes,
-                'ExpressionAttributeValues': expression_attribute_values,
-            }
-        )
+        dynamodb_update_item_args.update({
+            'Key': partition_key_serialized,
+            'UpdateExpression': update_attributes,
+            'ExpressionAttributeValues': expression_attribute_values,
+        })
 
         logging.log(logging.DEBUG, dynamodb_update_item_args)
 
