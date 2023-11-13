@@ -5,6 +5,10 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
+#   __|    \    _ \  |      _ \   __| __ __| __ __|
+#  (      _ \     /  |     (   | (_ |    |      |
+# \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
+
 # phone_tool.py
 # Created 8/31/23 - 8:39 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.

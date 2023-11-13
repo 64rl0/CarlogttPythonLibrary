@@ -5,6 +5,10 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
+#   __|    \    _ \  |      _ \   __| __ __| __ __|
+#  (      _ \     /  |     (   | (_ |    |      |
+# \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
+
 # simt.py
 # Created 10/25/23 - 3:55 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.

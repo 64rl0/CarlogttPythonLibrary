@@ -5,6 +5,10 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
+#   __|    \    _ \  |      _ \   __| __ __| __ __|
+#  (      _ \     /  |     (   | (_ |    |      |
+# \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
+
 # user_input.py
 # Created 7/20/23 - 3:12 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
