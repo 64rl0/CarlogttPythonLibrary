@@ -5,6 +5,10 @@
 # of the module's purpose and functionality.
 # ======================================================================
 
+#   __|    \    _ \  |      _ \   __| __ __| __ __|
+#  (      _ \     /  |     (   | (_ |    |      |
+# \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
+
 # exceptions.py
 # Created 9/25/23 - 6:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
@@ -47,6 +51,7 @@ __all__ = [
     'MySQLError',
     'DynamoDBError',
     'DynamoDBUpdateConflictError',
+    'S3Error',
     'SimTHandlerError',
 ]
 
@@ -101,6 +106,12 @@ class DynamoDBError(DatabaseError):
 class DynamoDBUpdateConflictError(DynamoDBError):
     """
     This is the base exception class to handle DynamoDB errors.
+    """
+
+
+class S3Error(MyLibraryException):
+    """
+    This is the base exception class to handle database errors.
     """
 
 
