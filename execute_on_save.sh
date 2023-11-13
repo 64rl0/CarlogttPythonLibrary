@@ -9,12 +9,12 @@ source ${path_to_venv_root}/bin/activate
 echo
 
 echo -e '\033[1m\033[32mVirtual environment activated:\033[0m'
-echo $VIRTUAL_ENV
-echo $(python --version)
+echo "$VIRTUAL_ENV"
+python --version
 echo
 
 echo -e '\033[1m\033[32mProject Root:\033[0m'
-echo $(pwd)
+pwd
 echo
 
 echo -e '\033[1m\033[32mRunning iSort...\033[0m'
