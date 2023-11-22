@@ -122,7 +122,7 @@ class MySQL(Database):
     def _db_active_connection(self, value) -> None:
         self._db_connection = value
 
-    @database_utils.retry_decorator(exception_to_check=exceptions.MySQLError)
+    @database_utils.retry_decorator(exception_to_check=(exceptions.MySQLError,))
     def open_db_connection(self) -> None:
         try:
             self._db_active_connection = mysql.connector.connect(
@@ -138,7 +138,7 @@ class MySQL(Database):
             logging.log(logging.ERROR, message)
             raise exceptions.MySQLError(message)
 
-    @database_utils.retry_decorator(exception_to_check=exceptions.MySQLError)
+    @database_utils.retry_decorator(exception_to_check=(exceptions.MySQLError,))
     def close_db_connection(self) -> None:
         try:
             self._db_active_connection.close()

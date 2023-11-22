@@ -56,7 +56,11 @@ __all__ = [
 
 class S3:
     def __init__(
-        self, aws_region_name: Optional[str] = None, aws_profile_name: Optional[str] = None
+        self,
+        aws_region_name: str,
+        aws_profile_name: Optional[str] = None,
+        aws_access_key_id: Optional[str] = None,
+        aws_secret_access_key: Optional[str] = None,
     ) -> None:
         """
         aws_profile and aws_region are injected locally for local
@@ -66,6 +70,8 @@ class S3:
 
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
         self._aws_service_name = "s3"
 
     @property
@@ -78,10 +84,13 @@ class S3:
         """
 
         try:
-            boto_session = boto3.session.Session(profile_name=self._aws_profile_name)
-            client = boto_session.client(  # type: ignore
-                service_name=self._aws_service_name, region_name=self._aws_region_name
+            boto_session = boto3.session.Session(
+                region_name=self._aws_region_name,
+                profile_name=self._aws_profile_name,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
             )
+            client = boto_session.client(service_name=self._aws_service_name)  # type: ignore
 
             return client
 

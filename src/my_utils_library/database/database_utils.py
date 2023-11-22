@@ -35,7 +35,7 @@ This module ...
 import functools
 import logging
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any, Union
 
@@ -56,7 +56,7 @@ DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
 def retry_decorator(
-    exception_to_check: type[Exception],
+    exception_to_check: Iterable[type[Exception]],
     tries: int = 4,
     delay_secs: int = 3,
     delay_multiplier: int = 2,
@@ -83,8 +83,8 @@ def retry_decorator(
                 try:
                     return original_func(*args, **kwargs)
 
-                except exception_to_check as e:
-                    message = f"{str(e)}, Retrying in {delay_secs} seconds..."
+                except tuple(exception_to_check) as ex:
+                    message = f"[RETRY]: {str(ex)}, Retrying in {delay_secs} seconds..."
 
                     # Log error
                     logging.error(message)

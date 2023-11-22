@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# __init__.py -> storage
+# __init__.py -> aws_boto
 # Created 11/9/23 - 9:58 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -33,6 +33,7 @@ This module contains the package imports for the current package.
 
 # Local Folder (Relative) Imports
 from .s3 import *
+from .secrets_manager import *
 
 # END IMPORTS
 # ======================================================================

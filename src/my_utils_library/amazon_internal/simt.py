@@ -61,10 +61,12 @@ class SimTicketHandler:
     def __init__(
         self,
         ticket_id: str,
+        aws_region_name: str,
         aws_account_id: str = "default",
         ticketing_system_name: str = "default",
-        aws_region_name: Optional[str] = None,
         aws_profile_name: Optional[str] = None,
+        aws_access_key_id: Optional[str] = None,
+        aws_secret_access_key: Optional[str] = None,
     ) -> None:
         """
         aws_profile and aws_region are injected locally for local
@@ -87,6 +89,8 @@ class SimTicketHandler:
 
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
 
@@ -132,10 +136,14 @@ class SimTicketHandler:
         """
 
         try:
-            boto_session = boto3.session.Session(profile_name=self._aws_profile_name)
+            boto_session = boto3.session.Session(
+                region_name=self._aws_region_name,
+                profile_name=self._aws_profile_name,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
+            )
             client = boto_session.client(  # type: ignore
                 service_name=self._aws_service_name,
-                region_name=self._aws_region_name,
                 endpoint_url=self._aws_endpoint_url,
                 config=self._tickety_client_config,
             )

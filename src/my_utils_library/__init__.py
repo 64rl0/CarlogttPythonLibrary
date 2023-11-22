@@ -35,10 +35,10 @@ simplify common tasks in Python.
 # ======================================================================
 
 # Local Folder (Relative) Imports
+from .aws_boto import *
 from .database import *
 from .exceptions import *
 from .logger import *
-from .storage import *
 from .utils import *
 
 # Amazon Internal Only Imports

@@ -132,7 +132,11 @@ DynamoDBPartitionKeyValue = Union[bytes, str, float]
 
 class DynamoDB:
     def __init__(
-        self, aws_region_name: Optional[str] = None, aws_profile_name: Optional[str] = None
+        self,
+        aws_region_name: str,
+        aws_profile_name: Optional[str] = None,
+        aws_access_key_id: Optional[str] = None,
+        aws_secret_access_key: Optional[str] = None,
     ) -> None:
         """
         aws_profile and aws_region are injected locally for local
@@ -142,6 +146,8 @@ class DynamoDB:
 
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
         self._aws_service_name = "dynamodb"
 
     @property
@@ -415,10 +421,13 @@ class DynamoDB:
         """
 
         try:
-            boto_session = boto3.session.Session(profile_name=self._aws_profile_name)
-            client = boto_session.client(  # type: ignore
-                service_name=self._aws_service_name, region_name=self._aws_region_name
+            boto_session = boto3.session.Session(
+                region_name=self._aws_region_name,
+                profile_name=self._aws_profile_name,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
             )
+            client = boto_session.client(service_name=self._aws_service_name)  # type: ignore
 
             return client
 
@@ -706,24 +715,28 @@ class DynamoDB:
             condition_attribute_key, condition_attribute_value = condition_attribute.popitem()
 
             # If condition attribute exists pass it to the DynamoDB call
-            dynamodb_update_item_args.update({
-                'ConditionExpression': (
-                    f"{condition_attribute_key} = :condition_attribute_value_placeholder"
-                )
-            })
+            dynamodb_update_item_args.update(
+                {
+                    'ConditionExpression': (
+                        f"{condition_attribute_key} = :condition_attribute_value_placeholder"
+                    )
+                }
+            )
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
-            expression_attribute_values[':condition_attribute_value_placeholder'] = (
-                self._serialize_attribute(condition_attribute_value)
-            )
+            expression_attribute_values[
+                ':condition_attribute_value_placeholder'
+            ] = self._serialize_attribute(condition_attribute_value)
 
         # Update DynamoDB call arguments
-        dynamodb_update_item_args.update({
-            'Key': partition_key_serialized,
-            'UpdateExpression': update_attributes,
-            'ExpressionAttributeValues': expression_attribute_values,
-        })
+        dynamodb_update_item_args.update(
+            {
+                'Key': partition_key_serialized,
+                'UpdateExpression': update_attributes,
+                'ExpressionAttributeValues': expression_attribute_values,
+            }
+        )
 
         logging.log(logging.DEBUG, dynamodb_update_item_args)
 

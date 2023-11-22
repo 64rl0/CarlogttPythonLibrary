@@ -52,6 +52,7 @@ __all__ = [
     'DynamoDBError',
     'DynamoDBUpdateConflictError',
     'S3Error',
+    'SecretsManagerError',
     'SimTHandlerError',
 ]
 
@@ -111,7 +112,13 @@ class DynamoDBUpdateConflictError(DynamoDBError):
 
 class S3Error(MyLibraryException):
     """
-    This is the base exception class to handle database errors.
+    This is the base exception class to handle S3 errors.
+    """
+
+
+class SecretsManagerError(MyLibraryException):
+    """
+    This is the base exception class to handle SecretsManager errors.
     """
 
 
