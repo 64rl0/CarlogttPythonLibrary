@@ -134,6 +134,7 @@ class DynamoDB:
     def __init__(
         self,
         aws_region_name: str,
+        *,
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
@@ -628,12 +629,17 @@ class DynamoDB:
                 )
 
             except exceptions.DynamoDBError:
-                # Failed to update the atomic counter, so we need to
-                # delete the item just put in DynamoDB
                 try:
+                    # Failed to update the atomic counter, so we need to
+                    # delete the item just put in DynamoDB
                     self.delete_items_from_table(
                         table, partition_key_key, auto_generated_partition_key_value_string
                     )
+
+                    # If the deletion of the item from the db is
+                    # successful then we raise the exception we are
+                    # handling as we failed to update the atomic counter
+                    raise
 
                 # If the deletion of the item from the db fails there is
                 # nothing else we can do if not request human action to
@@ -643,11 +649,6 @@ class DynamoDB:
                     message = "DynamoDB misaligned __COUNTER__ item. The __COUNTER__ is behind by 1"
                     logging.log(logging.CRITICAL, message)
                     raise exceptions.DynamoDBError(f"[CRITICAL ERROR] {message}")
-
-                # If the deletion of the item from the db is successful
-                # then we raise the exception we are handling as we
-                # failed to update the atomic counter
-                raise
 
         # If we get here it means that the item has been added
         # successfully therefore we retrieve and return it

@@ -37,7 +37,12 @@ from typing import Optional
 # Third Party Library Imports
 import boto3
 from mypy_boto3_s3.client import S3Client
-from mypy_boto3_s3.type_defs import ListObjectsV2RequestRequestTypeDef, PutObjectOutputTypeDef
+from mypy_boto3_s3.type_defs import (
+    DeleteObjectOutputTypeDef,
+    GetObjectOutputTypeDef,
+    ListObjectsV2RequestRequestTypeDef,
+    PutObjectOutputTypeDef,
+)
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -58,6 +63,7 @@ class S3:
     def __init__(
         self,
         aws_region_name: str,
+        *,
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
@@ -138,7 +144,7 @@ class S3:
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def get_file(self, bucket: str, filename: str):
+    def get_file(self, bucket: str, filename: str) -> GetObjectOutputTypeDef:
         """
         Retrieves objects from Amazon S3.
 
@@ -169,6 +175,24 @@ class S3:
 
         try:
             s3_response = self._client.put_object(Bucket=bucket, Key=filename, Body=file)
+
+            return s3_response
+
+        except Exception as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+
+    def delete_file(self, bucket: str, filename: str) -> DeleteObjectOutputTypeDef:
+        """
+        Delete objects from Amazon S3.
+
+        :param bucket: The name of the S3 bucket.
+        :param filename: The name of the file to delete.
+        :return: S3 delete response syntax.
+        :raise S3Error: If operation fails.
+        """
+
+        try:
+            s3_response = self._client.delete_object(Bucket=bucket, Key=filename)
 
             return s3_response
 

@@ -9,35 +9,54 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# __init__.py -> amazon_internal
-# Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt
+# cli_utils.py
+# Created 12/22/23 - 6:57 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
 """
-This module contains the package imports for the current package.
+This module ...
 """
 
 # ======================================================================
 # EXCEPTIONS
-# This section documents any exceptions made or code quality rules.
+# This section documents any exceptions made code or quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
-# Module imported but unused (F401)
-# 'from module import *' used; unable to detect undefined names (F403)
-# flake8: noqa
+#
 
 # ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Local Folder (Relative) Imports
-from .apollo import *
-from .midway import *
-from .phone_tool import *
-from .simt import *
 
 # END IMPORTS
 # ======================================================================
+
+
+# List of public names in the module
+__all__ = [
+    'red',
+    'green',
+    'yellow',
+    'blu',
+    'bold',
+    'end',
+]
+
+# Setting up logger for current module
+# module_logger =
+
+# Type aliases
+#
+
+
+# Colors
+red = "\033[31m"
+green = "\033[32m"
+yellow = "\033[33m"
+blu = "\033[34m"
+bold = "\033[1m"
+end = "\033[0m"

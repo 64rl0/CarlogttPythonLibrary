@@ -60,7 +60,6 @@ __all__ = [
     'Database',
     'MySQL',
     'SQLite',
-    'QueryHandler',
 ]
 
 # Type aliases
@@ -84,12 +83,12 @@ class Database(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
         pass
 
     @abc.abstractmethod
     def fetch_from_db(
-        self, sql_query: str, sql_values: Union[tuple[str], str], *, fetch_one: bool = False
+        self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
     ) -> Generator[dict[str, str], None, None]:
         pass
 
@@ -148,7 +147,7 @@ class MySQL(Database):
             logging.log(logging.ERROR, message)
             raise exceptions.MySQLError(message)
 
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
         """
         Send data to MySQL database.
         """
@@ -171,7 +170,7 @@ class MySQL(Database):
             self.close_db_connection()
 
     def fetch_from_db(
-        self, sql_query: str, sql_values: Union[tuple[str], str], *, fetch_one: bool = False
+        self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from MySQL database.
@@ -246,7 +245,7 @@ class SQLite(Database):
             raise exceptions.SQLiteError(message)
 
     def send_to_db(
-        self, sql_query: str, sql_values: Union[tuple[str], str], db_is_open: bool = False
+        self, sql_query: str, sql_values: Union[tuple[str, ...], str], db_is_open: bool = False
     ) -> None:
         """
         Send data to SQLite database.
@@ -278,7 +277,7 @@ class SQLite(Database):
     def fetch_from_db(
         self,
         sql_query: str,
-        sql_values: Union[tuple[str], str],
+        sql_values: Union[tuple[str, ...], str],
         *,
         fetch_one: bool = False,
         db_is_open: bool = False,
@@ -321,87 +320,3 @@ class SQLite(Database):
 
             if not db_is_open:
                 self.close_db_connection()
-
-
-class QueryHandler:
-    def __init__(self, database: Database, sql_queries_folder: pathlib.Path) -> None:
-        self._database = database
-        self._sql_queries_folder = sql_queries_folder
-
-    def open_db_connection(self) -> None:
-        self._database.open_db_connection()
-
-    def close_db_connection(self) -> None:
-        self._database.close_db_connection()
-
-    def create_table_on_db(self) -> None:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'create_table_on_db.sql'
-        )
-        sql_values = ""
-
-        self._database.send_to_db(sql_query, sql_values)
-
-    def fetch_record_from_db(self) -> dict[str, str]:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'fetch_record_from_db.sql'
-        )
-        sql_values = ""
-
-        record_gen = self._database.fetch_from_db(sql_query, sql_values, fetch_one=True)
-        record = [*record_gen][0]
-
-        return record
-
-    def fetch_all_records_from_db_lazy_load(self) -> Generator[dict[str, str], None, None]:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'fetch_all_records_from_db.sql'
-        )
-        sql_values = ""
-
-        record = self._database.fetch_from_db(sql_query, sql_values)
-
-        return record
-
-    def send_record_to_db(self) -> None:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'send_record_to_db.sql'
-        )
-        sql_values = ""
-
-        self._database.send_to_db(sql_query, sql_values)
-
-    def update_record_on_db(self) -> None:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'update_record_on_db.sql'
-        )
-        sql_values = ""
-
-        self._database.send_to_db(sql_query, sql_values)
-
-    def delete_record_from_db(self) -> None:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'delete_record_from_db.sql'
-        )
-        sql_values = ""
-
-        self._database.send_to_db(sql_query, sql_values)
-
-    def delete_all_records_from_db(self) -> None:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'delete_all_records_from_db.sql'
-        )
-        sql_values = ""
-
-        self._database.send_to_db(sql_query, sql_values)
-
-    def count_all_db_records(self) -> int:
-        sql_query = database_utils.sql_query_reader(
-            self._sql_queries_folder / 'count_all_db_records.sql'
-        )
-        sql_values = ""
-
-        records = self._database.fetch_from_db(sql_query, sql_values, fetch_one=True)
-        record = [*records][0]
-
-        return int(record['COUNT(*)'])

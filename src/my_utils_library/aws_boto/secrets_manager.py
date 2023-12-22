@@ -60,6 +60,7 @@ class SecretsManager:
     def __init__(
         self,
         aws_region_name: str,
+        *,
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,

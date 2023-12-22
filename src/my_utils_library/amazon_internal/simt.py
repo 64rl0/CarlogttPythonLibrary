@@ -62,6 +62,7 @@ class SimTicketHandler:
         self,
         ticket_id: str,
         aws_region_name: str,
+        *,
         aws_account_id: str = "default",
         ticketing_system_name: str = "default",
         aws_profile_name: Optional[str] = None,
