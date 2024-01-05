@@ -60,7 +60,6 @@ class SimTicketHandler:
 
     def __init__(
         self,
-        ticket_id: str,
         aws_region_name: str,
         *,
         aws_account_id: str = "default",
@@ -94,8 +93,6 @@ class SimTicketHandler:
         self._aws_secret_access_key = aws_secret_access_key
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
-
-        self.ticket_id = ticket_id
 
     @property
     def _client(self):
@@ -154,20 +151,24 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
-    def get_ticket_details(self):
+    def get_ticket_details(
+        self,
+        ticket_id: str,
+    ):
         """
         Retrieves a ticket from the ticketing system.
 
         Internal Amazon API:
         https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/GetTicket
 
-        :return
+        :param ticket_id: The ticket ID.
+        :return:
         :raise: SimTHandlerError if function call fails.
         """
 
         try:
             tickety_response = self._client.get_ticket(
-                ticketId=self.ticket_id,
+                ticketId=ticket_id,
                 awsAccountId=self._aws_account_id,
                 ticketingSystemName=self._ticketing_system_name,
             )
@@ -181,21 +182,22 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
-    def update_ticket(self, payload: dict[str, Any]) -> None:
+    def update_ticket(self, ticket_id: str, payload: dict[str, Any]) -> None:
         """
         Updates a ticket in the ticketing system.
 
         Internal Amazon API:
         https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket
 
+        :param ticket_id: The ticket ID.
         :param payload:
-        :return: Nothing.
+        :return:
         :raise: SimTHandlerError if function call fails.
         """
 
         try:
             self._client.update_ticket(
-                ticketId=self.ticket_id,
+                ticketId=ticket_id,
                 awsAccountId=self._aws_account_id,
                 ticketingSystemName=self._ticketing_system_name,
                 update=payload,
@@ -208,7 +210,7 @@ class SimTicketHandler:
 
         # Retrieve ticket to assert all the values have been updated
         # successfully
-        ticket_updated = self.get_ticket_details()
+        ticket_updated = self.get_ticket_details(ticket_id)
 
         # Prepare for exception
         exception_message = ""
@@ -227,6 +229,7 @@ class SimTicketHandler:
 
     def create_ticket_comment(
         self,
+        ticket_id: str,
         comment: str,
         thread_name: str = "CORRESPONDENCE",
         content_type: str = "text/amz-markdown-sim",
@@ -237,6 +240,7 @@ class SimTicketHandler:
         Internal Amazon API:
         https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket
 
+        :param ticket_id: The ticket ID.
         :param thread_name: Must be one of these 3:
                "CORRESPONDENCE" "WORKLOG" "ANNOUNCEMENTS".
                Auto default to "CORRESPONDENCE".
@@ -257,7 +261,7 @@ class SimTicketHandler:
 
         try:
             tickety_response = self._client.create_ticket_comment(
-                ticketId=self.ticket_id,
+                ticketId=ticket_id,
                 awsAccountId=self._aws_account_id,
                 ticketingSystemName=self._ticketing_system_name,
                 **payload,

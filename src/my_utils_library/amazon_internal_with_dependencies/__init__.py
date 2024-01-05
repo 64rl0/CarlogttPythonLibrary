@@ -9,14 +9,13 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# __init__.py -> my_utils_library
-# Created 10/4/23 - 10:44 AM UK Time (London) by carlogtt
+# __init__.py -> amazon_internal_with_dependencies
+# Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
 """
-my_utils_library is a collection of utility functions designed to
-simplify common tasks in Python.
+This module contains the package imports for the current package.
 """
 
 # ======================================================================
@@ -35,19 +34,8 @@ simplify common tasks in Python.
 # ======================================================================
 
 # Local Folder (Relative) Imports
-from .amazon_internal import *
-from .aws_boto import *
-from .database import *
-from .exceptions import *
-from .logger import *
-from .utils import *
-
-# Amazon Internal Only Imports
-try:
-    from .amazon_internal_with_dependencies import *
-
-except ImportError:
-    pass
+from .apollo import *
+from .phone_tool import *
 
 # END IMPORTS
 # ======================================================================

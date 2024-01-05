@@ -43,7 +43,9 @@ from .. import utils
 
 
 # List of public names in the module
-# __all__ = []
+__all__ = [
+    'cli_midway_auth',
+]
 
 # Setting up logger for current module
 # module_logger =
@@ -82,10 +84,7 @@ def cli_midway_auth(max_retries: int = 3):
             if i == max_retries - 1:
                 print()
                 print(
-                    utils.red
-                    + utils.bold
-                    + "[ERROR] Authentication to Midway failed."
-                    + utils.end
+                    utils.red + utils.bold + "[ERROR] Authentication to Midway failed." + utils.end
                 )
                 print()
                 sys.exit(1)
