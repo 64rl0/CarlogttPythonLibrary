@@ -1,3 +1,36 @@
+[project]
+name = "my_utils_library"
+description = "A Python package that provides some utility functions."
+version = "0.1.0"
+license = {text = "MIT"}
+authors = [
+    {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
+]
+requires-python = ">= 3.9"
+dependencies = [
+    "cryptography",
+    "selenium",
+    "boto3",
+    "boto3-stubs",
+    "mypy_boto3_dynamodb",
+    "mypy-boto3-secretsmanager",
+    "mypy-boto3-s3",
+    "requests",
+    "types-requests",
+    "mysql-connector-python",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/64rl0/my_utils_library.git"
+
+
+[project.optional-dependencies]
+prod = []
+dev = []
+test = []
+
+
 [tool.black]
 # black docs
 # https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html

@@ -42,12 +42,5 @@ from .exceptions import *
 from .logger import *
 from .utils import *
 
-# Amazon Internal Only Imports
-try:
-    from .amazon_internal_with_dependencies import *
-
-except ImportError:
-    pass
-
 # END IMPORTS
 # ======================================================================
