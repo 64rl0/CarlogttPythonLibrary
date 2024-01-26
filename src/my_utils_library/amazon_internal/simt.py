@@ -275,3 +275,28 @@ class SimTicketHandler:
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+
+    def create_ticket(self, ticket_data: dict[str, Any]) -> str:
+        """
+        Create a ticket in the ticketing system and return the
+        ticket ID.
+
+        :param ticket_data:
+        :return: The ticket ID.
+        """
+
+        try:
+            ticket_response = self._client.create_ticket(
+                awsAccountId=self._aws_account_id,
+                ticketingSystemName=self._ticketing_system_name,
+                ticket=ticket_data,
+            )
+
+            try:
+                return ticket_response['id']
+
+            except KeyError as ex:
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+
+        except Exception as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")

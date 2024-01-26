@@ -77,7 +77,7 @@ class MidwaySeleniumDriver:
         self._authenticate_midway()
 
     @classmethod
-    def get_selenium_driver(cls) -> MidwaySeleniumDriver:
+    def get_selenium_driver(cls, headless: bool = True) -> MidwaySeleniumDriver:
         """
         Get a Selenium driver instance.
 
@@ -87,7 +87,8 @@ class MidwaySeleniumDriver:
         # set driver options
         options = selenium.webdriver.chrome.options.Options()
 
-        options.add_argument("--headless=new")
+        if headless:
+            options.add_argument("--headless=new")
 
         # initiate driver
         chrome_driver = selenium.webdriver.Chrome(options=options)
