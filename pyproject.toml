@@ -10,14 +10,17 @@ requires-python = ">= 3.9"
 dependencies = [
     "cryptography",
     "selenium",
-    "boto3",
-    "boto3-stubs",
-    "mypy_boto3_dynamodb",
-    "mypy-boto3-secretsmanager",
-    "mypy-boto3-s3",
     "requests",
     "types-requests",
     "mysql-connector-python",
+    "boto3",
+    "boto3-stubs",
+    "mypy-boto3-dynamodb",
+    "mypy-boto3-secretsmanager",
+    "mypy-boto3-s3",
+    "mypy-boto3-cloudfront",
+    "mypy-boto3-lambda",
+    "mypy-boto3-ec2",
 ]
 
 

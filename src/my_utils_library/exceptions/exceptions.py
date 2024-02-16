@@ -53,6 +53,7 @@ __all__ = [
     'DynamoDBUpdateConflictError',
     'S3Error',
     'SecretsManagerError',
+    'CloudFrontError',
     'SimTHandlerError',
 ]
 
@@ -119,6 +120,12 @@ class S3Error(MyLibraryException):
 class SecretsManagerError(MyLibraryException):
     """
     This is the base exception class to handle SecretsManager errors.
+    """
+
+
+class CloudFrontError(MyLibraryException):
+    """
+    This is the base exception class to handle CloudFront errors.
     """
 
 

@@ -67,6 +67,7 @@ class SimTicketHandler:
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
+        caching: bool = False,
     ) -> None:
         """
         aws_profile and aws_region are injected locally for local
@@ -91,12 +92,20 @@ class SimTicketHandler:
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
+        self.caching = caching
+        self.cache: dict[str, Any] = dict()
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
 
     @property
     def _client(self):
-        return self._get_tickety_client()
+        if self.caching:
+            if self.cache.get('client') is None:
+                self.cache['client'] = self._get_boto_tickety_client()
+            return self.cache['client']
+
+        else:
+            return self._get_boto_tickety_client()
 
     @functools.cached_property
     def _tickety_client_config(self):
@@ -125,7 +134,7 @@ class SimTicketHandler:
 
         return botocore.config.Config(signature_version="v4a", retries={"mode": "adaptive"})
 
-    def _get_tickety_client(self):
+    def _get_boto_tickety_client(self):
         """
         Create a low level tickety client.
 

@@ -131,6 +131,11 @@ DynamoDBPartitionKeyValue = Union[bytes, str, float]
 
 
 class DynamoDB:
+    """
+    The DynamoDB class provides a simplified interface for interacting
+    with Amazon DynamoDB services within a Python application.
+    """
+
     def __init__(
         self,
         aws_region_name: str,
@@ -138,6 +143,7 @@ class DynamoDB:
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
+        caching: bool = False,
     ) -> None:
         """
         aws_profile and aws_region are injected locally for local
@@ -149,11 +155,19 @@ class DynamoDB:
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
+        self.caching = caching
+        self.cache: dict[str, Any] = dict()
         self._aws_service_name = "dynamodb"
 
     @property
     def _client(self) -> DynamoDBClient:
-        return self._get_boto_dynamodb_client()
+        if self.caching:
+            if self.cache.get('client') is None:
+                self.cache['client'] = self._get_boto_dynamodb_client()
+            return self.cache['client']
+
+        else:
+            return self._get_boto_dynamodb_client()
 
     @staticmethod
     def _serialize_attribute(attribute_value: DynamoDBAttributeValue) -> DynamoDBAttribute:

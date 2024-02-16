@@ -32,6 +32,7 @@ This module contains the package imports for the current package.
 # ======================================================================
 
 # Local Folder (Relative) Imports
+from .cloud_front import *
 from .s3 import *
 from .secrets_manager import *
 

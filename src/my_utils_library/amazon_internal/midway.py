@@ -54,18 +54,20 @@ __all__ = [
 #
 
 
-def cli_midway_auth(max_retries: int = 3):
+def cli_midway_auth(max_retries: int = 3, options: str = "-s"):
     """
     Run mwinit -s as bash command.
 
     :param max_retries: The maximum number of total attempts.
            Default is 3.
+    :param options: The options to pass to the mwinit command.
+           Default is -s
     :return: None
     """
 
     for i in range(max_retries):
         # Run mwinit -s
-        command = "mwinit -s || exit 1"
+        command = "mwinit {options} || exit 1".format(options=options)
 
         # Run the command using subprocess.Popen
         process = subprocess.Popen(command, shell=True, executable="/bin/bash")

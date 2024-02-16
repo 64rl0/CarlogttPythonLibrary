@@ -72,12 +72,15 @@ class MidwaySeleniumDriver:
     main class to Midway authenticate it.
     """
 
-    def __init__(self, driver: WebDriver) -> None:
+    def __init__(self, driver: WebDriver, cookie_filepath: str = "") -> None:
         self.driver = driver
+        self._cookie_filepath = cookie_filepath
         self._authenticate_midway()
 
     @classmethod
-    def get_selenium_driver(cls, headless: bool = True) -> MidwaySeleniumDriver:
+    def get_selenium_driver(
+        cls, headless: bool = True, cookie_filepath: str = ""
+    ) -> MidwaySeleniumDriver:
         """
         Get a Selenium driver instance.
 
@@ -94,7 +97,7 @@ class MidwaySeleniumDriver:
         chrome_driver = selenium.webdriver.Chrome(options=options)
         chrome_driver.set_page_load_timeout(60)  # seconds
 
-        return cls(chrome_driver)
+        return cls(chrome_driver, cookie_filepath)
 
     def _authenticate_midway(self) -> None:
         """
@@ -117,8 +120,13 @@ class MidwaySeleniumDriver:
         :return: the cookies as list
         """
 
-        home_path = pathlib.Path.home()
-        cookies_file = os.path.join(home_path, ".midway", "cookie")
+        if self._cookie_filepath == "":
+            home_path = pathlib.Path.home()
+            cookies_file = os.path.join(home_path, ".midway", "cookie")
+
+        else:
+            cookies_file = self._cookie_filepath
+
         cookies = []
 
         with open(cookies_file) as f:

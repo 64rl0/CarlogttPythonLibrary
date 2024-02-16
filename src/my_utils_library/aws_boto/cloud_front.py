@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# secrets_manager.py
-# Created 11/22/23 - 12:25 PM UK Time (London) by carlogtt
+# src/carlogtt_library/aws_boto/cloud_front.py
+# Created 2/8/24 - 1:07 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -32,16 +32,19 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-import json
+import time
 from typing import Any, Optional
 
 # Third Party Library Imports
 import boto3
-import botocore.exceptions
-from mypy_boto3_secretsmanager.client import SecretsManagerClient
 
 # Local Folder (Relative) Imports
 from .. import exceptions
+
+# TODO: uncomment this when brazil
+#       supports mypy_boto3_cloudfront.client
+# from mypy_boto3_cloudfront.client import CloudFrontClient
+
 
 # END IMPORTS
 # ======================================================================
@@ -49,18 +52,24 @@ from .. import exceptions
 
 # List of public names in the module
 __all__ = [
-    'SecretsManager',
+    'CloudFront',
 ]
+
+# Setting up logger for current module
+# module_logger =
 
 # Type aliases
 #
 
+# TODO: absolutely remove this when brazil
+#       supports mypy_boto3_cloudfront.client
+CloudFrontClient = Any
 
-class SecretsManager:
+
+class CloudFront:
     """
-    The SecretsManager class provides a simplified interface for
-    interacting with Amazon SecretsManager services within a Python
-    application.
+    The CloudFront class provides a simplified interface for interacting
+    with Amazon CloudFront services within a Python application.
     """
 
     def __init__(
@@ -84,21 +93,21 @@ class SecretsManager:
         self._aws_secret_access_key = aws_secret_access_key
         self.caching = caching
         self.cache: dict[str, Any] = dict()
-        self._aws_service_name = "secretsmanager"
+        self._aws_service_name = "cloudfront"
 
     @property
-    def _client(self) -> SecretsManagerClient:
+    def _client(self) -> CloudFrontClient:
         if self.caching:
             if self.cache.get('client') is None:
-                self.cache['client'] = self._get_boto_secretsmanager_client()
+                self.cache['client'] = self._get_boto_cloud_front_client()
             return self.cache['client']
 
         else:
-            return self._get_boto_secretsmanager_client()
+            return self._get_boto_cloud_front_client()
 
-    def _get_boto_secretsmanager_client(self) -> SecretsManagerClient:
+    def _get_boto_cloud_front_client(self) -> CloudFrontClient:
         """
-        Create a low-level secrets manager client.
+        Create a low-level CloudFront client.
         """
 
         try:
@@ -113,29 +122,35 @@ class SecretsManager:
             return client
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def get_secret_password(self, secret_name: str) -> str:
+    def invalidate_distribution(self, distribution: str, path: str = "/*"):
         """
-        Get secret from AWS Secrets Manager.
-        Return ONLY the value of the 'password' field!
+        Create a new invalidation.
 
-        :param secret_name: secret to retrieve from secrets manager.
-        :return: ONLY the value of the 'password' field!
+        :param distribution: The distribution ID where to create the
+               invalidation.
+        :param path: The path to invalidate, leave default to invalidate
+               the whole distribution. Must start with a /. i.e. /*
+        :return: Invalidation response syntax.
+        :raise CloudFrontError: If operation fails.
         """
 
         try:
-            get_secret_value_response = self._client.get_secret_value(SecretId=secret_name)
-            secret = get_secret_value_response['SecretString']
+            cloud_front_response = self._client.create_invalidation(
+                DistributionId=distribution,
+                InvalidationBatch={
+                    'Paths': {
+                        'Quantity': 1,
+                        'Items': [
+                            path,
+                        ],
+                    },
+                    'CallerReference': str(time.time_ns()),
+                },
+            )
 
-        # If secret is not found return an empty string
-        except botocore.exceptions.ClientError:
-            secret = ""
+            return cloud_front_response
 
-        # If secret is found load the string to Python dict and get
-        # the password
-        else:
-            secret_json = json.loads(secret)
-            secret = secret_json.get('password', "")
-
-        return secret
+        except Exception as ex:
+            raise exceptions.CloudFrontError(f"Operation failed! - {str(ex)}")
