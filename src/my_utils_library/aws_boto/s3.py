@@ -32,7 +32,7 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 # Third Party Library Imports
 import boto3
@@ -117,7 +117,7 @@ class S3:
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def list_files(self, bucket: str, folder_path: str = "") -> list[str]:
+    def list_files(self, bucket: str, folder_path: str = "", **kwargs) -> list[str]:
         """
         List all the files in the bucket.
 
@@ -125,6 +125,7 @@ class S3:
         :param folder_path: The prefix to the path of the folder to
                list. Leave default to list all the files in the bucket.
                (Default: "").
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: A list of the files in the bucket.
         :raise S3Error: If operation fails.
         """
@@ -136,7 +137,7 @@ class S3:
                     'Bucket': bucket,
                     'Prefix': folder_path,
                 }
-                s3_response = self._client.list_objects_v2(**list_objects_v2_params)
+                s3_response = self._client.list_objects_v2(**list_objects_v2_params, **kwargs)
 
                 for file in s3_response.get('Contents', {}):
                     try:
@@ -158,55 +159,60 @@ class S3:
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def get_file(self, bucket: str, filename: str) -> GetObjectOutputTypeDef:
+    def get_file(self, bucket: str, filename: str, **kwargs) -> GetObjectOutputTypeDef:
         """
         Retrieves objects from Amazon S3.
 
         :param bucket: The name of the S3 bucket.
         :param filename: The name of the file to retrieve.
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: The object stored in S3.
         :raise S3Error: If operation fails.
         """
 
         try:
-            s3_response = self._client.get_object(Bucket=bucket, Key=filename)
+            s3_response = self._client.get_object(Bucket=bucket, Key=filename, **kwargs)
 
             return s3_response
 
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def store_file(self, bucket: str, filename: str, file: bytes) -> PutObjectOutputTypeDef:
+    def store_file(
+        self, bucket: str, filename: str, file: Union[str, bytes], **kwargs
+    ) -> PutObjectOutputTypeDef:
         """
         Store objects to Amazon S3.
 
         :param bucket: The name of the S3 bucket.
         :param filename: The name of the file to retrieve.
         :param file: The body of the file in bytes.
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: The object stored in S3.
         :raise S3Error: If operation fails.
         """
 
         try:
-            s3_response = self._client.put_object(Bucket=bucket, Key=filename, Body=file)
+            s3_response = self._client.put_object(Bucket=bucket, Key=filename, Body=file, **kwargs)
 
             return s3_response
 
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def delete_file(self, bucket: str, filename: str) -> DeleteObjectOutputTypeDef:
+    def delete_file(self, bucket: str, filename: str, **kwargs) -> DeleteObjectOutputTypeDef:
         """
         Delete objects from Amazon S3.
 
         :param bucket: The name of the S3 bucket.
         :param filename: The name of the file to delete.
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: S3 delete response syntax.
         :raise S3Error: If operation fails.
         """
 
         try:
-            s3_response = self._client.delete_object(Bucket=bucket, Key=filename)
+            s3_response = self._client.delete_object(Bucket=bucket, Key=filename, **kwargs)
 
             return s3_response
 
@@ -214,7 +220,7 @@ class S3:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
     def create_presigned_url_for_file(
-        self, bucket: str, filename: str, expiration_time: int = 3600
+        self, bucket: str, filename: str, expiration_time: int = 3600, **kwargs
     ) -> str:
         """
         Creates a presigned URL for a file stored in Amazon S3.
@@ -225,6 +231,7 @@ class S3:
         :param filename: The name of the file to retrieve.
         :param expiration_time: The number of seconds until the URL
                expires. (Default: 3600).
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: The presigned URL.
         :raise S3Error: If operation fails.
         """
@@ -233,7 +240,10 @@ class S3:
             client_method_params = {'Bucket': bucket, 'Key': filename}
 
             s3_response = self._client.generate_presigned_url(
-                ClientMethod='get_object', Params=client_method_params, ExpiresIn=expiration_time
+                ClientMethod='get_object',
+                Params=client_method_params,
+                ExpiresIn=expiration_time,
+                **kwargs,
             )
 
             return s3_response

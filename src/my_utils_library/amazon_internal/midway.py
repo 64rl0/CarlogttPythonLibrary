@@ -84,18 +84,19 @@ def cli_midway_auth(max_retries: int = 3, options: str = "-s"):
 
         else:
             if i == max_retries - 1:
-                print()
                 print(
-                    utils.red + utils.bold + "[ERROR] Authentication to Midway failed." + utils.end
+                    utils.red
+                    + utils.bold
+                    + "\n[ERROR] Authentication to Midway failed.\n"
+                    + utils.end,
+                    flush=True,
                 )
-                print()
                 sys.exit(1)
 
-            print()
             print(
                 utils.red
                 + utils.bold
-                + f"[ERROR] Authentication to Midway failed. Retrying {i+2}..."
-                + utils.end
+                + f"\n[ERROR] Authentication to Midway failed. Retrying {i+2}...\n"
+                + utils.end,
+                flush=True,
             )
-            print()

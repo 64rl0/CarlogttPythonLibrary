@@ -124,7 +124,7 @@ class CloudFront:
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
-    def invalidate_distribution(self, distribution: str, path: str = "/*"):
+    def invalidate_distribution(self, distribution: str, path: str = "/*", **kwargs):
         """
         Create a new invalidation.
 
@@ -132,6 +132,7 @@ class CloudFront:
                invalidation.
         :param path: The path to invalidate, leave default to invalidate
                the whole distribution. Must start with a /. i.e. /*
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: Invalidation response syntax.
         :raise CloudFrontError: If operation fails.
         """
@@ -148,6 +149,7 @@ class CloudFront:
                     },
                     'CallerReference': str(time.time_ns()),
                 },
+                **kwargs,
             )
 
             return cloud_front_response

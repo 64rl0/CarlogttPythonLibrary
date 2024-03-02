@@ -115,17 +115,20 @@ class SecretsManager:
         except Exception as ex:
             raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
 
-    def get_secret_password(self, secret_name: str) -> str:
+    def get_secret_password(self, secret_name: str, **kwargs) -> str:
         """
         Get secret from AWS Secrets Manager.
         Return ONLY the value of the 'password' field!
 
         :param secret_name: secret to retrieve from secrets manager.
+        :param kwargs: Any other param passed to the underlying boto3.
         :return: ONLY the value of the 'password' field!
         """
 
         try:
-            get_secret_value_response = self._client.get_secret_value(SecretId=secret_name)
+            get_secret_value_response = self._client.get_secret_value(
+                SecretId=secret_name, **kwargs
+            )
             secret = get_secret_value_response['SecretString']
 
         # If secret is not found return an empty string
