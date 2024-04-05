@@ -5,7 +5,7 @@
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
 # scripts/formatter.sh
-# Created 2/16/24 - 1:26 PM UK Time (London) by carlogtt
+# Created 4/5/24 - 1:36 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -82,87 +82,114 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
+echo -e "\n${bold_green}${hammer_and_wrench} Project Root:${end}"
+echo "${project_root_dir_abs}"
+
 # Check if we are on DevDsk or local Dev Env
-devdsk=5
-if [ -d "${HOME}/devdsk${devdsk}" ]; then
+devdsk=6
+if [[ -d "${HOME}/devdsk${devdsk}" ]]; then
     # Use DevDsk venv
     path_to_venv_root="${HOME}/devdsk${devdsk}/venvs/dev_tools"
-else
+elif [[ -d "${HOME}/Library/CloudStorage/Dropbox" ]]; then
     # Use local dev venv
     path_to_venv_root="${HOME}/Library/CloudStorage/Dropbox/SDE/VirtualEnvs/dev_tools"
+else
+    echo -e "\n${bold_red}Have you selected the correct DevDsk in the formatter file?${end}\n"
+    exit 1
 fi
 source "${path_to_venv_root}/bin/activate"
-echo
-
-echo -e "${bold_green}${green_check_mark} Virtual environment activated:${end}"
+echo -e "\n${bold_green}${green_check_mark} Virtual environment activated:${end}"
 echo -e "OS Version: $(uname)"
 echo -e "Kernel Version: $(uname -r)"
-echo -e "venv: $VIRTUAL_ENV"
+echo -e "venv: ${VIRTUAL_ENV}"
 echo -e "running: $(python --version)"
-echo
 
-echo -e "${bold_green}${hammer_and_wrench} Project Root:${end}"
-echo "${project_root_dir_abs}"
-echo
-
-echo -e "${bold_green}${sparkles} Running iSort...${end}"
+echo -e "\n${bold_green}${sparkles} Running iSort...${end}"
 isort="Y"
-if [ $isort == "Y" ]; then
-    echo -e "${bold_blue}src/${end}"
-    isort "${project_root_dir_abs}/src" 2>&1
-    echo -e "${bold_blue}\ntest/${end}"
-    isort "${project_root_dir_abs}/test" 2>&1
+if [[ "${isort}" == "Y" ]]; then
+    if [[ -d "${project_root_dir_abs}/src" ]]; then
+        echo -e "${blue}src/${end}"
+        isort "${project_root_dir_abs}/src" 2>&1
+    fi
+    if [[ -d "${project_root_dir_abs}/test" ]]; then
+        echo -e "${blue}\ntest/${end}"
+        isort "${project_root_dir_abs}/test" 2>&1
+    fi
 else
     echo -e "${bold_red}[DISABLED]${end}"
 fi
-echo
 
-echo -e "${bold_green}${sparkles} Running Black...${end}"
+echo -e "\n${bold_green}${sparkles} Running Black...${end}"
 black_fmt="Y"
-if [ $black_fmt == "Y" ]; then
-    echo -e "${bold_blue}src/${end}"
-    black "${project_root_dir_abs}/src" 2>&1
-    echo -e "${bold_blue}\ntest/${end}"
-    black "${project_root_dir_abs}/test" 2>&1
+if [[ "${black_fmt}" == "Y" ]]; then
+    if [[ -d "${project_root_dir_abs}/src" ]]; then
+        echo -e "${blue}src/${end}"
+        black "${project_root_dir_abs}/src" 2>&1
+    fi
+    if [[ -d "${project_root_dir_abs}/test" ]]; then
+        echo -e "${blue}\ntest/${end}"
+        black "${project_root_dir_abs}/test" 2>&1
+    fi
 else
     echo -e "${bold_red}[DISABLED]${end}"
 fi
-echo
 
-echo -e "${bold_green}${sparkles} Running Flake8...${end}"
+echo -e "\n${bold_green}${sparkles} Running Flake8...${end}"
 flake8="Y"
-if [ $flake8 == "Y" ]; then
-    echo -e "${bold_blue}src/${end}"
-    flake8 -v "${project_root_dir_abs}/src" 2>&1
-    echo -e "${bold_blue}\ntest/${end}"
-    flake8 -v "${project_root_dir_abs}/test" 2>&1
+if [[ "${flake8}" == "Y" ]]; then
+    if [[ -d "${project_root_dir_abs}/src" ]]; then
+        echo -e "${blue}src/${end}"
+        flake8 -v "${project_root_dir_abs}/src" 2>&1
+    fi
+    if [[ -d "${project_root_dir_abs}/test" ]]; then
+        echo -e "${blue}\ntest/${end}"
+        flake8 -v "${project_root_dir_abs}/test" 2>&1
+    fi
 else
     echo -e "${bold_red}[DISABLED]${end}"
 fi
-echo
 
-echo -e "${bold_green}${sparkles} Running mypy...${end}"
+echo -e "\n${bold_green}${sparkles} Running mypy...${end}"
 mypy="Y"
-if [ $mypy == "Y" ]; then
-    echo -e "${bold_blue}src/${end}"
-    mypy "${project_root_dir_abs}/src" 2>&1
-    echo -e "${bold_blue}\ntest/${end}"
-    mypy "${project_root_dir_abs}/test" 2>&1
+if [[ "${mypy}" == "Y" ]]; then
+    if [[ -d "${project_root_dir_abs}/src" ]]; then
+        echo -e "${blue}src/${end}"
+        mypy "${project_root_dir_abs}/src" 2>&1
+    fi
+    if [[ -d "${project_root_dir_abs}/test" ]]; then
+        echo -e "${blue}\ntest/${end}"
+        mypy "${project_root_dir_abs}/test" 2>&1
+    fi
 else
     echo -e "${bold_red}[DISABLED]${end}"
 fi
-echo
 
-echo -e "${bold_green}${sparkles} Running shfmt...${end}"
+echo -e "\n${bold_green}${sparkles} Running shfmt...${end}"
 shfmt="Y"
-if [ $mypy == "Y" ]; then
-    shfmt -l -w "${script_dir_abs}"
-    shfmt -l -w "${project_root_dir_abs}/src"
-    shfmt -l -w "${project_root_dir_abs}/test"
+if [[ "${shfmt}" == "Y" ]]; then
+    if [[ -d "${script_dir_abs}" ]]; then
+        echo -e "${blue}scripts/${end}"
+        shfmt -l -w "${script_dir_abs}"
+    fi
+    if [[ -d "${project_root_dir_abs}/configuration" ]]; then
+        echo -e "${blue}\nconfiguration/${end}"
+        shfmt -l -w "${project_root_dir_abs}/configuration"
+    fi
+    if [[ -d "${project_root_dir_abs}/src" ]]; then
+        echo -e "${blue}\nsrc/${end}"
+        shfmt -l -w "${project_root_dir_abs}/src"
+    fi
+    if [[ -d "${project_root_dir_abs}/test" ]]; then
+        echo -e "${blue}\ntest/${end}"
+        shfmt -l -w "${project_root_dir_abs}/test"
+    fi
+    if [[ -d "${project_root_dir_abs}/lib" ]]; then
+        echo -e "${blue}\nlib/${end}"
+        shfmt -l -w "${project_root_dir_abs}/lib"
+    fi
 else
     echo -e "${bold_red}[DISABLED]${end}"
 fi
-echo
 
-echo -e "${bold_yellow}${warning_sign} Virtual environment deactivated!${end}"
+echo -e "\n${bold_yellow}${warning_sign} Virtual environment deactivated!${end}"
 deactivate
