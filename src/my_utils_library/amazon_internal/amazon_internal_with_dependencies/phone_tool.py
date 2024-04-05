@@ -58,9 +58,10 @@ def phone_tool_lookup(alias: str) -> dict[str, str]:
     """
 
     try:
-        url = f"https://phonetool.amazon.com/users/{alias}.json"
-        auth = requests_midway.RequestsMidway()
-        response = requests.get(url=url, auth=auth)
+        response = requests.get(
+            url=f"https://phonetool.amazon.com/users/{alias}.json",
+            auth=requests_midway.RequestsMidway(),
+        )
 
     except requests_midway.requests_midway.RequestsMidwayException as e:
         return {'RequestsMidwayException raised:': str(e)}

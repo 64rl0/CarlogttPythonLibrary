@@ -37,7 +37,6 @@ during the program's execution.
 
 # Standard Library Imports
 import json
-import logging
 
 # END IMPORTS
 # ======================================================================
@@ -46,6 +45,7 @@ import logging
 # List of public names in the module
 __all__ = [
     'MyLibraryException',
+    'SimTHandlerError',
     'DatabaseError',
     'SQLiteError',
     'MySQLError',
@@ -54,31 +54,50 @@ __all__ = [
     'S3Error',
     'SecretsManagerError',
     'CloudFrontError',
-    'SimTHandlerError',
+    'LambdaError',
 ]
 
 
 class MyLibraryException(Exception):
     """
-    This is the base exception for the AmzInventoryToolApp.
+    Custom exception class for MyLibrary, providing enhanced
+    functionality for error handling and reporting. This class extends
+    the standard Python Exception class, adding methods for converting
+    exception details to a dictionary or JSON string, facilitating
+    easier logging and serialization of error information.
     """
 
     def __init__(self, *args) -> None:
-        self.message = "Operation Failed!"
-        self.error = repr(self)
         super().__init__(*args)
 
     def to_dict(self) -> dict[str, str]:
+        """
+        Converts the exception to a dictionary.
+
+        :return: A dictionary with 'exception' as a key and the string
+                 representation of the exception as its value.
+        """
+
         return {
-            'message': self.message,
-            'error': self.error,
+            'exception': repr(self),
         }
 
     def to_json(self) -> str:
+        """
+        Converts the exception to a JSON string.
+
+        :return: A JSON string representation of the exception, making
+                 it suitable for logging or transmitting as part of an
+                 API response.
+        """
+
         return json.dumps(self.to_dict())
 
-    def log_exception(self) -> None:
-        logging.error(repr(self))
+
+class SimTHandlerError(MyLibraryException):
+    """
+    This is the base exception class to handle SimTicket Handler errors.
+    """
 
 
 class DatabaseError(MyLibraryException):
@@ -129,7 +148,7 @@ class CloudFrontError(MyLibraryException):
     """
 
 
-class SimTHandlerError(MyLibraryException):
+class LambdaError(MyLibraryException):
     """
-    This is the base exception class to handle SimTicket Handler errors.
+    This is the base exception class to handle Lambda errors.
     """

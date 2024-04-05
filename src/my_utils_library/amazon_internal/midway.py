@@ -32,8 +32,11 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import os
+import re
 import subprocess
 import sys
+import time
 
 # Local Folder (Relative) Imports
 from .. import utils
@@ -45,6 +48,7 @@ from .. import utils
 # List of public names in the module
 __all__ = [
     'cli_midway_auth',
+    'extract_valid_cookies',
 ]
 
 # Setting up logger for current module
@@ -85,18 +89,68 @@ def cli_midway_auth(max_retries: int = 3, options: str = "-s"):
         else:
             if i == max_retries - 1:
                 print(
-                    utils.red
-                    + utils.bold
+                    utils.cli_bold_red
                     + "\n[ERROR] Authentication to Midway failed.\n"
-                    + utils.end,
+                    + utils.cli_end,
                     flush=True,
                 )
                 sys.exit(1)
 
             print(
-                utils.red
-                + utils.bold
+                utils.cli_bold_red
                 + f"\n[ERROR] Authentication to Midway failed. Retrying {i+2}...\n"
-                + utils.end,
+                + utils.cli_end,
                 flush=True,
             )
+
+
+def extract_valid_cookies(cookie_filepath: str = "~/.midway/cookie") -> dict[str, str]:
+    """
+    Retrieves valid cookies from a specified cookie file, filtering
+    based on cookie that start with #Http and valid cookie expiration
+    time.
+    Return a dictionary of cookie names and their values.
+
+    :param cookie_filepath: The file path to the cookie file.
+           Defaults to "~/.midway/cookie".
+    :return: A dictionary where each key-value pair corresponds to a
+             cookie name and its value extracted from the file.
+    """
+
+    real_cookie_filepath = os.path.realpath(os.path.expanduser(cookie_filepath))
+
+    if not os.path.exists(real_cookie_filepath) or not os.path.isfile(real_cookie_filepath):
+        raise ValueError(f"cookie_filepath: {real_cookie_filepath} not found!")
+
+    cookies: dict[str, str] = {}
+
+    search_pattern = re.compile("^#Http", re.IGNORECASE)
+
+    with open(real_cookie_filepath, 'r') as cookie_file:
+        for cookie in cookie_file:
+            if not search_pattern.match(cookie):
+                continue
+
+            cookie_fields = cookie.split()
+
+            # Cookie fields
+            # 0 - Domain
+            # 1 - Flag
+            # 2 - Path
+            # 3 - Secure
+            # 4 - Expiration Time
+            # 5 - Name
+            # 6 - Value
+
+            if len(cookie_fields) != 7:
+                continue
+
+            if int(cookie_fields[4]) <= time.time():
+                continue
+
+            cookies.update({cookie_fields[5]: cookie_fields[6]})
+
+        if not cookies:
+            raise ValueError(f"No valid cookies found in {real_cookie_filepath}")
+
+    return cookies

@@ -56,6 +56,41 @@ __all__ = [
 class SimTicketHandler:
     """
     A handler class for the TicketyPythonSdk.
+
+    It includes an option to cache the client session to minimize
+    the number of AWS API call.
+
+    Internal Amazon API
+    https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicketingSystemAccessGrant
+
+    :param aws_region_name: The name of the AWS region where the
+           service is to be used. This parameter is required to
+           configure the AWS client.
+    :param aws_account_id: The AWS Account ID name for the target
+           ticketing system. Use “default” unless you are targeting
+           an integ environment.
+           https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F
+    :param ticketing_system_name: The Ticketing System for the
+           target ticketing system. Use “default” unless you are
+           targeting an integ environment.
+           https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F
+    :param aws_profile_name: The name of the AWS profile to use for
+           credentials. This is useful if you have multiple profiles
+           configured in your AWS credentials file.
+           Default is None, which means the default profile or
+           environment variables will be used if not provided.
+    :param aws_access_key_id: The AWS access key ID for
+           programmatically accessing AWS services. This parameter
+           is optional and only needed if not using a profile from
+           the AWS credentials file.
+    :param aws_secret_access_key: The AWS secret access key
+           corresponding to the provided access key ID. Like the
+           access key ID, this parameter is optional and only needed
+           if not using a profile.
+    :param caching: Determines whether to enable caching for the
+           client session. If set to True, the client session will
+           be cached to improve performance and reduce the number
+           of API calls. Default is False.
     """
 
     def __init__(
@@ -69,40 +104,23 @@ class SimTicketHandler:
         aws_secret_access_key: Optional[str] = None,
         caching: bool = False,
     ) -> None:
-        """
-        aws_profile and aws_region are injected locally for local
-        development testing through Brazil. When running on NAWS this
-        env variable is not set.
-
-        Internal Amazon API
-        https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicketingSystemAccessGrant
-        """
-
-        # The AWS Account ID name for the target ticketing system.
-        # Use “Default” unless you are targeting an integ environment.
-        # https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F
         self._aws_account_id = aws_account_id
-
-        # The Ticketing System for the target ticketing system.
-        # Use “Default” unless you are targeting an integ environment.
-        # https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F
         self._ticketing_system_name = ticketing_system_name
-
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
-        self.caching = caching
-        self.cache: dict[str, Any] = dict()
+        self._caching = caching
+        self._cache: dict[str, Any] = dict()
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
 
     @property
     def _client(self):
-        if self.caching:
-            if self.cache.get('client') is None:
-                self.cache['client'] = self._get_boto_tickety_client()
-            return self.cache['client']
+        if self._caching:
+            if self._cache.get('client') is None:
+                self._cache['client'] = self._get_boto_tickety_client()
+            return self._cache['client']
 
         else:
             return self._get_boto_tickety_client()

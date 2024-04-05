@@ -57,10 +57,8 @@ def suppress_errors(*exceptions: type[Exception]):
            the exception classes of exceptions to be suppressed.
 
     Example:
-        ::
-
-            with suppress_errors(ZeroDivisionError):
-                1/0  # This will not raise an exception
+        with suppress_errors(ZeroDivisionError):
+            1/0  # This will not raise an exception
     """
 
     try:
@@ -78,11 +76,9 @@ def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
     :param fileobj: Opened file object to redirect stdout to.
 
     Example:
-        ::
-
-            with open("file.txt", 'w') as file:
-                with redirect_stdout_to_file(file):
-                    print("Hello World!")  # This will print to file.
+        with open("file.txt", 'w') as file:
+            with redirect_stdout_to_file(file):
+                print("Hello World!")  # This will print to file.
     """
 
     current_stdout = sys.stdout
@@ -101,10 +97,8 @@ def redirect_stdout_to_stderr():
     Context manager to redirect stdout to stderr.
 
     Example:
-        ::
-
-            with redirect_stdout_to_stderr():
-                print("Hello World!")  # This will print to stderr.
+        with redirect_stdout_to_stderr():
+            print("Hello World!")  # This will print to stderr.
     """
 
     current_stdout = sys.stdout

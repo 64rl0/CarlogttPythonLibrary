@@ -34,12 +34,8 @@ integrity of different types of data inputs.
 # ======================================================================
 
 # Standard Library Imports
-import datetime
 import re
 import string
-
-# Local Folder (Relative) Imports
-from . import encryption
 
 # END IMPORTS
 # ======================================================================
@@ -50,7 +46,6 @@ __all__ = [
     'validate_non_empty_strings',
     'validate_username_requirements',
     'validate_password_requirements',
-    'validate_reset_code_match',
 ]
 
 
@@ -141,24 +136,3 @@ def validate_password_requirements(password_to_validate: str) -> str:
                 raise ValueError("Password does not meet the minimum requirements.")
 
     return password
-
-
-def validate_reset_code_match(
-    hashed_reset_code: bytes,
-    reset_code_user_input: str,
-    reset_code_expiry: datetime.datetime,
-    fernet_key: str,
-) -> bool:
-    """
-    validate_reset_code_match.
-    """
-
-    if hashed_reset_code and reset_code_expiry:
-        now = datetime.datetime.utcnow()
-
-        if now < reset_code_expiry:
-            return encryption.validate_hash_match(
-                reset_code_user_input, hashed_reset_code, fernet_key
-            )
-
-    return False

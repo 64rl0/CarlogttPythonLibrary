@@ -49,6 +49,8 @@ __all__ = [
     'logging_decorator',
 ]
 
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 OriginalFunction = Callable[..., Any]
@@ -56,10 +58,15 @@ InnerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
-def benchmark_decorator(logger: logging.Logger) -> DecoratorFunction:
+def benchmark_decorator(logger: logging.Logger = module_logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential
     backoff multiplier.
+
+    :param logger: The logging.Logger instance to be used for logging
+           the execution time of the decorated function.
+           If not explicitly provided, the function uses
+           Python's standard logging module as a default logger.
     """
 
     def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
@@ -78,10 +85,15 @@ def benchmark_decorator(logger: logging.Logger) -> DecoratorFunction:
     return decorator_benchmark
 
 
-def logging_decorator(logger: logging.Logger) -> DecoratorFunction:
+def logging_decorator(logger: logging.Logger = module_logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential
     backoff multiplier.
+
+    :param logger: The logging.Logger instance to be used for logging
+           the execution time of the decorated function.
+           If not explicitly provided, the function uses
+           Python's standard logging module as a default logger.
     """
 
     def decorator_logging(original_func: OriginalFunction) -> InnerFunction:

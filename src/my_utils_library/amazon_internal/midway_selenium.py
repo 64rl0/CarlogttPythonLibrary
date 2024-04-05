@@ -26,11 +26,12 @@ This module ...
 # ======================================================================
 #
 
-# Special Imports
 # ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
 # ======================================================================
+
+# Special Imports
 from __future__ import annotations
 
 # Standard Library Imports
@@ -66,10 +67,21 @@ WebDriver = Union[
 
 class MidwaySeleniumDriver:
     """
-    Use the classmethod get_selenium_driver to get a Selenium driver
-    instance already Midway authenticated.
-    If already have a Selenium driver instance, you can construct the
-    main class to Midway authenticate it.
+    Facilitates the creation and management of a Selenium WebDriver that
+    is authenticated against the Midway authentication system. This
+    class provides methods to obtain a WebDriver instance with Midway
+    authentication cookies applied, allowing automated navigation of
+    pages that require Midway authentication.
+
+    Use the `get_selenium_driver` class method to obtain an
+    authenticated Selenium WebDriver instance, or instantiate this class
+    with an existing WebDriver to apply Midway authentication.
+
+    :param driver: An instance of Selenium WebDriver.
+    :param cookie_filepath: Optional; the filepath to the Midway
+           authentication cookies file. If not provided, the class
+           looks for the cookie file in the default location
+           `~/.midway/cookie`.
     """
 
     def __init__(self, driver: WebDriver, cookie_filepath: str = "") -> None:

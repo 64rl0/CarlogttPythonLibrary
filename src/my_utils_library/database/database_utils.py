@@ -102,6 +102,18 @@ def retry_decorator(
 
 
 def sql_query_reader(file_path: Union[Path, str]) -> str:
+    """
+    Reads an SQL query from a file and returns it as a string.
+
+    This function simplifies the process of loading SQL queries
+    from files, avoiding the need for manual file handling. It supports
+    both string paths and Pathlib Path objects as input.
+
+    :param file_path: The path to the SQL file. This can be a string
+           or a Pathlib Path object.
+    :return: The content of the SQL file as a string.
+    """
+
     query = Path(file_path).read_text()
 
     return query

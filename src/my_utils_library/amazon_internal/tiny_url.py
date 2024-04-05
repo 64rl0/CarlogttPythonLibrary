@@ -31,11 +31,11 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Standard Library Imports
-import re
-
 # Third Party Library Imports
 import requests
+
+# Local Folder (Relative) Imports
+from . import midway
 
 # END IMPORTS
 # ======================================================================
@@ -53,29 +53,18 @@ __all__ = [
 #
 
 
-def create_amazon_tiny_url(long_url: str, cookie_filepath: str) -> str:
+def create_amazon_tiny_url(long_url: str, cookie_filepath: str = "~/.midway/cookie") -> str:
     """
     Create a tiny url.
     Using Amazon backend service https://tiny.amazon.com
 
-    :param cookie_filepath: The filepath to the midway cookie.
     :param long_url: The url to convert to tiny.
+    :param cookie_filepath: The file path to the cookie file.
+           Defaults to "~/.midway/cookie".
     :return: The tiny url for the agenda preview.
     """
 
-    cookies = {}
-
-    with open(cookie_filepath) as cookie:
-        for line in cookie:
-            if line.startswith("#") and not re.search("^#Http", line):
-                continue
-
-            fields = line.split()
-
-            if len(fields) != 7:
-                continue
-
-            cookies.update({fields[5]: fields[6]})
+    cookies = midway.extract_valid_cookies(cookie_filepath)
 
     response = requests.post(
         url='https://tiny.amazon.com/submit/url',

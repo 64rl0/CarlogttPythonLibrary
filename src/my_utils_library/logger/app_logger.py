@@ -46,10 +46,15 @@ Guidelines for the application logger class are as follows:
 
 # Standard Library Imports
 import enum
+import io
 import logging
 import pathlib
+import sys
 import uuid
-from typing import Union
+from typing import Optional, TextIO, Union
+
+# Local Folder (Relative) Imports
+from .. import utils
 
 # END IMPORTS
 # ======================================================================
@@ -63,23 +68,30 @@ __all__ = [
 
 class ColoredFormatter(logging.Formatter):
     """
-    Logging Formatter to add colors
+    A custom logging formatter to add color codes to log messages.
+    This formatter extends the standard logging
+    Formatter class, adding color to log messages for terminal output
+    that supports ANSI color codes.
     """
 
-    COLORS = {
-        'DEBUG': '\033[31m',  # red
-        'INFO': '\033[31m',  # red
-        'WARNING': '\033[31m',  # red
-        'ERROR': '\033[31m',  # red
-        'CRITICAL': '\033[31m',  # red
-    }
+    _COLOR_RESET = utils.cli_end
 
-    RESET = '\033[0m'
+    def __init__(self, log_color: str, *args, **kwargs):
+        self._log_color = log_color
+        super().__init__(*args, **kwargs)
 
-    def format(self, record):
-        color = self.COLORS.get(record.levelname, self.RESET)
+    def format(self, record: logging.LogRecord) -> str:
+        """
+        Formats a log record and adds color codes to the message.
+
+        :param record: The log record to be formatted.
+        :return: A color-coded log message string.
+        """
+
         log_message = super().format(record)
-        return f"{color}{log_message}{self.RESET}"
+        log_formatted = f"{self._log_color}{log_message}{self._COLOR_RESET}"
+
+        return log_formatted
 
 
 class Level(enum.Enum):
@@ -91,55 +103,123 @@ class Level(enum.Enum):
 
 
 class Logger:
-    def __init__(self, log_name: str, log_level: str):
+    """
+    Custom logger class for application-wide logging with support for
+    file, console, and StringIO logging. Provides colored formatting
+    and hierarchical logging capabilities.
+
+    :param log_name: The name of the logger, used as a namespace for
+           hierarchical logging.
+    :param log_level: The minimum log level for the logger. Messages
+           below this level will not be logged.
+    :param log_color: Specifies the color of the log messages. This is
+           used to set the initial color for all log messages handled
+           by this logger. The default color is 'default', which
+           applies no additional color formatting. Available colors
+           include 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'.
+    """
+
+    LOG_COLORS = {
+        'default': utils.cli_end,
+        'red': utils.cli_red,
+        'green': utils.cli_green,
+        'yellow': utils.cli_yellow,
+        'blue': utils.cli_blue,
+        'magenta': utils.cli_magenta,
+        'cyan': utils.cli_cyan,
+    }
+
+    def __init__(self, log_name: str, log_level: str, log_color: str = 'default'):
+        if log_color not in self.LOG_COLORS:
+            raise ValueError(
+                f"log_color must be ont of the following values: {self.LOG_COLORS.keys()}"
+            )
+
         self.app_logger = logging.getLogger(log_name)
         self.app_logger.setLevel(log_level)
         self.formatter = ColoredFormatter(
+            log_color=self.LOG_COLORS[log_color],
             style='%',
-            fmt=(
-                '%(name)-40s | %(funcName)-20s | %(lineno)d | %(asctime)s | %(levelname)-8s |'
-                ' %(message)s'
-            ),
+            fmt=('%(levelname)-8s | %(asctime)s | %(pathname)s:%(lineno)d | %(message)s'),
             datefmt='%Y-%m-%d %H:%M:%S',
         )
 
     def add_file_handler(self, logger_file_path: Union[str, pathlib.Path]) -> None:
         """
-        create a file handler which logs even debug messages
+        Adds a file handler to log messages to a file.
+
+        :param logger_file_path: The path to the log file. Can be a
+               string or a pathlib.Path object.
         """
 
-        file_handler = logging.FileHandler(logger_file_path, mode="a+")
+        file_handler = logging.FileHandler(filename=logger_file_path, mode="a+")
         file_handler.setFormatter(self.formatter)
         self.app_logger.addHandler(file_handler)
 
-    def add_console_handler(self, logger_console_stream) -> None:
+    def add_console_handler(self, logger_console_stream: Optional[TextIO] = None) -> None:
         """
-        create a console handler which logs even debug messages
+        Adds a console handler to log messages to the console.
+
+        :param logger_console_stream: The stream to log messages to.
+               Typically, sys.stdout or sys.stderr.
+               If not specified, sys.stderr is used.
         """
+
+        if logger_console_stream is None:
+            logger_console_stream = sys.stderr
 
         console_handler = logging.StreamHandler(stream=logger_console_stream)
         console_handler.setFormatter(self.formatter)
         self.app_logger.addHandler(console_handler)
 
-    def add_stringio_handler(self, logger_stringio_stream) -> None:
+    def add_stringio_handler(self, logger_stringio_stream: Optional[TextIO] = None) -> None:
         """
-        create a string_io handler which logs even debug messages
+        Adds a StringIO handler to log messages to a StringIO stream.
+
+        :param logger_stringio_stream: The StringIO stream to log
+               messages to.
+               If not specified, io.StringIO is used.
         """
+
+        if logger_stringio_stream is None:
+            logger_stringio_stream = io.StringIO()
 
         stringio_handler = logging.StreamHandler(stream=logger_stringio_stream)
         stringio_handler.setFormatter(self.formatter)
         self.app_logger.addHandler(stringio_handler)
 
     def get_child_logger(self, log_name: str) -> logging.Logger:
+        """
+        Creates and returns a child logger with a specific name.
+
+        :param log_name: The name of the child logger. This name is
+               appended to the parent logger's name.
+        :return: A new child logger instance.
+        """
+
         new_child_logger = self.app_logger.getChild(log_name)
+
         return new_child_logger
 
-    # this method is not currently being used so just making it private
-    # for now
+    # TODO(carlogtt): this method is not currently being used so just
+    #                 making it private for now
     def _log(self, log_level: Level, message: str = "") -> None:
+        """
+        Logs a message at a specific log level with an exception ID.
+
+        :param log_level: The logging level for the message.
+        :param message: The log message.
+        """
+
         message_with_exception_id = f"{Logger._generate_exception_id()} | {message}"
         self.app_logger.log(level=log_level.value, msg=message_with_exception_id)
 
     @staticmethod
     def _generate_exception_id() -> str:
+        """
+        Generates a unique exception ID for log messages.
+
+        :return: A string representing the unique exception ID.
+        """
+
         return "ID-" + str(uuid.uuid4().hex)
