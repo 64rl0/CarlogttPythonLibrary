@@ -36,7 +36,7 @@ simplify common tasks in Python.
 
 # Local Folder (Relative) Imports
 from .amazon_internal import *
-from .aws_boto import *
+from .aws_boto3 import *
 from .database import *
 from .exceptions import *
 from .logger import *

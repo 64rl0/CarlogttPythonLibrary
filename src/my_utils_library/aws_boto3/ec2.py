@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# secrets_manager.py
-# Created 11/22/23 - 12:25 PM UK Time (London) by carlogtt
+# src/carlogtt_library/aws_boto3/ec2.py
+# Created 4/10/24 - 8:27 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -19,7 +19,7 @@ This module ...
 """
 
 # ======================================================================
-# EXCEPTIONS
+# EXCEPTION
 # This section documents any exceptions made code or quality rules.
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
@@ -32,13 +32,13 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-import json
-from typing import Any, Optional
+import logging
+from typing import Any, Literal, Optional
 
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_secretsmanager.client import SecretsManagerClient
+from mypy_boto3_ec2.client import EC2Client
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -49,18 +49,20 @@ from .. import exceptions
 
 # List of public names in the module
 __all__ = [
-    'SecretsManager',
+    'EC2',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #
 
 
-class SecretsManager:
+class EC2:
     """
-    The SecretsManager class provides a simplified interface for
-    interacting with Amazon SecretsManager services within a Python
-    application.
+    The EC2 class provides a simplified interface for interacting with
+    Amazon EC2 services within a Python application.
 
     It includes an option to cache the client session to minimize
     the number of AWS API call.
@@ -102,21 +104,31 @@ class SecretsManager:
         self._aws_secret_access_key = aws_secret_access_key
         self._caching = caching
         self._cache: dict[str, Any] = dict()
-        self._aws_service_name = "secretsmanager"
+        self._aws_service_name: Literal['ec2'] = "ec2"
 
     @property
-    def _client(self) -> SecretsManagerClient:
+    def _client(self) -> EC2Client:
+        """
+        Returns an EC2 client.
+        Caches the client if caching is enabled.
+
+        :return: The EC2Client.
+        """
+
         if self._caching:
             if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_secretsmanager_client()
+                self._cache['client'] = self._get_boto_client()
             return self._cache['client']
 
         else:
-            return self._get_boto_secretsmanager_client()
+            return self._get_boto_client()
 
-    def _get_boto_secretsmanager_client(self) -> SecretsManagerClient:
+    def _get_boto_client(self) -> EC2Client:
         """
-        Create a low-level secrets manager client.
+        Create a low-level EC2 client.
+
+        :return: The EC2Client.
+        :raise EC2Error: If operation fails.
         """
 
         try:
@@ -126,37 +138,34 @@ class SecretsManager:
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
             )
-            client = boto_session.client(service_name=self._aws_service_name)  # type: ignore
+            client = boto_session.client(service_name=self._aws_service_name)
 
             return client
 
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.EC2Error(f"Operation failed! - {str(ex.response)}")
+
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.EC2Error(f"Operation failed! - {str(ex)}")
 
-    def get_secret_password(self, secret_name: str, **kwargs) -> str:
+    def invalidate_client_cache(self) -> None:
         """
-        Get secret from AWS Secrets Manager.
-        Return ONLY the value of the 'password' field!
+        Clears the cached client, if caching is enabled.
 
-        :param secret_name: secret to retrieve from secrets manager.
-        :param kwargs: Any other param passed to the underlying boto3.
-        :return: ONLY the value of the 'password' field!
+        This method allows manually invalidating the cached client,
+        forcing a new client instance to be created on the next access.
+        Useful if AWS credentials have changed or if there's a need to
+        connect to a different region within the same instance
+        lifecycle.
+
+        :return: None.
+        :raise EC2Error: Raises an error if caching is not enabled
+               for this instance.
         """
 
-        try:
-            get_secret_value_response = self._client.get_secret_value(
-                SecretId=secret_name, **kwargs
+        if not self._cache:
+            raise exceptions.EC2Error(
+                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
             )
-            secret = get_secret_value_response['SecretString']
 
-        # If secret is not found return an empty string
-        except botocore.exceptions.ClientError:
-            secret = ""
-
-        # If secret is found load the string to Python dict and get
-        # the password
-        else:
-            secret_json = json.loads(secret)
-            secret = secret_json.get('password', "")
-
-        return secret
+        self._cache['client'] = None

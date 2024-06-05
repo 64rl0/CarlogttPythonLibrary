@@ -32,10 +32,11 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 # Third Party Library Imports
 import boto3
+import botocore.exceptions
 from mypy_boto3_s3.client import S3Client
 from mypy_boto3_s3.type_defs import (
     DeleteObjectOutputTypeDef,
@@ -104,21 +105,31 @@ class S3:
         self._aws_secret_access_key = aws_secret_access_key
         self._caching = caching
         self._cache: dict[str, Any] = dict()
-        self._aws_service_name = "s3"
+        self._aws_service_name: Literal['s3'] = "s3"
 
     @property
     def _client(self) -> S3Client:
+        """
+        Returns a S3 client.
+        Caches the client if caching is enabled.
+
+        :return: The S3BClient.
+        """
+
         if self._caching:
             if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_s3_client()
+                self._cache['client'] = self._get_boto_client()
             return self._cache['client']
 
         else:
-            return self._get_boto_s3_client()
+            return self._get_boto_client()
 
-    def _get_boto_s3_client(self) -> S3Client:
+    def _get_boto_client(self) -> S3Client:
         """
-        Create a low-level s3 client.
+        Create a low-level S3 client.
+
+        :return: The S3Client.
+        :raise S3Error: If operation fails.
         """
 
         try:
@@ -128,12 +139,37 @@ class S3:
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
             )
-            client = boto_session.client(service_name=self._aws_service_name)  # type: ignore
+            client = boto_session.client(service_name=self._aws_service_name)
 
             return client
 
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+
+    def invalidate_client_cache(self) -> None:
+        """
+        Clears the cached client, if caching is enabled.
+
+        This method allows manually invalidating the cached client,
+        forcing a new client instance to be created on the next access.
+        Useful if AWS credentials have changed or if there's a need to
+        connect to a different region within the same instance
+        lifecycle.
+
+        :return: None.
+        :raise S3Error: Raises an error if caching is not enabled
+               for this instance.
+        """
+
+        if not self._cache:
+            raise exceptions.S3Error(
+                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
+            )
+
+        self._cache['client'] = None
 
     def list_files(self, bucket: str, folder_path: str = "", **kwargs) -> list[str]:
         """
@@ -148,14 +184,19 @@ class S3:
         :raise S3Error: If operation fails.
         """
         try:
-            while True:
-                filenames_list: list[str] = []
+            filenames_list: list[str] = []
 
-                list_objects_v2_params: ListObjectsV2RequestRequestTypeDef = {
-                    'Bucket': bucket,
-                    'Prefix': folder_path,
-                }
-                s3_response = self._client.list_objects_v2(**list_objects_v2_params, **kwargs)
+            list_objects_v2_params: ListObjectsV2RequestRequestTypeDef = {
+                'Bucket': bucket,
+                'Prefix': folder_path,
+            }
+
+            while True:
+                try:
+                    s3_response = self._client.list_objects_v2(**list_objects_v2_params, **kwargs)
+
+                except botocore.exceptions.ClientError as ex_inner:
+                    raise exceptions.S3Error(f"{str(ex_inner.response)}")
 
                 for file in s3_response.get('Contents', {}):
                     try:
@@ -193,6 +234,9 @@ class S3:
 
             return s3_response
 
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
@@ -215,6 +259,9 @@ class S3:
 
             return s3_response
 
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
 
@@ -233,6 +280,9 @@ class S3:
             s3_response = self._client.delete_object(Bucket=bucket, Key=filename, **kwargs)
 
             return s3_response
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
@@ -265,6 +315,9 @@ class S3:
             )
 
             return s3_response
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.S3Error(f"Operation failed! - {str(ex)}")

@@ -18,17 +18,20 @@
 This module contains the application logger class.
 Guidelines for the application logger class are as follows:
 
-# 10 - DEBUG:     Detailed information, typically of interest only when
-                  diagnosing problems.
-# 20 - INFO:      Confirmation that things are working as expected.
-# 30 - WARNING:   An indication that something unexpected happened, or
-                  indicative of some problem in the near future
-                  (e.g. ‘disk space low’). The software is still
-                  working as expected.
-# 40 - ERROR:     Due to a more serious problem, the software has not
-                  been able to perform some function.
-# 50 - CRITICAL:  A serious error, indicating that the program itself
-                  may be unable to continue running.
+10 - DEBUG: Detailed information, typically of interest only when
+diagnosing problems.
+
+20 - INFO: Confirmation that things are working as expected.
+
+30 - WARNING: An indication that something unexpected happened, or
+indicative of some problem in the near future (e.g. ‘disk space low’).
+The software is still working as expected.
+
+40 - ERROR: Due to a more serious problem, the software has not been
+able to perform some function.
+
+50 - CRITICAL: A serious error, indicating that the program itself may
+be unable to continue running.
 """
 
 # ======================================================================
@@ -117,6 +120,7 @@ class Logger:
            by this logger. The default color is 'default', which
            applies no additional color formatting. Available colors
            include 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'.
+    :param log_fmt: The log format.
     """
 
     LOG_COLORS = {
@@ -128,11 +132,18 @@ class Logger:
         'magenta': utils.cli_magenta,
         'cyan': utils.cli_cyan,
     }
+    LOG_FMT = '%(levelname)-8s | %(asctime)s | %(pathname)s:%(lineno)d | %(message)s'
 
-    def __init__(self, log_name: str, log_level: str, log_color: str = 'default'):
+    def __init__(
+        self,
+        log_name: str,
+        log_level: str,
+        log_color: str = 'default',
+        log_fmt: Optional[str] = None,
+    ):
         if log_color not in self.LOG_COLORS:
             raise ValueError(
-                f"log_color must be ont of the following values: {self.LOG_COLORS.keys()}"
+                f"log_color must be one of the following values: {self.LOG_COLORS.keys()}"
             )
 
         self.app_logger = logging.getLogger(log_name)
@@ -140,7 +151,7 @@ class Logger:
         self.formatter = ColoredFormatter(
             log_color=self.LOG_COLORS[log_color],
             style='%',
-            fmt=('%(levelname)-8s | %(asctime)s | %(pathname)s:%(lineno)d | %(message)s'),
+            fmt=log_fmt or self.LOG_FMT,
             datefmt='%Y-%m-%d %H:%M:%S',
         )
 
@@ -201,9 +212,7 @@ class Logger:
 
         return new_child_logger
 
-    # TODO(carlogtt): this method is not currently being used so just
-    #                 making it private for now
-    def _log(self, log_level: Level, message: str = "") -> None:
+    def log_with_exception_id(self, log_level: Level, message: str = "") -> None:
         """
         Logs a message at a specific log level with an exception ID.
 
@@ -211,15 +220,7 @@ class Logger:
         :param message: The log message.
         """
 
-        message_with_exception_id = f"{Logger._generate_exception_id()} | {message}"
+        exc_id = "EID-" + str(uuid.uuid4().hex)
+        message_with_exception_id = f"{exc_id} | {message}"
+
         self.app_logger.log(level=log_level.value, msg=message_with_exception_id)
-
-    @staticmethod
-    def _generate_exception_id() -> str:
-        """
-        Generates a unique exception ID for log messages.
-
-        :return: A string representing the unique exception ID.
-        """
-
-        return "ID-" + str(uuid.uuid4().hex)

@@ -40,16 +40,12 @@ from collections.abc import Generator
 from typing import Optional, Union
 
 # Third Party Library Imports
-# TODO: disabled as not supported by python 3.9. re-enable once VS can
-#  be updated to 3.10 or above
-# from mysql.connector.connection_cext import CMySQLConnection
 import mysql.connector
-from mysql.connector import MySQLConnection
+from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
 # Local Folder (Relative) Imports
-from .. import exceptions
-from . import database_utils
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -62,15 +58,11 @@ __all__ = [
     'SQLite',
 ]
 
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
 # Type aliases
-# TODO: disabled as not supported by python 3.9. re-enable once VS can
-#  be updated to 3.10 or above
-# MySQLConn = Union[
-#     MySQLConnection,
-#     CMySQLConnection,
-#     PooledMySQLConnection
-# ]
-MySQLConn = Union[MySQLConnection, PooledMySQLConnection]
+MySQLConn = Union[MySQLConnectionAbstract, PooledMySQLConnection]
 
 
 class Database(abc.ABC):
@@ -94,6 +86,16 @@ class Database(abc.ABC):
 
 
 class MySQL(Database):
+    """
+    Handles MySQL database connections.
+
+    :param host: Hostname or IP address of the MySQL server.
+    :param user: Username to authenticate with the MySQL server.
+    :param password: Password to authenticate with the MySQL server.
+    :param port: Port number of the MySQL server.
+    :param database_schema: Name of the database schema to use.
+    """
+
     def __init__(self, host: str, user: str, password: str, port: str, database_schema: str):
         self._host = host
         self._user = user
@@ -104,25 +106,37 @@ class MySQL(Database):
 
     @property
     def _db_active_connection(self) -> MySQLConn:
+        """
+        Gets the active db connection. If there is not an active
+        connection it creates one.
+        """
+
         if not self._db_connection:
             self.open_db_connection()
 
-        assert (
-            isinstance(self._db_connection, MySQLConnection)
-            # TODO: disabled as not supported by python 3.9. re-enable
-            #  once VS can be updated to 3.10 or above
-            # or isinstance(self._db_connection, CMySQLConnection)
-            or isinstance(self._db_connection, PooledMySQLConnection)
+        assert isinstance(self._db_connection, MySQLConnectionAbstract) or isinstance(
+            self._db_connection, PooledMySQLConnection
         ), "Expected self._db_connection to be type MySQLConn"
 
         return self._db_connection
 
     @_db_active_connection.setter
     def _db_active_connection(self, value) -> None:
+        """
+        Sets the active db connection.
+        """
+
         self._db_connection = value
 
-    @database_utils.retry_decorator(exception_to_check=(exceptions.MySQLError,))
+    @utils.retry(exceptions.MySQLError)
     def open_db_connection(self) -> None:
+        """
+        Open a MySQL db connection.
+        Auto retry up to 4 times on connection error.
+
+        :raise MySQLError: If the operation fails.
+        """
+
         try:
             self._db_active_connection = mysql.connector.connect(
                 host=self._host,
@@ -132,24 +146,35 @@ class MySQL(Database):
                 database=self._database_schema,
             )
 
-        except mysql.connector.Error as e:
-            message = f"While connecting to {self._host!r} operation failed! error: {str(e)}"
-            logging.log(logging.ERROR, message)
+        except mysql.connector.Error as ex:
+            message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
+            module_logger.error(message)
             raise exceptions.MySQLError(message)
 
-    @database_utils.retry_decorator(exception_to_check=(exceptions.MySQLError,))
+    @utils.retry(exceptions.MySQLError)
     def close_db_connection(self) -> None:
+        """
+        Close the MySQL db connection.
+        Auto retry up to 4 times on connection error.
+
+        :raise MySQLError: If the operation fails.
+        """
+
         try:
             self._db_active_connection.close()
 
-        except mysql.connector.Error as e:
-            message = f"While closing {self._host!r} operation failed! error: {str(e)}"
-            logging.log(logging.ERROR, message)
+        except mysql.connector.Error as ex:
+            message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
+            module_logger.error(message)
             raise exceptions.MySQLError(message)
 
     def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
         """
         Send data to MySQL database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :raise MySQLError: If the operation fails.
         """
 
         db_cursor = self._db_active_connection.cursor(prepared=True, dictionary=True)
@@ -158,11 +183,15 @@ class MySQL(Database):
             db_cursor.execute(sql_query, sql_values)
 
             self._db_active_connection.commit()
-            logging.log(logging.INFO, "Database upload successful")
 
-        except mysql.connector.OperationalError as e:
-            message = f"While sending to {self._host!r} operation failed! error: {str(e)}"
-            logging.log(logging.ERROR, message)
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+
+        except mysql.connector.OperationalError as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f" traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
             raise exceptions.MySQLError(message)
 
         finally:
@@ -174,12 +203,20 @@ class MySQL(Database):
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from MySQL database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :param fetch_one: If True, only fetch the first row.
+        :return: Generator of dictionaries containing the fetched rows.
+        :raise MySQLError: If the operation fails.
         """
 
         db_cursor = self._db_active_connection.cursor(prepared=True, dictionary=True)
 
         try:
             db_cursor.execute(sql_query, sql_values)
+
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
                 yield db_cursor.fetchone()
@@ -188,60 +225,82 @@ class MySQL(Database):
                 for row in db_cursor:
                     yield row
 
-        except mysql.connector.OperationalError as e:
-            message = f"While fetching from {self._host!r} operation failed! error: {str(e)}"
-            logging.log(logging.ERROR, message)
-            raise exceptions.MySQLError(message)
-
-        # This Exception handles the case where the table is not found.
-        except mysql.connector.errors.ProgrammingError as e:
-            message = f"While connecting to {self._host!r} operation failed! error: {str(e)}"
-            logging.log(logging.ERROR, message)
+        except (mysql.connector.OperationalError, mysql.connector.errors.ProgrammingError) as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f" traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
             raise exceptions.MySQLError(message)
 
         finally:
-            # It typically discards the results of the last query and
-            # resets the cursor to its initial state, without affecting
-            # the underlying database connection. This is useful if
-            # you've fetched some rows from a result but want to discard
-            # the remaining unfetched rows and reuse the cursor for
-            # another query.
+            # cursor.reset typically discards the results of the last
+            # query and resets the cursor to its initial state, without
+            # affecting the underlying database connection. This is
+            # useful if you've fetched some rows from a result but want
+            # to discard the remaining unfetched rows and reuse the
+            # cursor for another query.
             db_cursor.reset()
             self.close_db_connection()
 
 
 class SQLite(Database):
+    """
+    Handles SQLite database connections.
+
+    :param sqlite_db_path: Fullpath to the SQLite database file.
+    :param filename: Name of the SQLite database file.
+    """
+
     def __init__(self, sqlite_db_path: Union[str, pathlib.Path], filename: str):
         self._sqlite_db_path = sqlite_db_path
         self._filename = filename
         self._db_connection: Optional[sqlite3.Connection] = None
 
     def open_db_connection(self) -> None:
+        """
+        Open a SQLite db connection and cache it for quick access.
+        To equal the style of MySQL it enables some features by default:
+        - Set the cursor to return dictionary instead of tuples.
+        - Enable foreign key constraint.
+
+        :raise SQLiteError: If the operation fails.
+        """
+
         try:
             self._db_connection = sqlite3.connect(self._sqlite_db_path)
 
             # Row to the row_factory of connection creates what some
-            # people call a 'dictionary cursor'
-            # Instead of tuples it starts returning 'dictionary'
+            # people call a 'dictionary cursor'. Instead of tuples,
+            # it starts returning 'dictionary'
             self._db_connection.row_factory = sqlite3.Row
 
-            # foreign key constraint must be enabled by the application
+            # Foreign key constraint must be enabled by the application
             # at runtime using the PRAGMA command
             self._db_connection.execute("PRAGMA foreign_keys = ON;")
 
-        except sqlite3.OperationalError as e:
-            message = f"While connecting to {self._filename} operation failed! error: {str(e)}"
-            logging.error(message)
+        except sqlite3.OperationalError as ex:
+            message = (
+                f"While connecting to [{self._filename}] operation failed! traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
     def close_db_connection(self) -> None:
+        """
+        Close the SQLite db connection.
+
+        :raise SQLiteError: If the operation fails.
+        """
+
         try:
             assert self._db_connection is not None, "Database connection is not open!"
+
             self._db_connection.close()
 
-        except sqlite3.OperationalError as e:
-            message = f"While closing {self._filename} operation failed! error: {str(e)}"
-            logging.error(message)
+        except sqlite3.OperationalError as ex:
+            message = f"While closing [{self._filename}] operation failed! traceback: {repr(ex)}"
+            module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
     def send_to_db(
@@ -249,23 +308,34 @@ class SQLite(Database):
     ) -> None:
         """
         Send data to SQLite database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :param db_is_open: If True, the database connection is already
+               open.
+        :raise SQLiteError: If the operation fails.
         """
 
         if not db_is_open:
             self.open_db_connection()
 
         assert self._db_connection is not None, "Database connection is not open!"
+
         db_cursor = self._db_connection.cursor()
 
         try:
             db_cursor.execute(sql_query, sql_values)
 
             db_cursor.connection.commit()
-            logging.info("Database upload successful!")
 
-        except (sqlite3.OperationalError, sqlite3.IntegrityError) as e:
-            message = f"While sending to {self._filename} operation failed! error: {str(e)}"
-            logging.error(message)
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+
+        except (sqlite3.OperationalError, sqlite3.IntegrityError) as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._filename}] operation failed!"
+                f" traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
         finally:
@@ -284,35 +354,49 @@ class SQLite(Database):
     ) -> Generator[dict[str, str], None, None]:
         """
         Fetch data from SQLite database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :param fetch_one: If True, only fetch the first row.
+        :param db_is_open: If True, the database connection is already
+               open.
+        :return: Generator of dictionaries containing the fetched rows.
+        :raise SQLiteError: If the operation fails.
         """
 
         if not db_is_open:
             self.open_db_connection()
 
         assert self._db_connection is not None, "Database connection is not open!"
+
         db_cursor = self._db_connection.cursor()
 
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            # The dict() converts the sqlite3.Row object, created by
-            # row_factory, into a dictionary
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+
             if fetch_one:
                 try:
+                    # The dict() converts the sqlite3.Row object,
+                    # created by row_factory, into a dictionary
                     yield dict(db_cursor.fetchone())
 
-                # if the fetch is not found and returns None, the
-                # dict(None) would raise TypeError
                 except TypeError:
+                    # if the fetch is not found and returns None,
+                    # the dict(None) would raise TypeError
                     yield {}
 
             else:
                 for row in db_cursor:
                     yield dict(row)
 
-        except sqlite3.OperationalError as e:
-            message = f"While fetching from {self._filename} operation failed! error: {str(e)}"
-            logging.error(message)
+        except sqlite3.OperationalError as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._filename}] operation failed!"
+                f" traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
         finally:

@@ -39,6 +39,7 @@ from typing import Any, Optional
 # Third Party Library Imports
 import boto3
 import botocore.config
+import botocore.exceptions
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -162,7 +163,7 @@ class SimTicketHandler:
 
         try:
             boto_session = boto3.session.Session(
-                region_name=self._aws_region_name,
+                region_name="global",  # overriding region with 'global'
                 profile_name=self._aws_profile_name,
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
@@ -174,6 +175,9 @@ class SimTicketHandler:
             )
 
             return client
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
@@ -203,8 +207,11 @@ class SimTicketHandler:
             try:
                 return tickety_response['ticket']
 
-            except KeyError as ex:
-                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+            except KeyError as ex_inner:
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex_inner)}")
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
@@ -229,6 +236,9 @@ class SimTicketHandler:
                 ticketingSystemName=self._ticketing_system_name,
                 update=payload,
             )
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
@@ -297,8 +307,11 @@ class SimTicketHandler:
             try:
                 return tickety_response['commentId']
 
-            except KeyError as ex:
-                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+            except KeyError as ex_inner:
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex_inner)}")
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
@@ -322,8 +335,11 @@ class SimTicketHandler:
             try:
                 return ticket_response['id']
 
-            except KeyError as ex:
-                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+            except KeyError as ex_inner:
+                raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex_inner)}")
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
 
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")

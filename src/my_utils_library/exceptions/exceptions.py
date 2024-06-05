@@ -50,10 +50,12 @@ __all__ = [
     'SQLiteError',
     'MySQLError',
     'DynamoDBError',
-    'DynamoDBUpdateConflictError',
+    'DynamoDBConflictError',
     'S3Error',
     'SecretsManagerError',
+    'KMSError',
     'CloudFrontError',
+    'EC2Error',
     'LambdaError',
 ]
 
@@ -124,7 +126,7 @@ class DynamoDBError(DatabaseError):
     """
 
 
-class DynamoDBUpdateConflictError(DynamoDBError):
+class DynamoDBConflictError(DynamoDBError):
     """
     This is the base exception class to handle DynamoDB errors.
     """
@@ -142,9 +144,22 @@ class SecretsManagerError(MyLibraryException):
     """
 
 
+class KMSError(MyLibraryException):
+    """
+    This is the base exception class to handle Key Management Service
+    (KMS) errors.
+    """
+
+
 class CloudFrontError(MyLibraryException):
     """
     This is the base exception class to handle CloudFront errors.
+    """
+
+
+class EC2Error(MyLibraryException):
+    """
+    This is the base exception class to handle EC2 errors.
     """
 
 

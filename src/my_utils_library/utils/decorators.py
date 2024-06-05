@@ -36,8 +36,8 @@ application.
 import functools
 import logging
 import time
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Callable, Iterable
+from typing import Any, Union
 
 # END IMPORTS
 # ======================================================================
@@ -45,8 +45,9 @@ from typing import Any
 
 # List of public names in the module
 __all__ = [
-    'benchmark_decorator',
-    'logging_decorator',
+    'retry',
+    'benchmark_execution',
+    'log_execution',
 ]
 
 # Setting up logger for current module
@@ -58,7 +59,69 @@ InnerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
-def benchmark_decorator(logger: logging.Logger = module_logger) -> DecoratorFunction:
+def retry(
+    exception_to_check: Union[type[Exception], Iterable[type[Exception]]],
+    tries: int = 4,
+    delay_secs: int = 3,
+    delay_multiplier: int = 2,
+) -> DecoratorFunction:
+    """
+    Retry calling the decorated function using an exponential backoff
+    multiplier.
+
+    :param exception_to_check: the exception to check. may be a tuple
+           of exceptions to check
+    :param tries: number of times to try (not retry) before giving up
+    :param delay_secs: initial delay between retries in seconds
+    :param delay_multiplier: delay multiplier e.g. value of 2 will
+           double the delay each retry
+    """
+
+    def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
+        @functools.wraps(original_func)
+        def inner(*args: Any, **kwargs: Any) -> Any:
+            nonlocal tries
+            nonlocal delay_secs
+
+            # Convert single exception to a tuple
+            if isinstance(exception_to_check, Iterable):
+                exceptions = tuple(exception_to_check)
+
+            else:
+                exceptions = tuple([exception_to_check])
+
+            # Assert all exc in the exception tuple are exception types
+            if not all(isinstance(exc, type) and issubclass(exc, Exception) for exc in exceptions):
+                raise ValueError(
+                    "exception_to_check must be an exception type or an iterable of exception types"
+                )
+
+            while tries > 1:
+                try:
+                    return original_func(*args, **kwargs)
+
+                except exceptions as ex:
+                    message = f"[RETRY]: {repr(ex)}, Retrying in {delay_secs} seconds..."
+
+                    # Log error
+                    module_logger.error(message)
+                    print(message)
+
+                    # Wait to retry
+                    time.sleep(delay_secs)
+
+                    # Increase delay for next retry
+                    tries -= 1
+                    delay_secs *= delay_multiplier
+
+            return original_func(*args, **kwargs)
+
+        return inner
+
+    return decorator_retry
+
+
+def benchmark_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential
     backoff multiplier.
@@ -74,8 +137,7 @@ def benchmark_decorator(logger: logging.Logger = module_logger) -> DecoratorFunc
         def inner(*args: Any, **kwargs: Any) -> Any:
             start_time = time.perf_counter()
             result = original_func(*args, **kwargs)
-            end_time = time.perf_counter()
-            execution_time = end_time - start_time
+            execution_time = time.perf_counter() - start_time
             logger.info(f"Execution of {original_func.__name__} took {execution_time:.3f} seconds.")
 
             return result
@@ -85,7 +147,7 @@ def benchmark_decorator(logger: logging.Logger = module_logger) -> DecoratorFunc
     return decorator_benchmark
 
 
-def logging_decorator(logger: logging.Logger = module_logger) -> DecoratorFunction:
+def log_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential
     backoff multiplier.
