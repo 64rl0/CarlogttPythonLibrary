@@ -9,11 +9,7 @@
     <orderEntry type="jdk" jdkName="venv_generic" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
-  <component name="PyDocumentationSettings">
-    <option name="format" value="PLAIN" />
-    <option name="myDocStringFormat" value="Plain" />
-  </component>
-  <component name="SonarLintModuleSettings">
-    <option name="uniqueId" value="c5457119-43b5-437c-ab6d-103c20efd67c" />
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="" />
   </component>
 </module>
