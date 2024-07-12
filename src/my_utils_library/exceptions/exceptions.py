@@ -46,6 +46,7 @@ import json
 __all__ = [
     'MyLibraryException',
     'SimTHandlerError',
+    'RedisCacheManagerError',
     'DatabaseError',
     'SQLiteError',
     'MySQLError',
@@ -99,6 +100,13 @@ class MyLibraryException(Exception):
 class SimTHandlerError(MyLibraryException):
     """
     This is the base exception class to handle SimTicket Handler errors.
+    """
+
+
+class RedisCacheManagerError(MyLibraryException):
+    """
+    This is the base exception class to handle redis cache manager
+    errors.
     """
 
 

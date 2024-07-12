@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/test-boto3-stubs/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="venv_generic" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.11 (generic)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

@@ -37,6 +37,7 @@ This module contains the package imports for the current package.
 from .database_dynamo import *
 from .database_sql import *
 from .database_utils import *
+from .redis_cache_manager import *
 
 # END IMPORTS
 # ======================================================================
