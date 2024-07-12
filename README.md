@@ -1,8 +1,8 @@
-# MyUtilsLibrary
+# CarlogttPythonLibrary
 
 ![Python Logo](https://www.python.org/static/community_logos/python-logo.png "Python Logo")
 
-MyUtilsLibrary is a collection of utility functions designed to simplify common tasks in Python.
+CarlogttPythonLibrary is a collection of utility functions designed to simplify common tasks in Python.
 
 
 ## Installation
@@ -10,8 +10,8 @@ MyUtilsLibrary is a collection of utility functions designed to simplify common 
 To clone the repository:
 
 ```bash
-git clone https://github.com/64rl0/my_utils_library.git
-cd my_utils_library
+git clone https://github.com/64rl0/CarlogttPythonLibrary.git ./carlogtt_python_library
+cd carlogtt_python_library
 ```
 
 

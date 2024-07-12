@@ -9,13 +9,13 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# __init__.py -> my_utils_library
+# __init__.py -> carlogtt_python_library
 # Created 10/4/23 - 10:44 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
 """
-my_utils_library is a collection of utility functions designed to
+carlogtt_python_library is a collection of utility functions designed to
 simplify common tasks in Python.
 """
 

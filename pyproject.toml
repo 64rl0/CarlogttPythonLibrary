@@ -1,5 +1,5 @@
 [project]
-name = "my_utils_library"
+name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
 version = "0.1.0"
 license = {text = "MIT"}
@@ -26,7 +26,7 @@ dependencies = [
 
 
 [project.urls]
-Homepage = "https://github.com/64rl0/my_utils_library.git"
+Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 
 
 [project.optional-dependencies]
