@@ -521,13 +521,11 @@ class DynamoDB:
             )
 
             # If condition attribute exists pass it to the DynamoDB call
-            dynamodb_update_item_args.update(
-                {
-                    'ConditionExpression': (
-                        f"{condition_attribute_key} = :condition_attribute_value_placeholder"
-                    )
-                }
-            )
+            dynamodb_update_item_args.update({
+                'ConditionExpression': (
+                    f"{condition_attribute_key} = :condition_attribute_value_placeholder"
+                )
+            })
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
@@ -822,12 +820,10 @@ class DynamoDB:
             transact_items.append({'Put': el_put_serialized})
 
             # Append the 'put' item to the return list
-            response['Put'].append(
-                {
-                    key: self._serializer.deserialize_att(value)  # type: ignore
-                    for key, value in el_put_serialized['Item'].items()
-                }
-            )
+            response['Put'].append({
+                key: self._serializer.deserialize_att(value)  # type: ignore
+                for key, value in el_put_serialized['Item'].items()
+            })
 
             # If we need to increment the counter we update the counter
             if el.get('AutoGeneratePartitionKeyValue'):
@@ -890,13 +886,11 @@ class DynamoDB:
 
                 # If condition attribute exists pass it to the DynamoDB
                 # call
-                el_update_serialized.update(
-                    {
-                        'ConditionExpression': (
-                            f"{condition_att_key} = :condition_attribute_value_placeholder"
-                        )
-                    }
-                )
+                el_update_serialized.update({
+                    'ConditionExpression': (
+                        f"{condition_att_key} = :condition_attribute_value_placeholder"
+                    )
+                })
                 # :condition_attribute_value_placeholder has to be
                 # passed along the ExpressionAttributeValues because
                 # is used by the ConditionExpression
@@ -1022,18 +1016,14 @@ class DynamoDB:
                 self._client.create_table(
                     TableName=sys_table,
                     BillingMode='PAY_PER_REQUEST',
-                    AttributeDefinitions=[
-                        {
-                            'AttributeName': 'pk_id',
-                            'AttributeType': 'S',
-                        }
-                    ],
-                    KeySchema=[
-                        {
-                            'AttributeName': 'pk_id',
-                            'KeyType': 'HASH',
-                        }
-                    ],
+                    AttributeDefinitions=[{
+                        'AttributeName': 'pk_id',
+                        'AttributeType': 'S',
+                    }],
+                    KeySchema=[{
+                        'AttributeName': 'pk_id',
+                        'KeyType': 'HASH',
+                    }],
                     DeletionProtectionEnabled=True,
                 )
 
@@ -1186,12 +1176,10 @@ class DynamoDB:
         sys_table = table + "_SysItems"
 
         # Update the counter
-        update_attributes, expression_attribute_values = self._serializer.serialize_update_items(
-            **{
-                'current_counter_value': counter_value,
-                'last_modified_timestamp': time.time_ns(),
-            }
-        )
+        update_attributes, expression_attribute_values = self._serializer.serialize_update_items(**{
+            'current_counter_value': counter_value,
+            'last_modified_timestamp': time.time_ns(),
+        })
 
         # :condition_attribute_value_placeholder has to be
         # passed along the ExpressionAttributeValues because
