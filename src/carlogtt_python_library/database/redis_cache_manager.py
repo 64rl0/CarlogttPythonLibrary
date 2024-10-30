@@ -438,9 +438,13 @@ class RedisSerializer:
         data types.
         """
 
-        def default(self, obj) -> Any:
+        def default(self, obj: Any) -> Any:
             """
             Override the default method to handle additional data types.
+
+            A function that gets called for objects that can’t otherwise
+            be serialized. It should return a JSON encodable version of
+            the object.
 
             :param obj: The object to be serialized.
             :return: The serialized form of the object.
@@ -467,14 +471,17 @@ class RedisSerializer:
             if isinstance(obj, set):
                 return {'__sentinel_type__': 'set', 'data': [self._default(el) for el in obj]}
 
-            elif isinstance(obj, tuple):
-                return {'__sentinel_type__': 'tuple', 'data': [self._default(el) for el in obj]}
-
             elif isinstance(obj, bytes):
                 return {'__sentinel_type__': 'bytes', 'data': obj.decode('utf-8')}
 
             elif isinstance(obj, complex):
                 return {'__sentinel_type__': 'complex_num', 'data': [obj.real, obj.imag]}
+
+            # Note to future carlogtt, tuple does not call the default
+            # function as they are not seen as unserializable obj, but
+            # they are seen as list
+            elif isinstance(obj, tuple):
+                return {'__sentinel_type__': 'tuple', 'data': [self._default(el) for el in obj]}
 
             else:
                 return obj
@@ -489,6 +496,7 @@ class RedisSerializer:
             """
 
             # Handle tuples because JSON is converting them to lists
+            # Note to future carlogtt, not sure set will ever get here
             if isinstance(obj, (dict, set, list, tuple)):
                 obj = self._encode(obj)
 
@@ -502,17 +510,23 @@ class RedisSerializer:
             :return: The encoded form of the object.
             """
 
+            # The super encode method would convert tuples to lists, so
+            # we need to intercept that and convert tuples to dict with
+            # a sentinel_value
+            # Also dicts and lists can contain tuples
             if isinstance(obj, dict):
                 obj = {key: self._encode(value) for key, value in obj.items()}
-
-            elif isinstance(obj, set):
-                obj = {self._encode(el) for el in obj}
 
             elif isinstance(obj, list):
                 obj = [self._encode(el) for el in obj]
 
             elif isinstance(obj, tuple):
                 obj = {'__sentinel_type__': 'tuple', 'data': [self._encode(el) for el in obj]}
+
+            # Note to future carlogtt, not sure set will ever get here
+            # as they are converted to dict in the above default method
+            elif isinstance(obj, set):
+                obj = {self._encode(el) for el in obj}
 
             return obj
 
