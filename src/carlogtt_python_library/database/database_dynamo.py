@@ -42,6 +42,7 @@ from typing import Any, Literal, Optional, TypedDict, Union
 
 # Third Party Library Imports
 import boto3
+import botocore.config
 import botocore.exceptions
 from mypy_boto3_dynamodb import type_defs
 from mypy_boto3_dynamodb.client import DynamoDBClient
@@ -154,10 +155,16 @@ class DynamoDB:
            corresponding to the provided access key ID. Like the
            access key ID, this parameter is optional and only needed
            if not using a profile.
+    :param aws_session_token: The AWS temporary session token
+           corresponding to the provided access key ID. Like the
+           access key ID, this parameter is optional and only needed
+           if not using a profile.
     :param caching: Determines whether to enable caching for the
            client session. If set to True, the client session will
            be cached to improve performance and reduce the number
            of API calls. Default is False.
+    :param client_parameters: A key-value pair object of parameters that
+           will be passed to the low-level service client.
     """
 
     def __init__(
@@ -167,15 +174,19 @@ class DynamoDB:
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
+        aws_session_token: Optional[str] = None,
         caching: bool = False,
+        client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
+        self._aws_session_token = aws_session_token
         self._caching = caching
         self._cache: dict[str, Any] = dict()
         self._aws_service_name: Literal['dynamodb'] = "dynamodb"
+        self._client_parameters = client_parameters if client_parameters else dict()
         self._serializer = DynamoDbSerializer()
 
     @property
@@ -209,8 +220,11 @@ class DynamoDB:
                 profile_name=self._aws_profile_name,
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
+                aws_session_token=self._aws_session_token,
             )
-            client = boto_session.client(service_name=self._aws_service_name)
+            client = boto_session.client(
+                service_name=self._aws_service_name, **self._client_parameters
+            )
 
             return client
 
@@ -506,8 +520,8 @@ class DynamoDB:
         )
 
         # Serialize attributes
-        update_attributes, expression_attribute_values = self._serializer.serialize_update_items(
-            **items
+        update_expression, expression_attribute_names, expression_attribute_values = (
+            self._serializer.serialize_update_items(**items)
         )
 
         # Check if a condition is required
@@ -523,9 +537,15 @@ class DynamoDB:
             # If condition attribute exists pass it to the DynamoDB call
             dynamodb_update_item_args.update({
                 'ConditionExpression': (
-                    f"{condition_attribute_key} = :condition_attribute_value_placeholder"
+                    f"#{condition_attribute_key} = :condition_attribute_value_placeholder"
                 )
             })
+
+            # #condition_attribute_key has to be passed
+            # along the ExpressionAttributeNames because is used by the
+            # ConditionExpression
+            expression_attribute_names[f"#{condition_attribute_key}"] = condition_attribute_key
+
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
@@ -535,7 +555,8 @@ class DynamoDB:
 
         # Update DynamoDB call arguments
         dynamodb_update_item_args['Key'] = partition_key_serialized
-        dynamodb_update_item_args['UpdateExpression'] = update_attributes
+        dynamodb_update_item_args['UpdateExpression'] = update_expression
+        dynamodb_update_item_args['ExpressionAttributeNames'] = expression_attribute_names
         dynamodb_update_item_args['ExpressionAttributeValues'] = expression_attribute_values
 
         module_logger.debug(dynamodb_update_item_args)
@@ -862,14 +883,15 @@ class DynamoDB:
             partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
             assert isinstance(partition_key_value, (str, bytes, int, float))
 
-            update_attributes, expression_attribute_values = (
+            update_expression, expression_attribute_names, expression_attribute_values = (
                 self._serializer.serialize_update_items(**el['Items'])
             )
 
             el_update_serialized: type_defs.UpdateTypeDef = {
                 'TableName': el['TableName'],
                 'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
-                'UpdateExpression': update_attributes,
+                'UpdateExpression': update_expression,
+                'ExpressionAttributeNames': expression_attribute_names,
                 'ExpressionAttributeValues': expression_attribute_values,
             }
 
@@ -888,9 +910,15 @@ class DynamoDB:
                 # call
                 el_update_serialized.update({
                     'ConditionExpression': (
-                        f"{condition_att_key} = :condition_attribute_value_placeholder"
+                        f"#{condition_att_key} = :condition_attribute_value_placeholder"
                     )
                 })
+
+                # #condition_att_key has to be passed
+                # along the ExpressionAttributeNames because is used by
+                # the ConditionExpression
+                expression_attribute_names[f"#{condition_att_key}"] = condition_att_key
+
                 # :condition_attribute_value_placeholder has to be
                 # passed along the ExpressionAttributeValues because
                 # is used by the ConditionExpression
@@ -1176,10 +1204,12 @@ class DynamoDB:
         sys_table = table + "_SysItems"
 
         # Update the counter
-        update_attributes, expression_attribute_values = self._serializer.serialize_update_items(**{
-            'current_counter_value': counter_value,
-            'last_modified_timestamp': time.time_ns(),
-        })
+        update_expression, expression_attribute_names, expression_attribute_values = (
+            self._serializer.serialize_update_items(**{
+                'current_counter_value': counter_value,
+                'last_modified_timestamp': time.time_ns(),
+            })
+        )
 
         # :condition_attribute_value_placeholder has to be
         # passed along the ExpressionAttributeValues because
@@ -1191,11 +1221,12 @@ class DynamoDB:
         el_update_serialized: type_defs.UpdateTypeDef = {
             'TableName': sys_table,
             'Key': self._serializer.serialize_p_key("pk_id", "__PK_VALUE_COUNTER__"),
-            'UpdateExpression': update_attributes,
-            'ConditionExpression': (
-                "last_modified_timestamp = :condition_attribute_value_placeholder"
-            ),
+            'UpdateExpression': update_expression,
+            'ExpressionAttributeNames': expression_attribute_names,
             'ExpressionAttributeValues': expression_attribute_values,
+            'ConditionExpression': (
+                "#last_modified_timestamp = :condition_attribute_value_placeholder"
+            ),
         }
 
         return el_update_serialized
@@ -1484,17 +1515,26 @@ class DynamoDbSerializer:
 
         return additional_items
 
-    def serialize_update_items(self, **items: AttributeValue) -> tuple[str, Item]:
+    def serialize_update_items(self, **items: AttributeValue) -> tuple[str, dict[str, str], Item]:
         """
         Returns a tuple containing the UpdateExpression and the
         ExpressionAttributeValues ready to be passed to the DynamoDB
         update_item call.
 
         :param items: Key-value pairs to serialize.
-        :return: UpdateExpression and ExpressionAttributeValues.
+        :return: A tuple with UpdateExpression, ExpressionAttributeNames
+            and ExpressionAttributeValues.
         """
 
-        update_attributes = "SET "
+        update_expression = "SET "
+
+        # In DynamoDB operations(such as UpdateItem, Query, or Scan),
+        # you can use ExpressionAttributeNames to provide alternate
+        # names for attributes in your expressions.This is most
+        # commonly used to work around DynamoDB's reserved keywords or
+        # to use attribute names that contain special characters not
+        # allowed in expressions.
+        expression_attribute_names: dict[str, str] = {}
 
         # In DynamoDB API, the ExpressionAttributeValues dictionary is
         # used to pass in placeholders for values that will be used in
@@ -1505,17 +1545,18 @@ class DynamoDbSerializer:
 
         for key, value in items.items():
             normalized_key = utils.snake_case(key)
-            normalized_key_dynamodb_placeholder = ":" + normalized_key + "_placeholder"
             dynamodb_attribute = self.serialize_att(value)
 
-            # Add to the update_attributes string
-            update_attributes += f"{normalized_key} = {normalized_key_dynamodb_placeholder}, "
+            # Add to the update_expression string
+            update_expression += f"#{normalized_key} = :{normalized_key}_placeholder, "
 
-            # Add to the expression_attribute_values serialized
-            # dictionary
-            expression_attribute_values[normalized_key_dynamodb_placeholder] = dynamodb_attribute
+            # Add to the expression_attribute_names dict
+            expression_attribute_names[f"#{normalized_key}"] = normalized_key
 
-        # Removing the trailing ", " from the update_attributes string
-        update_attributes = update_attributes[:-2]
+            # Add to the expression_attribute_values serialized dict
+            expression_attribute_values[f":{normalized_key}_placeholder"] = dynamodb_attribute
 
-        return update_attributes, expression_attribute_values
+        # Removing the trailing ", " from the update_expression string
+        update_expression = update_expression[:-2]
+
+        return update_expression, expression_attribute_names, expression_attribute_values

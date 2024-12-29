@@ -88,10 +88,16 @@ class SimTicketHandler:
            corresponding to the provided access key ID. Like the
            access key ID, this parameter is optional and only needed
            if not using a profile.
+    :param aws_session_token: The AWS temporary session token
+           corresponding to the provided access key ID. Like the
+           access key ID, this parameter is optional and only needed
+           if not using a profile.
     :param caching: Determines whether to enable caching for the
            client session. If set to True, the client session will
            be cached to improve performance and reduce the number
            of API calls. Default is False.
+    :param client_parameters: A key-value pair object of parameters that
+           will be passed to the low-level service client.
     """
 
     def __init__(
@@ -103,7 +109,9 @@ class SimTicketHandler:
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
+        aws_session_token: Optional[str] = None,
         caching: bool = False,
+        client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
         self._aws_account_id = aws_account_id
         self._ticketing_system_name = ticketing_system_name
@@ -111,10 +119,12 @@ class SimTicketHandler:
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
         self._aws_secret_access_key = aws_secret_access_key
+        self._aws_session_token = aws_session_token
         self._caching = caching
         self._cache: dict[str, Any] = dict()
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
+        self._client_parameters = client_parameters if client_parameters else dict()
 
     @property
     def _client(self):
@@ -167,11 +177,13 @@ class SimTicketHandler:
                 profile_name=self._aws_profile_name,
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
+                aws_session_token=self._aws_session_token,
             )
             client = boto_session.client(  # type: ignore
                 service_name=self._aws_service_name,
                 endpoint_url=self._aws_endpoint_url,
                 config=self._tickety_client_config,
+                **self._client_parameters,
             )
 
             return client
