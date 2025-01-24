@@ -6,6 +6,6 @@ format:
 build:
 	./scripts/build_venv.sh "build_venv"
 
-.PHONY: deploy
+.PHONY: deploy-pypi
 deploy:
-	./scripts/deploy.sh
+	./scripts/deploy_pypi.sh
