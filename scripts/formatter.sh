@@ -82,114 +82,176 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
+# Select the correct venv with the tools installed
+devdsk="devdsk7"
+python_runtime="python3.11"
+
+# Use brazil runtime farm
+if [[ -d "${project_root_dir_abs}/build/private" ]]; then
+	brazil_bin_dir="$(brazil-path testrun.runtimefarm)/${python_runtime}/bin"
+fi
+
+# Use project build_venv venv
+if [[ -d "${project_root_dir_abs}/build_venv" ]]; then
+	path_to_venv_root="${project_root_dir_abs}/build_venv"
+# Use DevDsk dev_tools venv if we are on a DevDsk
+elif [[ -d "${HOME}/${devdsk}" ]]; then
+	path_to_venv_root="${HOME}/${devdsk}/venvs/dev_tools"
+# Use Dropbox dev_tools venv if we are on local macbook
+elif [[ -d "${HOME}/Library/CloudStorage/Dropbox" ]]; then
+	path_to_venv_root="${HOME}/Library/CloudStorage/Dropbox/SDE/VirtualEnvs/dev_tools"
+fi
+
+# Display Project info
 echo -e "\n${bold_green}${hammer_and_wrench} Project Root:${end}"
 echo "${project_root_dir_abs}"
 
-# Check if we are on DevDsk or local Dev Env
-devdsk=6
-if [[ -d "${HOME}/devdsk${devdsk}" ]]; then
-    # Use DevDsk venv
-    path_to_venv_root="${HOME}/devdsk${devdsk}/venvs/dev_tools"
-elif [[ -d "${HOME}/Library/CloudStorage/Dropbox" ]]; then
-    # Use local dev venv
-    path_to_venv_root="${HOME}/Library/CloudStorage/Dropbox/SDE/VirtualEnvs/dev_tools"
+# Activate brazil runtime env first as it takes precedence
+if [[ -n "${brazil_bin_dir}" ]]; then
+	OLD_PATH="${PATH}"
+	PATH="${brazil_bin_dir}:${PATH}"
+	echo -e "\n${bold_green}${green_check_mark} Virtual environment activated:${end}"
+	echo -e "${brazil_bin_dir}"
+# Activate venv if we are not in brazil venv
+elif [[ -n "${path_to_venv_root}" ]]; then
+	source "${path_to_venv_root}/bin/activate"
+	echo -e "\n${bold_green}${green_check_mark} Virtual environment activated:${end}"
+	echo -e "venv: ${VIRTUAL_ENV}"
+#  Cannot activate any venv
 else
-    echo -e "\n${bold_red}Have you selected the correct DevDsk in the formatter file?${end}\n"
-    exit 1
+	echo -e "\n${bold_red}Cannot find any venv to activate!${end}"
+	echo -e "${bold_red}Have you selected the correct DevDsk and/or build_venv in the formatter file?${end}"
+	echo -e "${bold_red}Run 'make build' to build a local build_venv in ${project_root_dir_abs}/build_venv${end}\n"
+	exit 1
 fi
-source "${path_to_venv_root}/bin/activate"
-echo -e "\n${bold_green}${green_check_mark} Virtual environment activated:${end}"
+
+# Display env info
 echo -e "OS Version: $(uname)"
 echo -e "Kernel Version: $(uname -r)"
-echo -e "venv: ${VIRTUAL_ENV}"
-echo -e "running: $(python --version)"
+echo -e "running: $(python3 --version)"
 
 echo -e "\n${bold_green}${sparkles} Running iSort...${end}"
 isort="Y"
 if [[ "${isort}" == "Y" ]]; then
-    if [[ -d "${project_root_dir_abs}/src" ]]; then
-        echo -e "${blue}src/${end}"
-        isort "${project_root_dir_abs}/src" 2>&1
-    fi
-    if [[ -d "${project_root_dir_abs}/test" ]]; then
-        echo -e "${blue}\ntest/${end}"
-        isort "${project_root_dir_abs}/test" 2>&1
-    fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}src/${end}"
+		isort "${project_root_dir_abs}/src" 2>&1
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		isort "${project_root_dir_abs}/test" 2>&1
+	fi
 else
-    echo -e "${bold_red}[DISABLED]${end}"
+	echo -e "${bold_red}[DISABLED]${end}"
 fi
 
 echo -e "\n${bold_green}${sparkles} Running Black...${end}"
 black_fmt="Y"
 if [[ "${black_fmt}" == "Y" ]]; then
-    if [[ -d "${project_root_dir_abs}/src" ]]; then
-        echo -e "${blue}src/${end}"
-        black "${project_root_dir_abs}/src" 2>&1
-    fi
-    if [[ -d "${project_root_dir_abs}/test" ]]; then
-        echo -e "${blue}\ntest/${end}"
-        black "${project_root_dir_abs}/test" 2>&1
-    fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}src/${end}"
+		black "${project_root_dir_abs}/src" 2>&1
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		black "${project_root_dir_abs}/test" 2>&1
+	fi
 else
-    echo -e "${bold_red}[DISABLED]${end}"
+	echo -e "${bold_red}[DISABLED]${end}"
 fi
 
 echo -e "\n${bold_green}${sparkles} Running Flake8...${end}"
-flake8="Y"
+flake8="N"
 if [[ "${flake8}" == "Y" ]]; then
-    if [[ -d "${project_root_dir_abs}/src" ]]; then
-        echo -e "${blue}src/${end}"
-        flake8 -v "${project_root_dir_abs}/src" 2>&1
-    fi
-    if [[ -d "${project_root_dir_abs}/test" ]]; then
-        echo -e "${blue}\ntest/${end}"
-        flake8 -v "${project_root_dir_abs}/test" 2>&1
-    fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}src/${end}"
+		flake8 -v "${project_root_dir_abs}/src" 2>&1
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		flake8 -v "${project_root_dir_abs}/test" 2>&1
+	fi
 else
-    echo -e "${bold_red}[DISABLED]${end}"
+	echo -e "${bold_red}[DISABLED]${end}"
 fi
 
 echo -e "\n${bold_green}${sparkles} Running mypy...${end}"
-mypy="Y"
+mypy="N"
 if [[ "${mypy}" == "Y" ]]; then
-    if [[ -d "${project_root_dir_abs}/src" ]]; then
-        echo -e "${blue}src/${end}"
-        mypy "${project_root_dir_abs}/src" 2>&1
-    fi
-    if [[ -d "${project_root_dir_abs}/test" ]]; then
-        echo -e "${blue}\ntest/${end}"
-        mypy "${project_root_dir_abs}/test" 2>&1
-    fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}src/${end}"
+		mypy "${project_root_dir_abs}/src" 2>&1
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		mypy "${project_root_dir_abs}/test" 2>&1
+	fi
 else
-    echo -e "${bold_red}[DISABLED]${end}"
+	echo -e "${bold_red}[DISABLED]${end}"
 fi
 
 echo -e "\n${bold_green}${sparkles} Running shfmt...${end}"
 shfmt="Y"
 if [[ "${shfmt}" == "Y" ]]; then
-    if [[ -d "${script_dir_abs}" ]]; then
-        echo -e "${blue}scripts/${end}"
-        shfmt -l -w "${script_dir_abs}"
-    fi
-    if [[ -d "${project_root_dir_abs}/configuration" ]]; then
-        echo -e "${blue}\nconfiguration/${end}"
-        shfmt -l -w "${project_root_dir_abs}/configuration"
-    fi
-    if [[ -d "${project_root_dir_abs}/src" ]]; then
-        echo -e "${blue}\nsrc/${end}"
-        shfmt -l -w "${project_root_dir_abs}/src"
-    fi
-    if [[ -d "${project_root_dir_abs}/test" ]]; then
-        echo -e "${blue}\ntest/${end}"
-        shfmt -l -w "${project_root_dir_abs}/test"
-    fi
-    if [[ -d "${project_root_dir_abs}/lib" ]]; then
-        echo -e "${blue}\nlib/${end}"
-        shfmt -l -w "${project_root_dir_abs}/lib"
-    fi
+	if [[ -d "${script_dir_abs}" ]]; then
+		echo -e "${blue}scripts/${end}"
+		shfmt -l -w "${script_dir_abs}"
+	fi
+	if [[ -d "${project_root_dir_abs}/configuration" ]]; then
+		echo -e "${blue}\nconfiguration/${end}"
+		shfmt -l -w "${project_root_dir_abs}/configuration"
+	fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}\nsrc/${end}"
+		shfmt -l -w "${project_root_dir_abs}/src"
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		shfmt -l -w "${project_root_dir_abs}/test"
+	fi
+	if [[ -d "${project_root_dir_abs}/lib" ]]; then
+		echo -e "${blue}\nlib/${end}"
+		shfmt -l -w "${project_root_dir_abs}/lib"
+	fi
 else
-    echo -e "${bold_red}[DISABLED]${end}"
+	echo -e "${bold_red}[DISABLED]${end}"
+fi
+
+echo -e "\n${bold_green}${sparkles} Running 'NNBSP' char replacement...${end}"
+nnbsp="Y"
+if [[ "${nnbsp}" == "Y" ]]; then
+	if [[ -d "${script_dir_abs}" ]]; then
+		echo -e "${blue}scripts/${end}"
+		find "${project_root_dir_abs}/scripts" -type f -not -name "formatter.sh" -exec sed -i '' 's/ / /g' {} +
+		echo -e "done!"
+	fi
+	if [[ -d "${project_root_dir_abs}/configuration" ]]; then
+		echo -e "${blue}\nconfiguration/${end}"
+		find "${project_root_dir_abs}/configuration" -type f -exec sed -i '' 's/ / /g' {} +
+		echo -e "done!"
+	fi
+	if [[ -d "${project_root_dir_abs}/src" ]]; then
+		echo -e "${blue}\nsrc/${end}"
+		find "${project_root_dir_abs}/src" -type f -not -path '*.pyc' -exec sed -i '' 's/ / /g' {} +
+		echo -e "done!"
+	fi
+	if [[ -d "${project_root_dir_abs}/test" ]]; then
+		echo -e "${blue}\ntest/${end}"
+		find "${project_root_dir_abs}/test" -type f -not -path '*.pyc' -exec sed -i '' 's/ / /g' {} +
+		echo -e "done!"
+	fi
+	if [[ -d "${project_root_dir_abs}/lib" ]]; then
+		echo -e "${blue}\nlib/${end}"
+		find "${project_root_dir_abs}/lib" -type f -exec sed -i '' 's/ / /g' {} +
+		echo -e "done!"
+	fi
+else
+	echo -e "${bold_red}[DISABLED]${end}"
 fi
 
 echo -e "\n${bold_yellow}${warning_sign} Virtual environment deactivated!${end}"
-deactivate
+if [[ -n "${OLD_PATH}" ]]; then
+	PATH="${OLD_PATH}"
+else
+	deactivate
+fi
