@@ -1,7 +1,7 @@
 [project]
 name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
-version = "0.1.0"
+version = "1.0.1"
 license = {text = "MIT"}
 authors = [
     {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
@@ -128,7 +128,7 @@ known_third_party = []
 
 # known_OTHER is how imports of custom sections are defined.
 # OTHER is a placeholder for the custom section name.
-known_mylib = []
+known_mylib = ['carlogtt_library', 'carlogtt_python_library']
 
 # Force isort to recognize a module as being part of the current python
 # project.
