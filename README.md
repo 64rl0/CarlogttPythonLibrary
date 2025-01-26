@@ -14,7 +14,7 @@ git clone https://github.com/64rl0/CarlogttPythonLibrary.git ./carlogtt_python_l
 cd carlogtt_python_library
 ```
 
-To clone use the library:
+To use the library:
 
 ```bash
 pip install carlogtt-python-library
