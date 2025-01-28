@@ -1,7 +1,7 @@
 [project]
 name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
-version = "1.0.1"
+version = "1.0.2"
 license = {text = "MIT"}
 authors = [
     {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
