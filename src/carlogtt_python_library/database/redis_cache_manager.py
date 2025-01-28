@@ -175,6 +175,7 @@ class RedisCacheManager:
                 raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
 
             if redis_response:
+                assert isinstance(redis_response, str)
                 response = self._serializer.deserialize(redis_response)
 
             else:
@@ -207,6 +208,7 @@ class RedisCacheManager:
                 redis_response = self._redis_client.set(redis_key, redis_value)
 
                 if redis_response:
+                    assert isinstance(redis_response, bool)
                     return redis_response
 
                 else:

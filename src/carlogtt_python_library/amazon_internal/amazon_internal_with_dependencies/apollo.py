@@ -35,8 +35,8 @@ This module ...
 import os
 
 # Third Party Library Imports
-from bender import apollo_environment_info
-from bender.apollo_error import ApolloError
+from bender import apollo_environment_info  # type: ignore
+from bender.apollo_error import ApolloError  # type: ignore
 
 # END IMPORTS
 # ======================================================================

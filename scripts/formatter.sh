@@ -161,7 +161,7 @@ else
 fi
 
 echo -e "\n${bold_green}${sparkles} Running Flake8...${end}"
-flake8="N"
+flake8="Y"
 if [[ "${flake8}" == "Y" ]]; then
 	if [[ -d "${project_root_dir_abs}/src" ]]; then
 		echo -e "${blue}src/${end}"
@@ -176,7 +176,7 @@ else
 fi
 
 echo -e "\n${bold_green}${sparkles} Running mypy...${end}"
-mypy="N"
+mypy="Y"
 if [[ "${mypy}" == "Y" ]]; then
 	if [[ -d "${project_root_dir_abs}/src" ]]; then
 		echo -e "${blue}src/${end}"

@@ -36,7 +36,7 @@ import json
 
 # Third Party Library Imports
 import requests
-import requests_midway
+import requests_midway  # type: ignore
 
 # END IMPORTS
 # ======================================================================

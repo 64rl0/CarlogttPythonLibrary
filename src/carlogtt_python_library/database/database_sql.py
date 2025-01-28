@@ -37,10 +37,11 @@ import logging
 import pathlib
 import sqlite3
 from collections.abc import Generator
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 # Third Party Library Imports
 import mysql.connector
+import mysql.connector.cursor
 from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
@@ -81,7 +82,7 @@ class Database(abc.ABC):
     @abc.abstractmethod
     def fetch_from_db(
         self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
-    ) -> Generator[dict[str, str], None, None]:
+    ) -> Generator[dict[str, Any], None, None]:
         pass
 
 
@@ -105,7 +106,7 @@ class MySQL(Database):
         self._db_connection: Optional[MySQLConn] = None
 
     @property
-    def _db_active_connection(self) -> MySQLConn:
+    def db_connection(self) -> MySQLConn:
         """
         Gets the active db connection. If there is not an active
         connection it creates one.
@@ -120,14 +121,6 @@ class MySQL(Database):
 
         return self._db_connection
 
-    @_db_active_connection.setter
-    def _db_active_connection(self, value) -> None:
-        """
-        Sets the active db connection.
-        """
-
-        self._db_connection = value
-
     @utils.retry(exceptions.MySQLError)
     def open_db_connection(self) -> None:
         """
@@ -138,7 +131,7 @@ class MySQL(Database):
         """
 
         try:
-            self._db_active_connection = mysql.connector.connect(
+            self._db_connection = mysql.connector.connect(
                 host=self._host,
                 user=self._user,
                 password=self._password,
@@ -161,7 +154,11 @@ class MySQL(Database):
         """
 
         try:
-            self._db_active_connection.close()
+            assert isinstance(self._db_connection, MySQLConnectionAbstract) or isinstance(
+                self._db_connection, PooledMySQLConnection
+            ), "Database connection is not open!"
+
+            self._db_connection.close()
 
         except mysql.connector.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
@@ -177,12 +174,12 @@ class MySQL(Database):
         :raise MySQLError: If the operation fails.
         """
 
-        db_cursor = self._db_active_connection.cursor(prepared=True, dictionary=True)
+        db_cursor = self.db_connection.cursor(prepared=True, dictionary=True)
 
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            self._db_active_connection.commit()
+            self.db_connection.commit()
 
             module_logger.info(f"Database SQL query {sql_query=} executed successfully")
 
@@ -200,7 +197,7 @@ class MySQL(Database):
 
     def fetch_from_db(
         self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
-    ) -> Generator[dict[str, str], None, None]:
+    ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from MySQL database.
 
@@ -211,7 +208,8 @@ class MySQL(Database):
         :raise MySQLError: If the operation fails.
         """
 
-        db_cursor = self._db_active_connection.cursor(prepared=True, dictionary=True)
+        db_cursor = self.db_connection.cursor(prepared=True, dictionary=True)
+        assert isinstance(db_cursor, mysql.connector.cursor.MySQLCursorDict)
 
         try:
             db_cursor.execute(sql_query, sql_values)
@@ -219,11 +217,21 @@ class MySQL(Database):
             module_logger.info(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
-                yield db_cursor.fetchone()
+                next_row = db_cursor.fetchone()
+                if next_row:
+                    yield next_row
+                else:
+                    yield {}
 
             else:
-                for row in db_cursor:
-                    yield row
+                next_row = db_cursor.fetchone()
+                if next_row:
+                    yield next_row
+                    # db_cursor.fetchone will return None when at the
+                    # end so the sentinel is met by the iter function
+                    yield from iter(db_cursor.fetchone, None)
+                else:
+                    yield {}
 
         except (mysql.connector.OperationalError, mysql.connector.errors.ProgrammingError) as ex:
             message = (
@@ -256,6 +264,22 @@ class SQLite(Database):
         self._sqlite_db_path = sqlite_db_path
         self._filename = filename
         self._db_connection: Optional[sqlite3.Connection] = None
+
+    @property
+    def db_connection(self) -> sqlite3.Connection:
+        """
+        Gets the active db connection. If there is not an active
+        connection it creates one.
+        """
+
+        if not self._db_connection:
+            self.open_db_connection()
+
+        assert isinstance(
+            self._db_connection, sqlite3.Connection
+        ), "Expected self._db_connection to be type sqlite3.Connection"
+
+        return self._db_connection
 
     def open_db_connection(self) -> None:
         """
@@ -294,7 +318,9 @@ class SQLite(Database):
         """
 
         try:
-            assert self._db_connection is not None, "Database connection is not open!"
+            assert isinstance(
+                self._db_connection, sqlite3.Connection
+            ), "Database connection is not open!"
 
             self._db_connection.close()
 
@@ -303,25 +329,16 @@ class SQLite(Database):
             module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
-    def send_to_db(
-        self, sql_query: str, sql_values: Union[tuple[str, ...], str], db_is_open: bool = False
-    ) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
         """
         Send data to SQLite database.
 
         :param sql_query: SQL query to be executed.
         :param sql_values: Values to be substituted in the SQL query.
-        :param db_is_open: If True, the database connection is already
-               open.
         :raise SQLiteError: If the operation fails.
         """
 
-        if not db_is_open:
-            self.open_db_connection()
-
-        assert self._db_connection is not None, "Database connection is not open!"
-
-        db_cursor = self._db_connection.cursor()
+        db_cursor = self.db_connection.cursor()
 
         try:
             db_cursor.execute(sql_query, sql_values)
@@ -340,9 +357,7 @@ class SQLite(Database):
 
         finally:
             db_cursor.close()
-
-            if not db_is_open:
-                self.close_db_connection()
+            self.close_db_connection()
 
     def fetch_from_db(
         self,
@@ -350,26 +365,32 @@ class SQLite(Database):
         sql_values: Union[tuple[str, ...], str],
         *,
         fetch_one: bool = False,
-        db_is_open: bool = False,
-    ) -> Generator[dict[str, str], None, None]:
+    ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from SQLite database.
 
         :param sql_query: SQL query to be executed.
         :param sql_values: Values to be substituted in the SQL query.
         :param fetch_one: If True, only fetch the first row.
-        :param db_is_open: If True, the database connection is already
-               open.
         :return: Generator of dictionaries containing the fetched rows.
         :raise SQLiteError: If the operation fails.
         """
 
-        if not db_is_open:
-            self.open_db_connection()
+        def _next_row_dict() -> Optional[dict[str, Any]]:
+            """
+            Returns the next row as a dictionary or None if no
+            more rows.
 
-        assert self._db_connection is not None, "Database connection is not open!"
+            :return: The next row as a dictionary or None.
+            """
 
-        db_cursor = self._db_connection.cursor()
+            row_next = db_cursor.fetchone()
+            if row_next:
+                return dict(row_next)
+            else:
+                return None
+
+        db_cursor = self.db_connection.cursor()
 
         try:
             db_cursor.execute(sql_query, sql_values)
@@ -377,19 +398,21 @@ class SQLite(Database):
             module_logger.info(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
-                try:
-                    # The dict() converts the sqlite3.Row object,
-                    # created by row_factory, into a dictionary
-                    yield dict(db_cursor.fetchone())
-
-                except TypeError:
-                    # if the fetch is not found and returns None,
-                    # the dict(None) would raise TypeError
+                next_row = _next_row_dict()
+                if next_row:
+                    yield next_row
+                else:
                     yield {}
 
             else:
-                for row in db_cursor:
-                    yield dict(row)
+                next_row = _next_row_dict()
+                if next_row:
+                    yield next_row
+                    # _next_row_dict will return None when at the end
+                    # so the sentinel is met by the iter function
+                    yield from iter(_next_row_dict, None)
+                else:
+                    yield {}
 
         except sqlite3.OperationalError as ex:
             message = (
@@ -401,6 +424,4 @@ class SQLite(Database):
 
         finally:
             db_cursor.close()
-
-            if not db_is_open:
-                self.close_db_connection()
+            self.close_db_connection()

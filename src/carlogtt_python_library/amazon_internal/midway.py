@@ -98,7 +98,7 @@ def cli_midway_auth(max_retries: int = 3, options: str = "-s"):
 
             print(
                 utils.cli_bold_red
-                + f"\n[ERROR] Authentication to Midway failed. Retrying {i+2}...\n"
+                + f"\n[ERROR] Authentication to Midway failed. Retrying {i + 2}...\n"
                 + utils.cli_end,
                 flush=True,
             )
