@@ -7,5 +7,5 @@ build:
 	./scripts/build_venv.sh "build_venv"
 
 .PHONY: deploy-pypi
-deploy:
+deploy-pypy:
 	./scripts/deploy_pypi.sh
