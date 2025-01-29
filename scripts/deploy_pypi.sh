@@ -79,6 +79,9 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
+# Format package
+make format
+
 # Activate local venv
 source "${project_root_dir_abs}/build_venv/bin/activate"
 echo -e "\n\n${bold_green}${green_check_mark} venv ${venv_name} activated:${end}"
@@ -87,8 +90,6 @@ echo -e "Kernel Version: $(uname -r)"
 echo -e "venv: $VIRTUAL_ENV"
 echo -e "running: $(python --version)"
 
-# Format package
-make format
 echo -e "\n\n"
 
 # Update version on file
@@ -108,7 +109,7 @@ rm -rf "${project_root_dir_abs}/dist"
 echo -e "completed!"
 
 # Build new package version
-echo -e "\n\n${bold_green}${hammer_and_wrench} Building package${end}"
+echo -e "\n\n${bold_green}${hammer_and_wrench}  Building package${end}"
 python3 -m build >/dev/null 2>&1
 echo -e "completed!"
 
