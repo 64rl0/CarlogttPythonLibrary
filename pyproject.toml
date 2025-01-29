@@ -1,6 +1,7 @@
 [project]
 name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
+readme = "README.md"
 version = "1.0.3"
 license = {text = "MIT"}
 authors = [
