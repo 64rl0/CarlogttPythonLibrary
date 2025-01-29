@@ -218,20 +218,20 @@ class MySQL(Database):
 
             if fetch_one:
                 next_row = db_cursor.fetchone()
-                if next_row:
-                    yield next_row
-                else:
+                if next_row is None:
                     yield {}
+                else:
+                    yield next_row
 
             else:
                 next_row = db_cursor.fetchone()
-                if next_row:
+                if next_row is None:
+                    yield {}
+                else:
                     yield next_row
                     # db_cursor.fetchone will return None when at the
                     # end so the sentinel is met by the iter function
                     yield from iter(db_cursor.fetchone, None)
-                else:
-                    yield {}
 
         except (mysql.connector.OperationalError, mysql.connector.errors.ProgrammingError) as ex:
             message = (
@@ -323,6 +323,7 @@ class SQLite(Database):
             ), "Database connection is not open!"
 
             self._db_connection.close()
+            self._db_connection = None
 
         except sqlite3.OperationalError as ex:
             message = f"While closing [{self._filename}] operation failed! traceback: {repr(ex)}"
@@ -384,11 +385,11 @@ class SQLite(Database):
             :return: The next row as a dictionary or None.
             """
 
-            row_next = db_cursor.fetchone()
-            if row_next:
-                return dict(row_next)
+            row_fetched = db_cursor.fetchone()
+            if row_fetched is None:
+                return row_fetched
             else:
-                return None
+                return dict(row_fetched)
 
         db_cursor = self.db_connection.cursor()
 
@@ -399,20 +400,20 @@ class SQLite(Database):
 
             if fetch_one:
                 next_row = _next_row_dict()
-                if next_row:
-                    yield next_row
-                else:
+                if next_row is None:
                     yield {}
+                else:
+                    yield next_row
 
             else:
                 next_row = _next_row_dict()
-                if next_row:
+                if next_row is None:
+                    yield {}
+                else:
                     yield next_row
                     # _next_row_dict will return None when at the end
                     # so the sentinel is met by the iter function
                     yield from iter(_next_row_dict, None)
-                else:
-                    yield {}
 
         except sqlite3.OperationalError as ex:
             message = (
