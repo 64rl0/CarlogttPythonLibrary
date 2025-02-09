@@ -199,7 +199,7 @@ class S3:
         try:
             filenames_list: list[str] = []
 
-            list_objects_v2_params: ListObjectsV2RequestRequestTypeDef = {
+            list_objects_v2_params: ListObjectsV2RequestTypeDef = {
                 'Bucket': bucket,
                 'Prefix': folder_path,
             }
