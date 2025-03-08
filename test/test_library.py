@@ -54,20 +54,16 @@ import carlogtt_library as mylib
 # ======================================================================
 
 
-# logging.basicConfig(level='DEBUG')
-
 dotenv.load_dotenv()
 
 region = "eu-west-1"
 profile = "cg_dev"
-# profile = "amz_inventory_tool_app_prod"
 
 s3_handler = mylib.S3(region, aws_profile_name=profile)
 dyn = mylib.DynamoDB(region, aws_profile_name=profile, caching=True)
 cf = mylib.CloudFront(aws_region_name=region, aws_profile_name=profile)
 lambdaf = mylib.Lambda(aws_region_name=region, aws_profile_name=profile)
 sm = mylib.SecretsManager(aws_region_name=region, aws_profile_name=profile)
-simt = mylib.SimTicketHandler(aws_region_name=region, aws_profile_name=profile)
 
 
 def inv_db_all():
@@ -417,14 +413,6 @@ def get_bookings():
             bookings = product['bookings'] or []
             if str(booking_id) in bookings:
                 print(product['product_id'], '=>', booking_id)
-
-
-def sim():
-    my_sim = simt.get_ticket_details('V1387890615')
-
-    print(my_sim)
-
-    return
 
 
 def update_item_ddb():

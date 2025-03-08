@@ -33,7 +33,6 @@ This module ...
 
 # Standard Library Imports
 import functools
-import time
 from typing import Any, Optional
 
 # Third Party Library Imports
@@ -242,7 +241,7 @@ class SimTicketHandler:
         """
 
         try:
-            self._client.update_ticket(
+            response = self._client.update_ticket(
                 ticketId=ticket_id,
                 awsAccountId=self._aws_account_id,
                 ticketingSystemName=self._ticketing_system_name,
@@ -255,26 +254,11 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
-        time.sleep(0.5)
-
-        # Retrieve ticket to assert all the values have been updated
-        # successfully
-        ticket_updated = self.get_ticket_details(ticket_id)
-
-        # Prepare for exception
-        exception_message = ""
-
-        for key, value in payload.items():
-            try:
-                assert (
-                    payload[key] == ticket_updated[key]
-                ), f"Value for '{key}' has not been updated"
-
-            except AssertionError as ex:
-                exception_message += str(ex) + " - "
-
-        if exception_message:
-            raise exceptions.SimTHandlerError(exception_message)
+        if (
+            not isinstance(response, dict)
+            or response.get('ResponseMetadata', {}).get('HTTPStatusCode') != 200
+        ):
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(response)}")
 
     def create_ticket_comment(
         self,
