@@ -2,7 +2,7 @@
 name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
 readme = "README.md"
-version = "1.0.5"
+version = "1.0.6"
 license = {text = "MIT"}
 authors = [
     {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
@@ -13,12 +13,12 @@ dependencies = [
     "boto3-stubs",
     "cryptography",
     "mypy-boto3-cloudfront",
-    "mypy-boto3-dynamodb",
+    "mypy-boto3-dynamodb==1.36.0",
     "mypy-boto3-ec2",
-    "mypy-boto3-kms",
-    "mypy-boto3-lambda",
+    "mypy-boto3-kms==1.36.0",
+    "mypy-boto3-lambda==1.36.0",
     "mypy-boto3-s3==1.36.9",
-    "mypy-boto3-secretsmanager",
+    "mypy-boto3-secretsmanager==1.36.0",
     "mysql-connector-python",
     "redis",
     "requests",
