@@ -34,6 +34,7 @@ This module ...
 
 # Standard Library Imports
 import sqlite3
+from pprint import pprint
 from unittest.mock import patch
 
 # Third Party Library Imports
@@ -55,6 +56,14 @@ from carlogtt_library.exceptions import MySQLError, SQLiteError
 
 # Type aliases
 #
+
+mysql_db = MySQL(
+    host="fake_host",
+    user="fake_user",
+    password="fake_pass",
+    port="9999",
+    database_schema="fake_db",
+)
 
 
 def test_database_abstract_methods():
@@ -157,3 +166,22 @@ def test_sqlite_coverage():
     sqlite_db._db_connection = None
     with pytest.raises(AssertionError):
         sqlite_db.close_db_connection()
+
+
+def sql_query():
+    sql_query = 'INSERT INTO `table` (`string`, `int`, `none`, `float`) VALUES (?, ?, ?, ?)'
+    sql_values = ('hello', 123, None, 23.5)
+
+    mysql_db.send_to_db(sql_query=sql_query, sql_values=sql_values)
+
+
+if __name__ == '__main__':
+    funcs = [
+        # ,
+    ]
+
+    for func in funcs:
+        print()
+        print("Calling: ", func.__name__)
+        pprint(func())
+        print("*" * 30 + "\n")

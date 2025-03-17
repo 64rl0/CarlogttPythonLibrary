@@ -284,7 +284,6 @@ class DynamoDB:
 
         return response
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
     def get_items(self, table: str) -> Generator[dict[str, AttributeValueDeserialized], None, None]:
         """
         Returns an Iterable of deserialized items in the table.
@@ -296,12 +295,16 @@ class DynamoDB:
         :raise DynamoDBError: If retrieval fails.
         """
 
+        @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
+        def _scan_with_retry(dynamodb_scan_args: dict[str, Any]):
+            return self._client.scan(**dynamodb_scan_args)
+
         dynamodb_scan_args: dict[str, Any] = {'TableName': table}
 
         try:
             while True:
                 try:
-                    dynamodb_response = self._client.scan(**dynamodb_scan_args)
+                    dynamodb_response = _scan_with_retry(**dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
                     raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")

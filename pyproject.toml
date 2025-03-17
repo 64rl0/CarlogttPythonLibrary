@@ -9,9 +9,15 @@ authors = [
 ]
 requires-python = ">= 3.9"
 dependencies = [
+    # Runtime dependencies
     "boto3",
-    "boto3-stubs",
     "cryptography",
+    "mysql-connector-python",
+    "redis",
+    "requests",
+    "selenium",
+    # Type checkin dependencies
+    "boto3-stubs",
     "mypy-boto3-cloudfront",
     "mypy-boto3-dynamodb==1.36.0",
     "mypy-boto3-ec2",
@@ -19,11 +25,8 @@ dependencies = [
     "mypy-boto3-lambda==1.36.0",
     "mypy-boto3-s3==1.36.9",
     "mypy-boto3-secretsmanager==1.36.0",
-    "mysql-connector-python",
-    "redis",
-    "requests",
-    "selenium",
     "types-requests",
+    "types-redis",
 ]
 
 

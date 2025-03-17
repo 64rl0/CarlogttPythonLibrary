@@ -64,6 +64,7 @@ def retry(
     tries: int = 4,
     delay_secs: int = 3,
     delay_multiplier: int = 2,
+    logger: logging.Logger = module_logger,
 ) -> DecoratorFunction:
     """
     Retry calling the decorated function using an exponential backoff
@@ -75,6 +76,10 @@ def retry(
     :param delay_secs: initial delay between retries in seconds
     :param delay_multiplier: delay multiplier e.g. value of 2 will
            double the delay each retry
+    :param logger: The logging.Logger instance to be used for logging
+           the execution time of the decorated function.
+           If not explicitly provided, the function uses
+           Python's standard logging module as a default logger.
     """
 
     def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
@@ -104,8 +109,7 @@ def retry(
                     message = f"[RETRY]: {repr(ex)}, Retrying in {delay_secs} seconds..."
 
                     # Log error
-                    module_logger.error(message)
-                    print(message)
+                    logger.info(message)
 
                     # Wait to retry
                     time.sleep(delay_secs)
@@ -121,16 +125,34 @@ def retry(
     return decorator_retry
 
 
-def benchmark_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
+def benchmark_execution(
+    logger: logging.Logger = module_logger, resolution: str = 'sec'
+) -> DecoratorFunction:
     """
-    Retry calling the decorated function using an exponential
-    backoff multiplier.
+    Measure and log the execution time of the decorated function.
 
     :param logger: The logging.Logger instance to be used for logging
-           the execution time of the decorated function.
-           If not explicitly provided, the function uses
-           Python's standard logging module as a default logger.
+        the execution time of the decorated function.
+        If not explicitly provided, the function uses Python's standard
+        logging module as a default logger.
+    :param resolution: The time unit to use in the log message. Must be
+        one of {"sec", "min", "hour", "day"}. Defaults to "sec".
     """
+
+    valid_resolutions = {
+        "sec": ("seconds", 1),
+        "min": ("minutes", 60),
+        "hour": ("hours", 3600),
+        "day": ("days", 86400),
+    }
+
+    # Validate the resolution
+    if resolution not in valid_resolutions:
+        raise ValueError(
+            f"Invalid resolution '{resolution}'. Must be one of: {list(valid_resolutions.keys())}"
+        )
+
+    unit_label, divisor = valid_resolutions[resolution]
 
     def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
         @functools.wraps(original_func)
@@ -138,7 +160,13 @@ def benchmark_execution(logger: logging.Logger = module_logger) -> DecoratorFunc
             start_time = time.perf_counter()
             result = original_func(*args, **kwargs)
             execution_time = time.perf_counter() - start_time
-            logger.info(f"Execution of {original_func.__name__} took {execution_time:.3f} seconds.")
+
+            # Convert to the desired resolution
+            converted_time = execution_time / divisor
+
+            logger.info(
+                f"Execution of {original_func.__name__} took {converted_time:.3f} {unit_label}."
+            )
 
             return result
 
@@ -149,8 +177,8 @@ def benchmark_execution(logger: logging.Logger = module_logger) -> DecoratorFunc
 
 def log_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
     """
-    Retry calling the decorated function using an exponential
-    backoff multiplier.
+    Log the start and completion of the decorated function using the
+    provided logger.
 
     :param logger: The logging.Logger instance to be used for logging
            the execution time of the decorated function.

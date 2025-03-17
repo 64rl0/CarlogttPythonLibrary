@@ -64,6 +64,7 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 MySQLConn = Union[MySQLConnectionAbstract, PooledMySQLConnection]
+SQLValueType = Union[str, int, float, None]
 
 
 class Database(abc.ABC):
@@ -76,12 +77,16 @@ class Database(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
         pass
 
     @abc.abstractmethod
     def fetch_from_db(
-        self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
+        self,
+        sql_query: str,
+        sql_values: Union[tuple[SQLValueType, ...], str],
+        *,
+        fetch_one: bool = False,
     ) -> Generator[dict[str, Any], None, None]:
         pass
 
@@ -165,7 +170,7 @@ class MySQL(Database):
             module_logger.error(message)
             raise exceptions.MySQLError(message)
 
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
         """
         Send data to MySQL database.
 
@@ -174,7 +179,7 @@ class MySQL(Database):
         :raise MySQLError: If the operation fails.
         """
 
-        db_cursor = self.db_connection.cursor(prepared=True, dictionary=True)
+        db_cursor = self.db_connection.cursor(prepared=True)
 
         try:
             db_cursor.execute(sql_query, sql_values)
@@ -196,7 +201,11 @@ class MySQL(Database):
             self.close_db_connection()
 
     def fetch_from_db(
-        self, sql_query: str, sql_values: Union[tuple[str, ...], str], *, fetch_one: bool = False
+        self,
+        sql_query: str,
+        sql_values: Union[tuple[SQLValueType, ...], str],
+        *,
+        fetch_one: bool = False,
     ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from MySQL database.
@@ -330,7 +339,7 @@ class SQLite(Database):
             module_logger.error(message)
             raise exceptions.SQLiteError(message)
 
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[str, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
         """
         Send data to SQLite database.
 
@@ -363,7 +372,7 @@ class SQLite(Database):
     def fetch_from_db(
         self,
         sql_query: str,
-        sql_values: Union[tuple[str, ...], str],
+        sql_values: Union[tuple[SQLValueType, ...], str],
         *,
         fetch_one: bool = False,
     ) -> Generator[dict[str, Any], None, None]:
@@ -387,7 +396,7 @@ class SQLite(Database):
 
             row_fetched = db_cursor.fetchone()
             if row_fetched is None:
-                return row_fetched
+                return None
             else:
                 return dict(row_fetched)
 

@@ -33,6 +33,7 @@ This module ...
 
 # Standard Library Imports
 import functools
+from collections.abc import Generator
 from typing import Any, Optional
 
 # Third Party Library Imports
@@ -41,7 +42,7 @@ import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports
-from .. import exceptions
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -193,6 +194,43 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
+    def get_tickets(self, filters: dict[str, Any]) -> Generator[dict[str, Any], None, None]:
+        """
+        Returns an iterable of ticketIds.
+
+        :param filters:
+        :return: Returns an iterable of ticketIds.
+        :raise: SimTHandlerError if function call fails.
+        """
+
+        @utils.retry(Exception)
+        def _list_tickets_with_retry(payload: dict[str, Any]):
+            return self._client.list_tickets(
+                awsAccountId=self._aws_account_id,
+                ticketingSystemName=self._ticketing_system_name,
+                **payload,
+            )
+
+        payload: dict[str, Any] = {'filters': filters}
+        next_token = 'valid_string'
+
+        try:
+            while next_token:
+                tickety_response = _list_tickets_with_retry(payload)
+
+                next_token = tickety_response.get('nextToken', '')
+                payload.update({'nextToken': next_token})
+
+                for ticket_data in tickety_response.get('ticketSummaries', []):
+                    yield ticket_data
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex.response)}")
+
+        except Exception as ex:
+            raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
+
+    @utils.retry(exceptions.SimTHandlerError)
     def get_ticket_details(
         self,
         ticket_id: str,
@@ -227,6 +265,7 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
+    @utils.retry(exceptions.SimTHandlerError)
     def update_ticket(self, ticket_id: str, payload: dict[str, Any]) -> None:
         """
         Updates a ticket in the ticketing system.
@@ -260,6 +299,7 @@ class SimTicketHandler:
         ):
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(response)}")
 
+    @utils.retry(exceptions.SimTHandlerError)
     def create_ticket_comment(
         self,
         ticket_id: str,
@@ -312,6 +352,7 @@ class SimTicketHandler:
         except Exception as ex:
             raise exceptions.SimTHandlerError(f"Operation failed! - {str(ex)}")
 
+    @utils.retry(exceptions.SimTHandlerError)
     def create_ticket(self, ticket_data: dict[str, Any]) -> str:
         """
         Create a ticket in the ticketing system and return the

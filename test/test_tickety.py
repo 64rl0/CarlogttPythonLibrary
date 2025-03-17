@@ -142,10 +142,18 @@ def ticket_update():
     simt.update_ticket(ticket_id, payload)
 
 
+def get_tickets():
+    filters = {'requesters': [{'namespace': 'MIDWAY', 'value': 'carlogtt'}]}
+    response = simt.get_tickets(filters=filters)
+    for ticket in response:
+        print(ticket)
+
+
 if __name__ == '__main__':
     funcs = [
-        ticket_details,
-        ticket_update,
+        # ticket_details,
+        # ticket_update,
+        get_tickets
     ]
 
     for func in funcs:
