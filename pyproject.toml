@@ -2,7 +2,7 @@
 name = "carlogtt_python_library"
 description = "A Python package that provides some utility functions."
 readme = "README.md"
-version = "1.1.0"
+version = "1.2.0"
 license = {text = "MIT"}
 authors = [
     {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
