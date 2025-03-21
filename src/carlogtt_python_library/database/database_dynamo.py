@@ -35,7 +35,6 @@ This module ...
 import decimal
 import logging
 import numbers
-import sys
 import time
 from collections.abc import Generator, Iterable, Mapping, MutableMapping, Sequence
 from typing import Any, Literal, Optional, TypedDict, Union
@@ -49,12 +48,6 @@ from mypy_boto3_dynamodb.client import DynamoDBClient
 
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
-
-if sys.version_info >= (3, 11):
-    from typing import NotRequired
-else:
-    from typing_extensions import NotRequired
-
 
 # END IMPORTS
 # ======================================================================
@@ -121,10 +114,11 @@ DynamoDbMapDeserialized = Mapping[str, AttributeValueDeserialized]  # type: igno
 PartitionKeyTypeDef = TypedDict(
     "PartitionKeyTypeDef",
     {
-        "S": NotRequired[str],
-        "N": NotRequired[str],
-        "B": NotRequired[bytes],
+        "S": str,
+        "N": str,
+        "B": bytes,
     },
+    total=False,
 )
 
 PartitionKeyItem = dict[str, PartitionKeyTypeDef]
@@ -296,15 +290,17 @@ class DynamoDB:
         """
 
         @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
-        def _scan_with_retry(dynamodb_scan_args: dict[str, Any]):
+        def _scan_with_retry(
+            dynamodb_scan_args: type_defs.ScanInputRequestTypeDef,
+        ) -> type_defs.ScanOutputTypeDef:
             return self._client.scan(**dynamodb_scan_args)
 
-        dynamodb_scan_args: dict[str, Any] = {'TableName': table}
+        dynamodb_scan_args: type_defs.ScanInputRequestTypeDef = {'TableName': table}
 
         try:
             while True:
                 try:
-                    dynamodb_response = _scan_with_retry(**dynamodb_scan_args)
+                    dynamodb_response = _scan_with_retry(dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
                     raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")

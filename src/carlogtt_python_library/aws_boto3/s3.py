@@ -41,7 +41,7 @@ from mypy_boto3_s3.client import S3Client
 from mypy_boto3_s3.type_defs import (
     DeleteObjectOutputTypeDef,
     GetObjectOutputTypeDef,
-    ListObjectsV2RequestRequestTypeDef,
+    ListObjectsV2RequestTypeDef,
     PutObjectOutputTypeDef,
 )
 
@@ -199,7 +199,7 @@ class S3:
         try:
             filenames_list: list[str] = []
 
-            list_objects_v2_params: ListObjectsV2RequestRequestTypeDef = {
+            list_objects_v2_params: ListObjectsV2RequestTypeDef = {
                 'Bucket': bucket,
                 'Prefix': folder_path,
             }
