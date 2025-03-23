@@ -37,11 +37,9 @@ Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 [project.optional-dependencies]
 dev = [
     "black",
+    "flake8",
     "isort",
     "mypy",
-    "flake8",
-]
-test = [
     "pytest",
 ]
 

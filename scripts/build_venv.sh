@@ -104,9 +104,7 @@ echo -e "running: $(python --version)"
 # Install requirements
 echo -e "\n\n${bold_green}${sparkles} Installing requirements...${end}"
 pip install --upgrade pip
-pip install -e "${project_root_dir_abs}"
-# Development dependencies
-pip install -I build twine black isort mypy flake8
+pip install -e "${project_root_dir_abs}[dev]"
 
 # Build complete!
 echo -e "\n\n${bold_green}${sparkles} ${venv_name} venv build complete & Ready for use!...${end}"
