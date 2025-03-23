@@ -37,10 +37,12 @@ Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 [project.optional-dependencies]
 dev = [
     "black",
+    "build",
     "flake8",
     "isort",
     "mypy",
     "pytest",
+    "twine",
 ]
 
 
