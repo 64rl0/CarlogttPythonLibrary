@@ -1,6 +1,6 @@
 [project]
 name = "carlogtt_python_library"
-description = "A Python package that provides some utility functions."
+description = "A versatile Python library offering a collection of reusable utility functions designed to streamline common programming tasks and promote code reusability across various projects."
 readme = "README.md"
 version = "1.2.0"
 license = {text = "MIT"}
@@ -19,12 +19,12 @@ dependencies = [
     # Type checkin dependencies
     "boto3-stubs",
     "mypy-boto3-cloudfront",
-    "mypy-boto3-dynamodb==1.36.0",
+    "mypy-boto3-dynamodb",
     "mypy-boto3-ec2",
-    "mypy-boto3-kms==1.36.0",
+    "mypy-boto3-kms",
     "mypy-boto3-lambda",
     "mypy-boto3-s3",
-    "mypy-boto3-secretsmanager==1.36.0",
+    "mypy-boto3-secretsmanager",
     "types-requests",
     "types-redis",
 ]
@@ -35,9 +35,15 @@ Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 
 
 [project.optional-dependencies]
-prod = []
-dev = []
-test = []
+dev = [
+    "black",
+    "isort",
+    "mypy",
+    "flake8",
+]
+test = [
+    "pytest",
+]
 
 
 [tool.black]

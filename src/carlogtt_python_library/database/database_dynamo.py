@@ -291,11 +291,11 @@ class DynamoDB:
 
         @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
         def _scan_with_retry(
-            dynamodb_scan_args: type_defs.ScanInputRequestTypeDef,
+            dynamodb_scan_args: type_defs.ScanInputTypeDef,
         ) -> type_defs.ScanOutputTypeDef:
             return self._client.scan(**dynamodb_scan_args)
 
-        dynamodb_scan_args: type_defs.ScanInputRequestTypeDef = {'TableName': table}
+        dynamodb_scan_args: type_defs.ScanInputTypeDef = {'TableName': table}
 
         try:
             while True:
