@@ -40,9 +40,9 @@ import boto3
 import botocore.exceptions
 from mypy_boto3_secretsmanager.client import SecretsManagerClient
 from mypy_boto3_secretsmanager.type_defs import (
-    DeleteSecretRequestRequestTypeDef,
+    DeleteSecretRequestTypeDef,
     DeleteSecretResponseTypeDef,
-    ListSecretsRequestRequestTypeDef,
+    ListSecretsRequestTypeDef,
     SecretListEntryTypeDef,
 )
 
@@ -202,7 +202,7 @@ class SecretsManager:
         :raise SecretsManagerError: If operation fails.
         """
 
-        list_secrets_args: ListSecretsRequestRequestTypeDef = {}
+        list_secrets_args: ListSecretsRequestTypeDef = {}
         secrets = []
 
         try:
@@ -316,7 +316,7 @@ class SecretsManager:
         :raise SecretsManagerError: If operation fails.
         """
 
-        delete_secret_args: DeleteSecretRequestRequestTypeDef = {'SecretId': secret_id}
+        delete_secret_args: DeleteSecretRequestTypeDef = {'SecretId': secret_id}
 
         if force_delete:
             delete_secret_args['ForceDeleteWithoutRecovery'] = True
