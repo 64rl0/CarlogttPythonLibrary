@@ -33,6 +33,7 @@ This module ...
 
 # Standard Library Imports
 import json
+import logging
 
 # Third Party Library Imports
 import requests
@@ -46,6 +47,12 @@ import requests_midway  # type: ignore
 __all__ = [
     'phone_tool_lookup',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def phone_tool_lookup(alias: str) -> dict[str, str]:

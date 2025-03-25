@@ -32,6 +32,7 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import logging
 from typing import Any, Literal, Optional, Union
 
 # Third Party Library Imports
@@ -56,6 +57,9 @@ from .. import exceptions
 __all__ = [
     'S3',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 

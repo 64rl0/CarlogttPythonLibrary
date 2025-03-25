@@ -68,6 +68,12 @@ __all__ = [
     'Logger',
 ]
 
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
+
 
 class ColoredFormatter(logging.Formatter):
     """

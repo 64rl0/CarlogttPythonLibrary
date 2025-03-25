@@ -34,6 +34,7 @@ integrity of different types of data inputs.
 # ======================================================================
 
 # Standard Library Imports
+import logging
 import re
 import string
 
@@ -47,6 +48,12 @@ __all__ = [
     'validate_username_requirements',
     'validate_password_requirements',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def validate_non_empty_strings(**strings: str) -> dict[str, str]:

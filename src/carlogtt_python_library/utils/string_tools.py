@@ -32,6 +32,7 @@ This module contains useful functions to work with strings.
 # ======================================================================
 
 # Standard Library Imports
+import logging
 import random
 import string
 
@@ -44,6 +45,12 @@ __all__ = [
     'get_random_string',
     'snake_case',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def get_random_string(length: int) -> str:

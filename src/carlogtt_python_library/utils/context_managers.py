@@ -32,9 +32,10 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import contextlib
 import io
+import logging
 import sys
-from contextlib import contextmanager
 
 # END IMPORTS
 # ======================================================================
@@ -47,8 +48,14 @@ __all__ = [
     'redirect_stdout_to_stderr',
 ]
 
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
 
-@contextmanager
+# Type aliases
+#
+
+
+@contextlib.contextmanager
 def suppress_errors(*exceptions: type[Exception]):
     """
     Context manager to suppress specified exceptions.
@@ -68,7 +75,7 @@ def suppress_errors(*exceptions: type[Exception]):
         pass
 
 
-@contextmanager
+@contextlib.contextmanager
 def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
     """
     Context manager to redirect stdout to file.
@@ -91,7 +98,7 @@ def redirect_stdout_to_file(fileobj: io.TextIOWrapper):
         sys.stdout = current_stdout
 
 
-@contextmanager
+@contextlib.contextmanager
 def redirect_stdout_to_stderr():
     """
     Context manager to redirect stdout to stderr.

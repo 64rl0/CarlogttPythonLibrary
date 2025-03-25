@@ -32,6 +32,7 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import logging
 import time
 from typing import Any, Literal, Optional
 
@@ -53,7 +54,7 @@ __all__ = [
 ]
 
 # Setting up logger for current module
-# module_logger =
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #

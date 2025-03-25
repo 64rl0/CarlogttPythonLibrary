@@ -33,6 +33,7 @@ This module ...
 
 # Standard Library Imports
 import json
+import logging
 from typing import Any, Literal, Optional
 
 # Third Party Library Imports
@@ -57,6 +58,9 @@ from .. import exceptions
 __all__ = [
     'SecretsManager',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #

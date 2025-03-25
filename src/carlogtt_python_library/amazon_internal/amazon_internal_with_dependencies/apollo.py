@@ -32,6 +32,7 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import logging
 import os
 
 # Third Party Library Imports
@@ -46,6 +47,12 @@ from bender.apollo_error import ApolloError  # type: ignore
 __all__ = [
     'get_application_root',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def get_application_root() -> str:

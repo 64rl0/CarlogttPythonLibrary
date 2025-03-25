@@ -35,6 +35,7 @@ This module ...
 from __future__ import annotations
 
 # Standard Library Imports
+import logging
 import os
 import pathlib
 import re
@@ -54,7 +55,7 @@ __all__ = [
 ]
 
 # Setting up logger for current module
-# module_logger =
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 WebDriver = Union[

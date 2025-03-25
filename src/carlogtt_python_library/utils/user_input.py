@@ -24,13 +24,15 @@ This module ...
 # These exceptions may be necessary due to specific coding requirements
 # or to bypass false positives.
 # ======================================================================
-# isort: skip_file
+#
 
 # ======================================================================
 # IMPORTS
 # Importing required libraries and modules for the application.
 # ======================================================================
 
+# Standard Library Imports
+import logging
 
 # END IMPORTS
 # ======================================================================
@@ -41,6 +43,12 @@ __all__ = [
     'get_user_input_and_validate_int',
     'get_user_input_confirmation_y_n',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def get_user_input_and_validate_int(question: str = "Enter a number: ") -> int:

@@ -33,6 +33,7 @@ This module provides a set of various utilities.
 
 # Standard Library Imports
 import ctypes
+import logging
 
 # END IMPORTS
 # ======================================================================
@@ -42,6 +43,12 @@ import ctypes
 __all__ = [
     'ref_count',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 def ref_count(obj_id: int) -> int:

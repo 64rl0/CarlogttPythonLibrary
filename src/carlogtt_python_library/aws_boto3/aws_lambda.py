@@ -33,6 +33,7 @@ This module ...
 
 # Standard Library Imports
 import json
+import logging
 from typing import Any, Literal, Optional
 
 # Third Party Library Imports
@@ -54,7 +55,7 @@ __all__ = [
 ]
 
 # Setting up logger for current module
-# module_logger =
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #

@@ -31,6 +31,9 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
+# Standard Library Imports
+import logging
+
 # Third Party Library Imports
 import requests
 
@@ -47,7 +50,7 @@ __all__ = [
 ]
 
 # Setting up logger for current module
-# module_logger =
+module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #
