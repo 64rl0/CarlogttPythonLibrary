@@ -42,6 +42,9 @@ from typing import Any, Optional, Union
 # Third Party Library Imports
 import mysql.connector
 import mysql.connector.cursor
+import psycopg2
+import psycopg2.extensions
+import psycopg2.extras
 from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
@@ -56,6 +59,7 @@ from .. import exceptions, utils
 __all__ = [
     'Database',
     'MySQL',
+    'PostgreSQL',
     'SQLite',
 ]
 
@@ -258,6 +262,166 @@ class MySQL(Database):
             # to discard the remaining unfetched rows and reuse the
             # cursor for another query.
             db_cursor.reset()
+            self.close_db_connection()
+
+
+class PostgreSQL(Database):
+    """
+    Handles PostgreSQL database connections.
+
+    :param host: Hostname or IP address of the Postgres server.
+    :param user: Username to authenticate with the Postgres server.
+    :param password: Password to authenticate with the Postgres server.
+    :param port: Port number of the Postgres server.
+    :param database_schema: Name of the database schema to use.
+    """
+
+    def __init__(self, host: str, user: str, password: str, port: str, database_schema: str):
+        self._host = host
+        self._user = user
+        self._password = password
+        self._port = port
+        self._database_schema = database_schema
+        self._db_connection: Optional[psycopg2.extensions.connection] = None
+
+    @property
+    def db_connection(self) -> psycopg2.extensions.connection:
+        """
+        Gets the active db connection. If there is not an active
+        connection it creates one.
+        """
+
+        if not self._db_connection:
+            self.open_db_connection()
+
+        assert isinstance(
+            self._db_connection, psycopg2.extensions.connection
+        ), "Expected self._db_connection to be type psycopg2.extensions.connection"
+
+        return self._db_connection
+
+    @utils.retry(exceptions.PostgresError)
+    def open_db_connection(self) -> None:
+        """
+        Open a PostgreSQL db connection.
+        Auto retry up to 4 times on connection error.
+
+        :raise PostgresError: If the operation fails.
+        """
+
+        try:
+            self._db_connection = psycopg2.connect(
+                dbname=self._database_schema,
+                user=self._user,
+                password=self._password,
+                host=self._host,
+                port=self._port,
+            )
+
+        except psycopg2.OperationalError as ex:
+            message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
+            module_logger.error(message)
+            raise exceptions.PostgresError(message)
+
+    @utils.retry(exceptions.PostgresError)
+    def close_db_connection(self) -> None:
+        """
+        Close the PostgreSQL db connection.
+        Auto retry up to 4 times on connection error.
+
+        :raise PostgresError: If the operation fails.
+        """
+
+        try:
+            if self._db_connection:
+                self._db_connection.close()
+                self._db_connection = None
+
+        except psycopg2.Error as ex:
+            message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
+            module_logger.error(message)
+            raise exceptions.PostgresError(message)
+
+    def send_to_db(self, sql_query: str, sql_values: Union[tuple, str]) -> None:
+        """
+        Send data to PostgreSQL database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :raise PostgresError: If the operation fails.
+        """
+
+        db_cursor = self.db_connection.cursor()
+
+        try:
+            db_cursor.execute(sql_query, sql_values)
+            self.db_connection.commit()
+
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+
+        except psycopg2.Error as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._host}] "
+                f"operation failed! traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
+            raise exceptions.PostgresError(message)
+
+        finally:
+            db_cursor.close()
+            self.close_db_connection()
+
+    def fetch_from_db(
+        self,
+        sql_query: str,
+        sql_values: Union[tuple, str],
+        *,
+        fetch_one: bool = False,
+    ) -> Generator[dict[str, Any], None, None]:
+        """
+        Fetch data from PostgreSQL database.
+
+        :param sql_query: SQL query to be executed.
+        :param sql_values: Values to be substituted in the SQL query.
+        :param fetch_one: If True, only fetch the first row.
+        :return: Generator of dictionaries containing the fetched rows.
+        :raise PostgresError: If the operation fails.
+        """
+
+        # Create a cursor that returns rows as dictionaries
+        db_cursor = self.db_connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        try:
+            db_cursor.execute(sql_query, sql_values)
+
+            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+
+            if fetch_one:
+                next_row = db_cursor.fetchone()
+                if next_row is None:
+                    yield {}
+                else:
+                    yield dict(next_row)
+
+            else:
+                next_row = db_cursor.fetchone()
+                if next_row is None:
+                    yield {}
+                else:
+                    yield dict(next_row)
+                    # Fetch the rest one by one until None is returned
+                    yield from (dict(row) for row in iter(db_cursor.fetchone, None))
+
+        except psycopg2.Error as ex:
+            message = (
+                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f" traceback: {repr(ex)}"
+            )
+            module_logger.error(message)
+            raise exceptions.PostgresError(message)
+
+        finally:
+            db_cursor.close()
             self.close_db_connection()
 
 

@@ -56,26 +56,26 @@ import carlogtt_library as mylib
 #
 
 region = "eu-west-1"
-profile = "cg_dev"
-simt = mylib.SimTicketHandler(aws_region_name=region, aws_profile_name=profile)
+profile = "amz_inventory_tool_app_prod"
+simt = mylib.SimT(aws_region_name=region, aws_profile_name=profile)
 
 
 def test_update_ticket_success():
     mock_client = MagicMock()
-    simt = mylib.SimTicketHandler(region)
+    simt = mylib.SimT(region)
     simt._cache['client'] = mock_client
 
     mock_client.update_ticket.return_value = {"ResponseMetadata": {"HTTPStatusCode": 200}}
 
     try:
         simt.update_ticket("TICKET123", {"status": "closed"})
-    except mylib.SimTHandlerError:
-        assert True, "update_ticket() raised SimTHandlerError unexpectedly!"
+    except mylib.SimTError:
+        assert True, "update_ticket() raised SimTError unexpectedly!"
 
 
 def test_update_ticket_client_error():
     mock_client = MagicMock()
-    simt = mylib.SimTicketHandler(region)
+    simt = mylib.SimT(region)
     simt._cache['client'] = mock_client
 
     mock_client.update_ticket.side_effect = botocore.exceptions.ClientError(
@@ -84,50 +84,50 @@ def test_update_ticket_client_error():
 
     try:
         simt.update_ticket("TICKET123", {"status": "closed"})
-        assert False, "Expected SimTHandlerError but none was raised."
-    except mylib.SimTHandlerError as e:
+        assert False, "Expected SimTError but none was raised."
+    except mylib.SimTError as e:
         assert "Operation failed!" in str(e)
 
 
 def test_update_ticket_generic_exception():
     mock_client = MagicMock()
-    simt = mylib.SimTicketHandler(region)
+    simt = mylib.SimT(region)
     simt._cache['client'] = mock_client
 
     mock_client.update_ticket.side_effect = Exception("Unexpected error")
 
     try:
         simt.update_ticket("TICKET123", {"status": "closed"})
-        assert False, "Expected SimTHandlerError but none was raised."
-    except mylib.SimTHandlerError as e:
+        assert False, "Expected SimTError but none was raised."
+    except mylib.SimTError as e:
         assert "Operation failed!" in str(e)
 
 
 def test_update_ticket_invalid_response():
     mock_client = MagicMock()
-    simt = mylib.SimTicketHandler(region)
+    simt = mylib.SimT(region)
     simt._cache['client'] = mock_client
 
     mock_client.update_ticket.return_value = {"ResponseMetadata": {"HTTPStatusCode": 500}}
 
     try:
         simt.update_ticket("TICKET123", {"status": "closed"})
-        assert False, "Expected SimTHandlerError but none was raised."
-    except mylib.SimTHandlerError as e:
+        assert False, "Expected SimTError but none was raised."
+    except mylib.SimTError as e:
         assert "Operation failed!" in str(e)
 
 
 def test_update_ticket_invalid_response_type():
     mock_client = MagicMock()
-    simt = mylib.SimTicketHandler(region)
+    simt = mylib.SimT(region)
     simt._cache['client'] = mock_client
 
     mock_client.update_ticket.return_value = None
 
     try:
         simt.update_ticket("TICKET123", {"status": "closed"})
-        assert False, "Expected SimTHandlerError but none was raised."
-    except mylib.SimTHandlerError as e:
+        assert False, "Expected SimTError but none was raised."
+    except mylib.SimTError as e:
         assert "Operation failed!" in str(e)
 
 
@@ -151,9 +151,9 @@ def get_tickets():
 
 if __name__ == '__main__':
     funcs = [
-        # ticket_details,
+        ticket_details,
         # ticket_update,
-        get_tickets
+        # get_tickets,
     ]
 
     for func in funcs:

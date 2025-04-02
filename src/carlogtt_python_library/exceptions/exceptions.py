@@ -37,6 +37,8 @@ during the program's execution.
 
 # Standard Library Imports
 import json
+import logging
+import warnings
 
 # END IMPORTS
 # ======================================================================
@@ -45,11 +47,14 @@ import json
 # List of public names in the module
 __all__ = [
     'MyLibraryException',
+    'SimTError',
     'SimTHandlerError',
+    'MiradorError',
     'RedisCacheManagerError',
     'DatabaseError',
     'SQLiteError',
     'MySQLError',
+    'PostgresError',
     'DynamoDBError',
     'DynamoDBConflictError',
     'S3Error',
@@ -59,6 +64,12 @@ __all__ = [
     'EC2Error',
     'LambdaError',
 ]
+
+# Setting up logger for current module
+module_logger = logging.getLogger(__name__)
+
+# Type aliases
+#
 
 
 class MyLibraryException(Exception):
@@ -97,9 +108,31 @@ class MyLibraryException(Exception):
         return json.dumps(self.to_dict())
 
 
-class SimTHandlerError(MyLibraryException):
+class SimTError(MyLibraryException):
     """
     This is the base exception class to handle SimTicket Handler errors.
+    """
+
+
+class SimTHandlerError(SimTError):
+    """
+    DEPRECATED: Please use SimTError instead.
+    This subclass only exists for backward compatibility.
+    """
+
+    def __init__(self, *args):
+        # Issue a DeprecationWarning at runtime
+        warnings.warn(
+            "[DEPRECATED] 'SimTHandlerError' is deprecated. Please use 'SimTError' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args)
+
+
+class MiradorError(MyLibraryException):
+    """
+    This is the base exception class to handle Mirador Handler errors.
     """
 
 
@@ -125,6 +158,12 @@ class SQLiteError(DatabaseError):
 class MySQLError(DatabaseError):
     """
     This is the base exception class to handle MySQL errors.
+    """
+
+
+class PostgresError(DatabaseError):
+    """
+    This is the base exception class to handle PostgreSQL errors.
     """
 
 

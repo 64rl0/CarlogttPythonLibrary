@@ -40,8 +40,6 @@ import time
 from pprint import pprint
 
 # Third Party Library Imports
-import dotenv
-
 # import cv2
 import pytz
 
@@ -53,8 +51,6 @@ import carlogtt_library as mylib
 # END IMPORTS
 # ======================================================================
 
-
-dotenv.load_dotenv()
 
 region = "eu-west-1"
 profile = "cg_dev"

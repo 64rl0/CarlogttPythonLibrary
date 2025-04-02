@@ -38,11 +38,12 @@ from pprint import pprint
 from unittest.mock import patch
 
 # Third Party Library Imports
+import psycopg2.extensions
 import pytest
 
 # My Library Imports
-from carlogtt_library import Database, MySQL, SQLite
-from carlogtt_library.exceptions import MySQLError, SQLiteError
+from carlogtt_library import Database, MySQL, PostgreSQL, SQLite
+from carlogtt_library.exceptions import MySQLError, PostgresError, SQLiteError
 
 # END IMPORTS
 # ======================================================================
@@ -85,36 +86,36 @@ def test_mysql_coverage():
     # Call db_connection property
     try:
         _ = mysql_db.db_connection
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     # Call open_db_connection
     try:
         mysql_db.open_db_connection()
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     # Call close_db_connection
     try:
         mysql_db.close_db_connection()
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     # Call send_to_db with dummy SQL
     try:
         mysql_db.send_to_db("FAKE SQL", ("fake_value",))
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     # Call fetch_from_db (once with fetch_one=False, once with fetch_one=True)
     try:
         list(mysql_db.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=False))
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     try:
         list(mysql_db.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=True))
-    except:
+    except (MySQLError, AssertionError):
         pass
 
     # Mock MySQL connection error to test exception handling
@@ -166,6 +167,53 @@ def test_sqlite_coverage():
     sqlite_db._db_connection = None
     with pytest.raises(AssertionError):
         sqlite_db.close_db_connection()
+
+
+def test_postgresql_coverage():
+    pg = PostgreSQL(
+        host="fake_host",
+        user="XXXXXXXXX",
+        password="XXXX_pass",
+        port="9999",
+        database_schema="fake_db",
+    )
+
+    # Call db_connection property
+    try:
+        _ = pg.db_connection
+    except (PostgresError, AssertionError):
+        pass
+
+    # Call open_db_connection
+    try:
+        pg.open_db_connection()
+        assert isinstance(pg._db_connection, psycopg2.extensions.connection)
+    except (PostgresError, AssertionError):
+        pass
+
+    # Call close_db_connection
+    try:
+        pg.close_db_connection()
+        assert pg._db_connection is None
+    except (PostgresError, AssertionError):
+        pass
+
+    # Call send_to_db with dummy SQL
+    try:
+        pg.send_to_db("FAKE SQL", ("fake_value",))
+    except (PostgresError, AssertionError):
+        pass
+
+    # Call fetch_from_db (once with fetch_one=False, once with fetch_one=True)
+    try:
+        list(pg.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=False))
+    except (PostgresError, AssertionError):
+        pass
+
+    try:
+        list(pg.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=True))
+    except (PostgresError, AssertionError):
+        pass
 
 
 def sql_query():

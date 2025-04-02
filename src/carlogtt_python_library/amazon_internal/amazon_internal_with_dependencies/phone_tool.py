@@ -37,7 +37,7 @@ import logging
 
 # Third Party Library Imports
 import requests
-import requests_midway  # type: ignore
+import requests_midway
 
 # END IMPORTS
 # ======================================================================
