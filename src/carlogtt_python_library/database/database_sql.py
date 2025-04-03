@@ -68,7 +68,7 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 MySQLConn = Union[MySQLConnectionAbstract, PooledMySQLConnection]
-SQLValueType = Union[str, int, float, None]
+SQLValueType = Any
 
 
 class Database(abc.ABC):

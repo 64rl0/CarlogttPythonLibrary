@@ -19,6 +19,10 @@ dependencies = [
     "requests",
     "selenium",
     # Type checkin dependencies
+    "types-cryptography",
+    "types-requests",
+    "types-redis",
+    "types-psycopg2",
     "boto3-stubs",
     "mypy-boto3-cloudfront",
     "mypy-boto3-dynamodb",
@@ -27,10 +31,6 @@ dependencies = [
     "mypy-boto3-lambda",
     "mypy-boto3-s3",
     "mypy-boto3-secretsmanager",
-    "types-cryptography",
-    "types-requests",
-    "types-redis",
-    "types-psycopg2",
 ]
 
 
