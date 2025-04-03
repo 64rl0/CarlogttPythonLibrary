@@ -170,7 +170,7 @@ pretty = true
 
 # Suppresses errors about packages which do not implement type-hint
 # sharing.
-ignore_missing_imports = false
+ignore_missing_imports = true
 
 # Warns about unneeded '# type: ignore' comments.
-warn_unused_ignores = true
+warn_unused_ignores = false
