@@ -42,14 +42,19 @@ from typing import Any, Optional, Union
 # Third Party Library Imports
 import mysql.connector
 import mysql.connector.cursor
-import psycopg2
-import psycopg2.extensions
-import psycopg2.extras
 from mysql.connector.abstracts import MySQLConnectionAbstract
 from mysql.connector.pooling import PooledMySQLConnection
 
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
+
+try:
+    import psycopg2
+    import psycopg2.extensions
+    import psycopg2.extras
+except ImportError:
+    pass
+
 
 # END IMPORTS
 # ======================================================================
