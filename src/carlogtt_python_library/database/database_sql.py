@@ -48,12 +48,18 @@ from mysql.connector.pooling import PooledMySQLConnection
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
 
+# This is to maintain backward compatability with AL2 that does not
+# support the latest version of psycopg2. Remove when drop support
+# of AL2.
 try:
     import psycopg2
     import psycopg2.extensions
     import psycopg2.extras
+
+    PGConnection = psycopg2.extensions.connection
 except ImportError:
-    pass
+    psycopg2 = None  # type: ignore
+    PGConnection = NotImplemented  # type: ignore
 
 
 # END IMPORTS
@@ -287,10 +293,10 @@ class PostgreSQL(Database):
         self._password = password
         self._port = port
         self._database_schema = database_schema
-        self._db_connection: Optional[psycopg2.extensions.connection] = None
+        self._db_connection: Optional[PGConnection] = None
 
     @property
-    def db_connection(self) -> psycopg2.extensions.connection:
+    def db_connection(self) -> PGConnection:
         """
         Gets the active db connection. If there is not an active
         connection it creates one.
