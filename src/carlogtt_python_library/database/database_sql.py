@@ -342,6 +342,7 @@ class PostgreSQL(Database):
             module_logger.error(message)
             raise exceptions.PostgresError(message)
 
+    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def send_to_db(self, sql_query: str, sql_values: Union[tuple, str]) -> None:
         """
         Send data to PostgreSQL database.
@@ -371,6 +372,7 @@ class PostgreSQL(Database):
             db_cursor.close()
             self.close_db_connection()
 
+    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def fetch_from_db(
         self,
         sql_query: str,

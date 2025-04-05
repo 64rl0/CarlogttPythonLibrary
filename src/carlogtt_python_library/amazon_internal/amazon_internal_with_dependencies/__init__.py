@@ -35,6 +35,7 @@ This module contains the package imports for the current package.
 
 # Local Folder (Relative) Imports
 from .apollo import *
+from .mirador import *
 from .phone_tool import *
 
 # END IMPORTS
