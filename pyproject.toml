@@ -47,6 +47,7 @@ dev = [
     "flake8",
     "isort",
     "mypy",
+    "pep8-naming",
     "pytest",
     "twine",
 ]
