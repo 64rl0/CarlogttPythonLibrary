@@ -63,7 +63,7 @@ try:
 except ImportError:
     # Setting up logger for current module
     module_logger = logging.getLogger(__name__)
-    module_logger.warning(
+    module_logger.debug(
         "psycopg2 is not installed. Please install manually or use 'pip install"
         " \"carlogtt-python-library[postgres]\"'."
     )

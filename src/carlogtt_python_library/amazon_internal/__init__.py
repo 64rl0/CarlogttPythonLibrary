@@ -51,7 +51,7 @@ except ImportError:
 
     # Setting up logger for current module
     module_logger = logging.getLogger(__name__)
-    module_logger.warning(
+    module_logger.debug(
         "Amazon internal imports failed due to missing Brazil dependencies. This is expected if"
         " you're running outside the Amazon Brazil environment."
     )
