@@ -48,16 +48,26 @@ from mysql.connector.pooling import PooledMySQLConnection
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
 
-# This is to maintain backward compatability with AL2 that does not
-# support the latest version of psycopg2. Remove when drop support
-# of AL2.
+# psycopg2 is defined as an optional dependency. We use this try/except
+# to gracefully handle environments where psycopg2 is not installed
+# (e.g., on older systems or when Postgres support is not needed).
+# If you do need Postgres support, run:
+#     pip install "carlogtt-python-library[postgres]"
 try:
     import psycopg2
     import psycopg2.extensions
     import psycopg2.extras
 
     PGConnection = psycopg2.extensions.connection
+
 except ImportError:
+    # Setting up logger for current module
+    module_logger = logging.getLogger(__name__)
+    module_logger.warning(
+        "psycopg2 is not installed. Please install manually or use 'pip install"
+        " \"carlogtt-python-library[postgres]\"'."
+    )
+
     psycopg2 = None  # type: ignore
     PGConnection = NotImplemented  # type: ignore
 

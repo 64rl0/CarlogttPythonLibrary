@@ -38,12 +38,23 @@ from .amazon_internal_apis import *
 from .midway import *
 from .midway_selenium import *
 
-# Amazon Internal Only Imports
+# These imports rely on internal Amazon Brazil packages that are not
+# publicly available. If you're running this code outside of Amazon's
+# internal environment, the import will fail. This is expected and safe
+# to ignore. Any functionality requiring these internal packages simply
+# won't be available externally.
 try:
     from .amazon_internal_with_dependencies import *
 
 except ImportError:
-    pass
+    import logging
+
+    # Setting up logger for current module
+    module_logger = logging.getLogger(__name__)
+    module_logger.warning(
+        "Amazon internal imports failed due to missing Brazil dependencies. This is expected if"
+        " you're running outside the Amazon Brazil environment."
+    )
 
 # END IMPORTS
 # ======================================================================

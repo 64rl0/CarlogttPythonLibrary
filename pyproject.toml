@@ -14,7 +14,6 @@ dependencies = [
     "awscrt",
     "cryptography",
     "mysql-connector-python",
-    "psycopg2",
     "redis",
     "requests",
     "selenium",
@@ -39,6 +38,9 @@ Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 
 
 [project.optional-dependencies]
+postgres = [
+    "psycopg2",
+]
 dev = [
     "black",
     "build",
