@@ -289,18 +289,12 @@ class DynamoDB:
         :raise DynamoDBError: If retrieval fails.
         """
 
-        @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
-        def _scan_with_retry(
-            dynamodb_scan_args: type_defs.ScanInputTypeDef,
-        ) -> type_defs.ScanOutputTypeDef:
-            return self._client.scan(**dynamodb_scan_args)
-
         dynamodb_scan_args: type_defs.ScanInputTypeDef = {'TableName': table}
 
         try:
             while True:
                 try:
-                    dynamodb_response = _scan_with_retry(dynamodb_scan_args)
+                    dynamodb_response = self._scan_with_retry(dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
                     raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
@@ -333,6 +327,24 @@ class DynamoDB:
 
         except Exception as ex:
             raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+
+    @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
+    def _scan_with_retry(
+        self, dynamodb_scan_args: type_defs.ScanInputTypeDef
+    ) -> type_defs.ScanOutputTypeDef:
+        """
+        Scan a DynamoDB table with built-in retry logic.
+
+        :param dynamodb_scan_args:
+            Dictionary of parameters for the DynamoDB `scan` operation,
+            e.g. `{"TableName": "my-table", "FilterExpression": ...}`.
+        :return:
+            The raw DynamoDB scan response from the Boto3 client. This
+            includes items (if any), plus pagination data like
+            `LastEvaluatedKey`.
+        """
+
+        return self._client.scan(**dynamodb_scan_args)
 
     def get_items_count(self, table: str) -> int:
         """

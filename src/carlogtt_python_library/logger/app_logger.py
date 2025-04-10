@@ -83,7 +83,7 @@ class ColoredFormatter(logging.Formatter):
     that supports ANSI color codes.
     """
 
-    _COLOR_RESET = utils.cli_end
+    _COLOR_RESET = utils.CLIStyle.CLI_END
 
     def __init__(self, log_color: str, *args, **kwargs):
         self._log_color = log_color
@@ -130,13 +130,13 @@ class Logger:
     """
 
     LOG_COLORS = {
-        'default': utils.cli_end,
-        'red': utils.cli_red,
-        'green': utils.cli_green,
-        'yellow': utils.cli_yellow,
-        'blue': utils.cli_blue,
-        'magenta': utils.cli_magenta,
-        'cyan': utils.cli_cyan,
+        'default': utils.CLIStyle.CLI_END,
+        'red': utils.CLIStyle.CLI_RED,
+        'green': utils.CLIStyle.CLI_GREEN,
+        'yellow': utils.CLIStyle.CLI_YELLOW,
+        'blue': utils.CLIStyle.CLI_BLUE,
+        'magenta': utils.CLIStyle.CLI_MAGENTA,
+        'cyan': utils.CLIStyle.CLI_CYAN,
     }
     LOG_FMT = '%(levelname)-8s | %(asctime)s | %(pathname)s:%(lineno)d | %(message)s'
 

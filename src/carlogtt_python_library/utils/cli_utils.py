@@ -42,54 +42,7 @@ import time
 
 # List of public names in the module
 __all__ = [
-    'cli_black',
-    'cli_red',
-    'cli_green',
-    'cli_yellow',
-    'cli_blue',
-    'cli_magenta',
-    'cli_cyan',
-    'cli_white',
-    'cli_bold_black',
-    'cli_bold_red',
-    'cli_bold_green',
-    'cli_bold_yellow',
-    'cli_bold_blue',
-    'cli_bold_magenta',
-    'cli_bold_cyan',
-    'cli_bold_white',
-    'cli_bg_black',
-    'cli_bg_red',
-    'cli_bg_green',
-    'cli_bg_yellow',
-    'cli_bg_blue',
-    'cli_bg_magenta',
-    'cli_bg_cyan',
-    'cli_bg_white',
-    'cli_bold',
-    'cli_dim',
-    'cli_italic',
-    'cli_underline',
-    'cli_invert',
-    'cli_hidden',
-    'cli_end',
-    'cli_end_bold',
-    'cli_end_dim',
-    'cli_end_italic_underline',
-    'cli_end_invert',
-    'cli_end_hidden',
-    'emoji_green_check_mark',
-    'emoji_hammer_and_wrench',
-    'emoji_clock',
-    'emoji_sparkles',
-    'emoji_stop_sign',
-    'emoji_warning_sign',
-    'emoji_key',
-    'emoji_circle_arrows',
-    'emoji_broom',
-    'emoji_link',
-    'emoji_package',
-    'emoji_network_world',
+    'CLIStyle',
     'LoadingBar',
 ]
 
@@ -100,65 +53,70 @@ module_logger = logging.getLogger(__name__)
 #
 
 
-# Basic Foreground Colors
-cli_black = "\033[30m"
-cli_red = "\033[31m"
-cli_green = "\033[32m"
-cli_yellow = "\033[33m"
-cli_blue = "\033[34m"
-cli_magenta = "\033[35m"
-cli_cyan = "\033[36m"
-cli_white = "\033[37m"
+class CLIStyle:
+    """
+    A collection of ANSI escape codes and emojis for styling CLI output.
+    """
 
-# Bold/Bright Foreground Colors
-cli_bold_black = "\033[1;30m"
-cli_bold_red = "\033[1;31m"
-cli_bold_green = "\033[1;32m"
-cli_bold_yellow = "\033[1;33m"
-cli_bold_blue = "\033[1;34m"
-cli_bold_magenta = "\033[1;35m"
-cli_bold_cyan = "\033[1;36m"
-cli_bold_white = "\033[1;37m"
+    # Basic Foreground Colors
+    CLI_BLACK = "\033[30m"
+    CLI_RED = "\033[31m"
+    CLI_GREEN = "\033[32m"
+    CLI_YELLOW = "\033[33m"
+    CLI_BLUE = "\033[34m"
+    CLI_MAGENTA = "\033[35m"
+    CLI_CYAN = "\033[36m"
+    CLI_WHITE = "\033[37m"
 
-# Basic Background Colors
-cli_bg_black = "\033[40m"
-cli_bg_red = "\033[41m"
-cli_bg_green = "\033[42m"
-cli_bg_yellow = "\033[43m"
-cli_bg_blue = "\033[44m"
-cli_bg_magenta = "\033[45m"
-cli_bg_cyan = "\033[46m"
-cli_bg_white = "\033[47m"
+    # Bold/Bright Foreground Colors
+    CLI_BOLD_BLACK = "\033[1;30m"
+    CLI_BOLD_RED = "\033[1;31m"
+    CLI_BOLD_GREEN = "\033[1;32m"
+    CLI_BOLD_YELLOW = "\033[1;33m"
+    CLI_BOLD_BLUE = "\033[1;34m"
+    CLI_BOLD_MAGENTA = "\033[1;35m"
+    CLI_BOLD_CYAN = "\033[1;36m"
+    CLI_BOLD_WHITE = "\033[1;37m"
 
-# Text Formatting
-cli_bold = "\033[1m"
-cli_dim = "\033[2m"
-cli_italic = "\033[3m"
-cli_underline = "\033[4m"
-cli_invert = "\033[7m"
-cli_hidden = "\033[8m"
+    # Basic Background Colors
+    CLI_BG_BLACK = "\033[40m"
+    CLI_BG_RED = "\033[41m"
+    CLI_BG_GREEN = "\033[42m"
+    CLI_BG_YELLOW = "\033[43m"
+    CLI_BG_BLUE = "\033[44m"
+    CLI_BG_MAGENTA = "\033[45m"
+    CLI_BG_CYAN = "\033[46m"
+    CLI_BG_WHITE = "\033[47m"
 
-# Reset Specific Formatting
-cli_end = "\033[0m"
-cli_end_bold = "\033[21m"
-cli_end_dim = "\033[22m"
-cli_end_italic_underline = "\033[23m"
-cli_end_invert = "\033[27m"
-cli_end_hidden = "\033[28m"
+    # Text Formatting
+    CLI_BOLD = "\033[1m"
+    CLI_DIM = "\033[2m"
+    CLI_ITALIC = "\033[3m"
+    CLI_UNDERLINE = "\033[4m"
+    CLI_INVERT = "\033[7m"
+    CLI_HIDDEN = "\033[8m"
 
-# Emoji
-emoji_green_check_mark = "\xe2\x9c\x85"
-emoji_hammer_and_wrench = "\xf0\x9f\x9b\xa0"
-emoji_clock = "\xe2\x8f\xb0"
-emoji_sparkles = "\xe2\x9c\xa8"
-emoji_stop_sign = "\xf0\x9f\x9b\x91"
-emoji_warning_sign = "\xe2\x9a\xa0\xef\xb8\x8f"
-emoji_key = "\xf0\x9f\x94\x91"
-emoji_circle_arrows = "\xf0\x9f\x94\x84"
-emoji_broom = "\xf0\x9f\xa7\xb9"
-emoji_link = "\xf0\x9f\x94\x97"
-emoji_package = "\xf0\x9f\x93\xa6"
-emoji_network_world = "\xf0\x9f\x8c\x90"
+    # Reset Specific Formatting
+    CLI_END = "\033[0m"
+    CLI_END_BOLD = "\033[21m"
+    CLI_END_DIM = "\033[22m"
+    CLI_END_ITALIC_UNDERLINE = "\033[23m"
+    CLI_END_INVERT = "\033[27m"
+    CLI_END_HIDDEN = "\033[28m"
+
+    # Emoji
+    EMOJI_GREEN_CHECK_MARK = "\xe2\x9c\x85"
+    EMOJI_HAMMER_AND_WRENCH = "\xf0\x9f\x9b\xa0"
+    EMOJI_CLOCK = "\xe2\x8f\xb0"
+    EMOJI_SPARKLES = "\xe2\x9c\xa8"
+    EMOJI_STOP_SIGN = "\xf0\x9f\x9b\x91"
+    EMOJI_WARNING_SIGN = "\xe2\x9a\xa0\xef\xb8\x8f"
+    EMOJI_KEY = "\xf0\x9f\x94\x91"
+    EMOJI_CIRCLE_ARROWS = "\xf0\x9f\x94\x84"
+    EMOJI_BROOM = "\xf0\x9f\xa7\xb9"
+    EMOJI_LINK = "\xf0\x9f\x94\x97"
+    EMOJI_PACKAGE = "\xf0\x9f\x93\xa6"
+    EMOJI_NETWORK_WORLD = "\xf0\x9f\x8c\x90"
 
 
 class LoadingBar(threading.Thread):

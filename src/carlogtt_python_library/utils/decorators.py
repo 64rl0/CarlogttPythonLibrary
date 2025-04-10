@@ -109,7 +109,7 @@ def retry(
                     message = f"[RETRY]: {repr(ex)}, Retrying in {delay_secs} seconds..."
 
                     # Log error
-                    logger.info(message)
+                    logger.debug(message)
 
                     # Wait to retry
                     time.sleep(delay_secs)

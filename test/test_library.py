@@ -42,14 +42,23 @@ from pprint import pprint
 # Third Party Library Imports
 # import cv2
 import pytz
+from test__entrypoint__ import master_logger
 
 # My Library Imports
 import carlogtt_library as mylib
 
-# import numpy as np
-
 # END IMPORTS
 # ======================================================================
+
+
+# List of public names in the module
+# __all__ = []
+
+# Setting up logger for current module
+module_logger = master_logger.get_child_logger(__name__)
+
+# Type aliases
+#
 
 
 region = "eu-west-1"

@@ -40,6 +40,7 @@ from unittest.mock import patch
 # Third Party Library Imports
 import psycopg2.extensions
 import pytest
+from test__entrypoint__ import master_logger
 
 # My Library Imports
 from carlogtt_library import Database, MySQL, PostgreSQL, SQLite
@@ -53,7 +54,7 @@ from carlogtt_library.exceptions import MySQLError, PostgresError, SQLiteError
 # __all__ = []
 
 # Setting up logger for current module
-# module_logger =
+module_logger = master_logger.get_child_logger(__name__)
 
 # Type aliases
 #

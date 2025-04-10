@@ -47,9 +47,12 @@ import warnings
 # List of public names in the module
 __all__ = [
     'MyLibraryException',
+    'AwsSigV4SessionError',
     'SimTError',
     'SimTHandlerError',
     'MiradorError',
+    'PipelinesError',
+    'BindleError',
     'RedisCacheManagerError',
     'DatabaseError',
     'SQLiteError',
@@ -114,6 +117,12 @@ class SimTError(MyLibraryException):
     """
 
 
+class AwsSigV4SessionError(MyLibraryException):
+    """
+    This is the base exception class to handle AwsSigV4Session errors.
+    """
+
+
 class SimTHandlerError(SimTError):
     """
     DEPRECATED: Please use SimTError instead.
@@ -133,6 +142,18 @@ class SimTHandlerError(SimTError):
 class MiradorError(MyLibraryException):
     """
     This is the base exception class to handle Mirador Handler errors.
+    """
+
+
+class PipelinesError(MyLibraryException):
+    """
+    This is the base exception class to handle Pipelines errors.
+    """
+
+
+class BindleError(MyLibraryException):
+    """
+    This is the base exception class to handle Bindle errors.
     """
 
 

@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_mirador.py
-# Created 3/24/25 - 8:31 PM UK Time (London) by carlogtt
+# test/test_pipelines.py
+# Created 4/7/25 - 11:36 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -54,35 +54,38 @@ module_logger = master_logger.get_child_logger(__name__)
 # Type aliases
 #
 
-
-region = "eu-north-1"
-profile = "akhjones_dev"
-mirador = mylib.Mirador(
+region = "eu-west-1"
+profile = "carlogtt-isengard-dev"
+pipelines = mylib.Pipelines(
     aws_region_name=region,
-    mirador_role_arn='arn:aws:iam::376204018982:role/mirador-api-D222006546-gamma-arn',
-    mirador_external_id='91c7248a-a87a-40a7-9dbd-e0d88fb27c20',
-    mirador_api_key='CXc5qfkpmr5zf7eGowwgA75ZDHL4XOTP6uLACgL4',
-    mirador_stage='gamma',
     aws_profile_name=profile,
-    client_parameters={},
     caching=True,
+    client_parameters={},
 )
 
 
-def get_finding_attributes():
-    response = mirador.get_finding_attributes()
-    pprint(response)
+def get_pipeline_structure():
+    response = pipelines.get_pipeline_structure(pipeline_name="ADC-OAR")
+
+    return response
 
 
-def get_resource_attributes():
-    response = mirador.get_resource_attributes()
-    pprint(response)
+def pipelines_throttling():
+    counter = 0
+    while True:
+        counter += 1
+        response = pipelines.get_pipeline_structure(pipeline_name="ADC-OAR")
+        print(response)
+        if counter == 20:
+            break
+
+    return response
 
 
 if __name__ == '__main__':
     funcs = [
-        get_finding_attributes,
-        get_resource_attributes,
+        get_pipeline_structure,
+        # pipelines_throttling,
     ]
 
     for func in funcs:

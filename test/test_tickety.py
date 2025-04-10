@@ -38,6 +38,7 @@ from unittest.mock import MagicMock
 
 # Third Party Library Imports
 import botocore.exceptions
+from test__entrypoint__ import master_logger
 
 # My Library Imports
 import carlogtt_library as mylib
@@ -50,7 +51,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-# module_logger =
+module_logger = master_logger.get_child_logger(__name__)
 
 # Type aliases
 #

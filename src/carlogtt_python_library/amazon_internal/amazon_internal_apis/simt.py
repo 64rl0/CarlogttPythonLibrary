@@ -60,7 +60,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+TicketyClient = Any
 
 
 class SimT:
@@ -113,17 +113,15 @@ class SimT:
         self,
         aws_region_name: str,
         *,
-        aws_account_id: str = "default",
-        ticketing_system_name: str = "default",
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
         aws_session_token: Optional[str] = None,
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
+        aws_account_id: str = "default",
+        ticketing_system_name: str = "default",
     ) -> None:
-        self._aws_account_id = aws_account_id
-        self._ticketing_system_name = ticketing_system_name
         self._aws_region_name = aws_region_name
         self._aws_profile_name = aws_profile_name
         self._aws_access_key_id = aws_access_key_id
@@ -131,12 +129,15 @@ class SimT:
         self._aws_session_token = aws_session_token
         self._caching = caching
         self._cache: dict[str, Any] = dict()
+        self._aws_account_id = aws_account_id
+        self._ticketing_system_name = ticketing_system_name
+        self._aws_tickety_region_name = "global"
         self._aws_service_name = "tickety"
         self._aws_endpoint_url = "https://global.api.tickety.amazon.dev"
         self._client_parameters = client_parameters if client_parameters else dict()
 
     @property
-    def _client(self):
+    def _client(self) -> TicketyClient:
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_boto_tickety_client()
@@ -172,7 +173,7 @@ class SimT:
 
         return botocore.config.Config(signature_version="v4a", retries={"mode": "adaptive"})
 
-    def _get_boto_tickety_client(self):
+    def _get_boto_tickety_client(self) -> TicketyClient:
         """
         Create a low level tickety client.
 
@@ -182,7 +183,7 @@ class SimT:
 
         try:
             boto_session = boto3.session.Session(
-                region_name="global",  # overriding region with 'global'
+                region_name=self._aws_tickety_region_name,
                 profile_name=self._aws_profile_name,
                 aws_access_key_id=self._aws_access_key_id,
                 aws_secret_access_key=self._aws_secret_access_key,
@@ -203,6 +204,28 @@ class SimT:
         except Exception as ex:
             raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
 
+    def invalidate_client_cache(self) -> None:
+        """
+        Clears the cached client, if caching is enabled.
+
+        This method allows manually invalidating the cached client,
+        forcing a new client instance to be created on the next access.
+        Useful if AWS credentials have changed or if there's a need to
+        connect to a different region within the same instance
+        lifecycle.
+
+        :return: None.
+        :raise SimTError: Raises an error if caching is not enabled
+               for this instance.
+        """
+
+        if not self._cache:
+            raise exceptions.SimTError(
+                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
+            )
+
+        self._cache['client'] = None
+
     def get_tickets(self, filters: dict[str, Any]) -> Generator[dict[str, Any], None, None]:
         """
         Returns an iterable of ticketIds.
@@ -212,20 +235,12 @@ class SimT:
         :raise: SimTError if function call fails.
         """
 
-        @utils.retry(Exception)
-        def _list_tickets_with_retry(payload: dict[str, Any]):
-            return self._client.list_tickets(
-                awsAccountId=self._aws_account_id,
-                ticketingSystemName=self._ticketing_system_name,
-                **payload,
-            )
-
         payload: dict[str, Any] = {'filters': filters}
         next_token = 'valid_string'
 
         try:
             while next_token:
-                tickety_response = _list_tickets_with_retry(payload)
+                tickety_response = self._list_tickets_with_retry(payload)
 
                 next_token = tickety_response.get('nextToken', '')
                 payload.update({'nextToken': next_token})
@@ -238,6 +253,28 @@ class SimT:
 
         except Exception as ex:
             raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+
+    @utils.retry(Exception)
+    def _list_tickets_with_retry(self, payload: dict[str, Any]):
+        """
+        Perform the `list_tickets` operation with automatic retries for
+        transient exceptions.
+
+        :param payload:
+            The parameters to pass to the underlying client's
+            `list_tickets` call. Typically includes filters,
+            nextToken, etc.
+        :return:
+            The raw response dictionary from `list_tickets`, which
+            includes a potential `nextToken` and a list of ticket
+            summaries in the `ticketSummaries` key.
+        """
+
+        return self._client.list_tickets(
+            awsAccountId=self._aws_account_id,
+            ticketingSystemName=self._ticketing_system_name,
+            **payload,
+        )
 
     @utils.retry(exceptions.SimTError)
     def get_ticket_details(
