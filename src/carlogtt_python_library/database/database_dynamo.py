@@ -703,49 +703,48 @@ class DynamoDB:
 
         :param put: Initiates a PutItem operation to write a new item.
             schema = {
-                'TableName': "string DynamoDB Table Name",
-                'PartitionKeyKey': "string of the PartitionKey key",
-                'PartitionKeyValue': "OPTIONAL - partition key value",
-                'AutoGeneratePartitionKeyValue': "OPTIONAL - bool",
-                'Items': "dict containing all the items to put in
-                    DynamoDB",
-                }
+            'TableName': "string DynamoDB Table Name",
+            'PartitionKeyKey': "string of the PartitionKey key",
+            'PartitionKeyValue': "OPTIONAL - partition key value",
+            'AutoGeneratePartitionKeyValue': "OPTIONAL - bool",
+            'Items': "dict containing all the items to put in DynamoDB",
+            }
         :param update: Initiates an UpdateItem operation to update an
             existing item.
             schema = {
-                'TableName': "string DynamoDB Table Name",
-                'PartitionKey': "The partition key as dict of
-                    partition_key {key: value}",
-                'Items': "dict containing all the values for items to be
-                    updated",
-                'ConditionAttribute': "OPTIONAL - attribute to matched
-                    as dict of attribute_to_match {key: value}",
-                }
+            'TableName': "string DynamoDB Table Name",
+            'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            'Items': "dict containing all the values for items to be
+            updated",
+            'ConditionAttribute': "OPTIONAL - attribute to matched
+            as dict of attribute_to_match {key: value}",
+            }
         :param delete: Initiates a DeleteItem operation to delete an
             existing item.
             schema = {
-                'TableName': "string DynamoDB Table Name",
-                'PartitionKey': "The partition key as dict of
-                    partition_key {key: value}",
-                }
+            'TableName': "string DynamoDB Table Name",
+            'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            }
         :param condition_check: Applies a condition to an item that is
             not being modified by the transaction. The condition must
             be satisfied for the transaction to succeed.
             schema = {
-                'TableName': "string DynamoDB Table Name",
-                'PartitionKey': "The partition key as dict of
-                    partition_key {key: value}",
-                }
+            'TableName': "string DynamoDB Table Name",
+            'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            }
         :return: A dictionary with keys
             'Put', 'Update', 'Delete', 'ConditionCheck',
             and a list of items writes to the DynamoDB in the same
             order as they were passed in.
             schema = {
-                'Put': "list of items writes to DynamoDB",
-                'Update': "list of items writes to DynamoDB",
-                'Delete': "list of items writes to DynamoDB",
-                'ConditionCheck': "list of items writes to DynamoDB",
-                }
+            'Put': "list of items writes to DynamoDB",
+            'Update': "list of items writes to DynamoDB",
+            'Delete': "list of items writes to DynamoDB",
+            'ConditionCheck': "list of items writes to DynamoDB",
+            }
         :raise DynamoDBError: If atomic writes fail.
         :raise DynamoDBConflictError: If atomic writes fail due to a
             conflict.

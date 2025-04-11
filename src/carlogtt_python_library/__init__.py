@@ -112,6 +112,22 @@ class _CompatibilityProxy:
         'emoji_network_world',
     }
 
+    DEPRECATED_STRING_UTILS_VARIABLES = {
+        'get_random_string',
+        'snake_case',
+    }
+
+    DEPRECATED_USER_INPUT_VARIABLES = {
+        'get_user_input_and_validate_int',
+        'get_user_input_confirmation_y_n',
+    }
+
+    DEPRECATED_VALIDATORS_VARIABLES = {
+        'validate_non_empty_strings',
+        'validate_username_requirements',
+        'validate_password_requirements',
+    }
+
     def __getattr__(self, name: str):
         """
         Redirects access to deprecated variables to the new variable
@@ -120,22 +136,44 @@ class _CompatibilityProxy:
 
         if name in self.DEPRECATED_CLI_STYLE_VARIABLES:
             upper_name = name.upper()
+            msg = (
+                f"[DEPRECATED] '{name}' is deprecated. Use '{CLIStyle.__qualname__}.{upper_name}'"
+                " instead."
+            )
 
-            if hasattr(CLIStyle, upper_name):
-                _warnings.warn(
-                    f"[DEPRECATED] '{name}' is deprecated. Use 'CLIStyle.{upper_name}' instead.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
+            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            _module_logger.warning(msg)
 
-                _module_logger.warning(
-                    f"[DEPRECATED] '{name}' is deprecated. Use 'CLIStyle.{upper_name}' instead.",
-                )
+            return getattr(CLIStyle, upper_name)
 
-                return getattr(CLIStyle, upper_name)
+        elif name in self.DEPRECATED_STRING_UTILS_VARIABLES:
+            msg = (
+                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
+                f" '{StringUtils.__qualname__}()' instead."
+            )
 
-        else:
-            raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            _module_logger.warning(msg)
+
+        elif name in self.DEPRECATED_USER_INPUT_VARIABLES:
+            msg = (
+                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
+                f" '{UserPrompter.__qualname__}()' instead."
+            )
+
+            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            _module_logger.warning(msg)
+
+        elif name in self.DEPRECATED_VALIDATORS_VARIABLES:
+            msg = (
+                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
+                f" '{InputValidator.__qualname__}()' instead."
+            )
+
+            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
+            _module_logger.warning(msg)
+
+        raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 # Inject the compatibility proxy at module-level

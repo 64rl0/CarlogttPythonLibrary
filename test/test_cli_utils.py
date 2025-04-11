@@ -56,3 +56,6 @@ module_logger = master_logger.get_child_logger(__name__)
 
 print(mylib.cli_black)
 print(mylib.CLIStyle.CLI_BLACK)
+print(mylib.CLIStyle.CLI_END)
+
+print(mylib.snake_case('ThisIsATest'))
