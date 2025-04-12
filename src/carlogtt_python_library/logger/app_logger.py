@@ -66,6 +66,7 @@ from .. import utils
 # List of public names in the module
 __all__ = [
     'Logger',
+    'LoggerLevel',
 ]
 
 # Setting up logger for current module
@@ -75,7 +76,7 @@ module_logger = logging.getLogger(__name__)
 #
 
 
-class ColoredFormatter(logging.Formatter):
+class _ColoredFormatter(logging.Formatter):
     """
     A custom logging formatter to add color codes to log messages.
     This formatter extends the standard logging
@@ -97,13 +98,17 @@ class ColoredFormatter(logging.Formatter):
         :return: A color-coded log message string.
         """
 
+        # Inject a UUID if not already present
+        if not hasattr(record, 'log_id'):
+            record.log_id = str(uuid.uuid4().hex)
+
         log_message = super().format(record)
         log_formatted = f"{self._log_color}{log_message}{self._COLOR_RESET}"
 
         return log_formatted
 
 
-class Level(enum.Enum):
+class LoggerLevel(enum.Enum):
     DEBUG = 10
     INFO = 20
     WARNING = 30
@@ -129,7 +134,7 @@ class Logger:
     :param log_fmt: The log format.
     """
 
-    LOG_COLORS = {
+    _LOG_COLORS = {
         'default': utils.CLIStyle.CLI_END,
         'red': utils.CLIStyle.CLI_RED,
         'green': utils.CLIStyle.CLI_GREEN,
@@ -138,28 +143,86 @@ class Logger:
         'magenta': utils.CLIStyle.CLI_MAGENTA,
         'cyan': utils.CLIStyle.CLI_CYAN,
     }
-    LOG_FMT = '%(levelname)-8s | %(asctime)s | %(pathname)s:%(lineno)d | %(message)s'
+    _LOG_FMT = '%(levelname)-8s | %(asctime)s | %(log_id)s | %(pathname)s:%(lineno)d | %(message)s'
 
     def __init__(
         self,
         log_name: str,
-        log_level: str,
+        log_level: Union[str, LoggerLevel],
         log_color: str = 'default',
         log_fmt: Optional[str] = None,
-    ):
-        if log_color not in self.LOG_COLORS:
+    ) -> None:
+        if log_color not in self._LOG_COLORS:
             raise ValueError(
-                f"log_color must be one of the following values: {self.LOG_COLORS.keys()}"
+                f"log_color must be one of the following values: {self._LOG_COLORS.keys()}"
             )
 
+        self._log_level_enum = self._parse_log_level(log_level=log_level)
+
         self.app_logger = logging.getLogger(log_name)
-        self.app_logger.setLevel(log_level)
-        self.formatter = ColoredFormatter(
-            log_color=self.LOG_COLORS[log_color],
+        self.app_logger.setLevel(self._log_level_enum.value)
+
+        self.formatter = _ColoredFormatter(
+            log_color=self._LOG_COLORS[log_color],
             style='%',
-            fmt=log_fmt or self.LOG_FMT,
+            fmt=log_fmt or self._LOG_FMT,
             datefmt='%Y-%m-%d %H:%M:%S',
         )
+
+        self._root_logger = logging.getLogger()
+        self._root_logger_attached = False
+
+    def attach_root_logger(self) -> None:
+        """
+        Attach the current handlers and logging level of 'app_logger'
+        to the root logger.
+
+        This ensures that calls to the Python root logger
+        (e.g. logging.info(), logging.debug()) will produce output
+        that matches the configuration of 'app_logger'.
+        """
+
+        # Copy app_logger level to root_logger
+        self._root_logger.setLevel(self.app_logger.level)
+
+        # Copy app_logger handlers to root_logger
+        for handler in self.app_logger.handlers:
+            self._root_logger.addHandler(handler)
+
+        # Remove app_logger handlers to avoid logging duplication
+        self.app_logger.handlers = []
+
+        # Mark root logger as active
+        logging.debug("root_logger attached to module_logger")
+        self._root_logger_attached = True
+
+    def detach_root_logger(self) -> None:
+        """
+        Detach custom handlers from the root logger and revert to a
+        higher-level filter (WARNING).
+
+        This effectively disables or limits root-logger output.
+        Any modules still calling logging.info() or logging.debug()
+        against the root logger will no longer produce output
+        (or be limited to WARNING+).
+        """
+
+        # Copy root_logger level to app_logger
+        self.app_logger.setLevel(self._root_logger.level)
+
+        # Reset the default root logger level
+        self._root_logger.setLevel(LoggerLevel.WARNING.value)
+
+        # Copy root_logger handlers to app_logger
+        for handler in self._root_logger.handlers:
+            self.app_logger.addHandler(handler)
+
+        # Remove root_logger handlers
+        self._root_logger.handlers = []
+
+        # Mark root logger as disabled
+        logging.debug("root_logger detached from module_logger")
+        self._root_logger_attached = False
 
     def add_file_handler(self, logger_file_path: Union[str, pathlib.Path]) -> None:
         """
@@ -169,7 +232,7 @@ class Logger:
                string or a pathlib.Path object.
         """
 
-        file_handler = logging.FileHandler(filename=logger_file_path, mode="a+")
+        file_handler = logging.FileHandler(filename=logger_file_path, mode='a+')
         file_handler.setFormatter(self.formatter)
         self.app_logger.addHandler(file_handler)
 
@@ -218,15 +281,64 @@ class Logger:
 
         return new_child_logger
 
-    def log_with_exception_id(self, log_level: Level, message: str = "") -> None:
+    def change_logger_level(self, log_level: Union[str, LoggerLevel]) -> None:
         """
-        Logs a message at a specific log level with an exception ID.
+        Change the logger's effective level at runtime.
 
-        :param log_level: The logging level for the message.
-        :param message: The log message.
+        This method updates both the logger instance's level and all
+        registered handlers' levels to the newly specified value.
+
+        :param log_level: The desired new log level. It can be either:
+            - A :class:`LoggerLevel` enum member
+            (e.g. ``LoggerLevel.DEBUG``)
+            - A string representing one of the valid log level names
+            (e.g. ``"DEBUG"``, ``"INFO"``)
+        :raises ValueError: If the provided string does not match any
+            :class:`LoggerLevel` member.
+        :return: None
         """
 
-        exc_id = "EID-" + str(uuid.uuid4().hex)
-        message_with_exception_id = f"{exc_id} | {message}"
+        # Update instance value
+        self._log_level_enum = self._parse_log_level(log_level=log_level)
 
-        self.app_logger.log(level=log_level.value, msg=message_with_exception_id)
+        # Get active logger
+        if self._root_logger_attached:
+            active_logger = self._root_logger
+        else:
+            active_logger = self.app_logger
+
+        # Set app_logger new level
+        active_logger.setLevel(self._log_level_enum.value)
+
+        # Set all handlers new level
+        for handler in active_logger.handlers:
+            handler.setLevel(self._log_level_enum.value)
+
+    def _parse_log_level(self, log_level: Union[str, LoggerLevel]) -> LoggerLevel:
+        """
+        Convert a string or LoggerLevel enum into a valid LoggerLevel.
+
+        :param log_level: A string (e.g., 'INFO') or a LoggerLevel enum.
+        :return: A LoggerLevel enum member.
+        :raises ValueError: If log_level is an invalid string.
+        :raises TypeError: If log_level is neither a string nor a
+            LoggerLevel.
+        """
+
+        if isinstance(log_level, str):
+            try:
+                self._log_level_enum = LoggerLevel[log_level.upper()]
+
+            except KeyError:
+                raise ValueError(
+                    f"Invalid log_level '{log_level}'. Valid options:"
+                    f" {', '.join(lvl.name for lvl in LoggerLevel)}"
+                ) from None
+
+        elif isinstance(log_level, LoggerLevel):
+            self._log_level_enum = log_level
+
+        else:
+            raise TypeError("log_level must be either a string or LoggerLevel.")
+
+        return self._log_level_enum
