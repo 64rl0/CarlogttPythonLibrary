@@ -61,7 +61,7 @@ class _CompatibilityProxy:
     (e.g. `cli_red`) and redirect to the CLIStyle class.
     """
 
-    DEPRECATED_NAMES = {
+    DEPRECATED_NAMES_PUBLIC = {
         'cli_black': CLIStyle,
         'cli_red': CLIStyle,
         'cli_green': CLIStyle,
@@ -117,12 +117,21 @@ class _CompatibilityProxy:
         'validate_non_empty_strings': InputValidator,
         'validate_username_requirements': InputValidator,
         'validate_password_requirements': InputValidator,
-        'get_application_root': Apollo,
         'create_amazon_tiny_url': AmazonTinyUrl,
-        'phone_tool_lookup': PhoneTool,
         'cli_midway_auth': MidwayUtils,
         'extract_valid_cookies': MidwayUtils,
     }
+
+    try:
+        DEPRECATED_NAMES_AMAZON_INTERNAL = {
+            'get_application_root': Apollo,
+            'phone_tool_lookup': PhoneTool,
+        }
+
+        DEPRECATED_NAMES = {**DEPRECATED_NAMES_PUBLIC, **DEPRECATED_NAMES_AMAZON_INTERNAL}
+
+    except NameError:
+        DEPRECATED_NAMES = DEPRECATED_NAMES_PUBLIC
 
     def __getattr__(self, name: str):
         """

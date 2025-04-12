@@ -64,6 +64,9 @@ class AmazonTinyUrl:
     A handler class for the TinyUrl API.
     """
 
+    def __init__(self):
+        self.midway_utils = midway.MidwayUtils()
+
     def create_amazon_tiny_url(
         self, long_url: str, cookie_filepath: str = "~/.midway/cookie"
     ) -> str:
@@ -77,7 +80,7 @@ class AmazonTinyUrl:
         :return: The tiny url for the agenda preview.
         """
 
-        cookies = midway.extract_valid_cookies(cookie_filepath)
+        cookies = self.midway_utils.extract_valid_cookies(cookie_filepath)
 
         response = requests.post(
             url='https://tiny.amazon.com/submit/url',
