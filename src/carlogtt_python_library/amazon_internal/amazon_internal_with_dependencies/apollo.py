@@ -37,8 +37,8 @@ import os
 import warnings
 
 # Third Party Library Imports
-from bender import apollo_environment_info  # type: ignore
-from bender.apollo_error import ApolloError  # type: ignore
+import bender.apollo_environment_info  # type: ignore
+import bender.apollo_error  # type: ignore
 
 # END IMPORTS
 # ======================================================================
@@ -71,10 +71,12 @@ class Apollo:
         """
 
         try:
-            root = os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
+            root = os.path.abspath(bender.apollo_environment_info.ApolloEnvironmentInfo().root)
 
-        except ApolloError:
-            root = os.path.abspath(apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)
+        except bender.apollo_error.ApolloError:
+            root = os.path.abspath(
+                bender.apollo_environment_info.BrazilBootstrapEnvironmentInfo().root
+            )
 
         return root
 
@@ -90,6 +92,6 @@ def get_application_root() -> str:
     module_logger.warning(msg)
 
     try:
-        return os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
-    except ApolloError:
-        return os.path.abspath(apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)
+        return os.path.abspath(bender.apollo_environment_info.ApolloEnvironmentInfo().root)
+    except bender.apollo_error.ApolloError:
+        return os.path.abspath(bender.apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)

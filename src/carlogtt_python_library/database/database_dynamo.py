@@ -1307,6 +1307,9 @@ class DynamoDbSerializer:
     table, and for reading data back into Python objects.
     """
 
+    def __init__(self):
+        self.string_utils = utils.StringUtils()
+
     def serialize_att(self, attribute_value: AttributeValue) -> type_defs.AttributeValueTypeDef:
         """
         Serialize a Python data type into a format suitable for
@@ -1517,7 +1520,7 @@ class DynamoDbSerializer:
         additional_items: Item = {}
 
         for key, value in items.items():
-            normalized_key = utils.snake_case(key)
+            normalized_key = self.string_utils.snake_case(key)
             dynamodb_attribute = self.serialize_att(value)
 
             # Now add it to the additional_items serialized dictionary
@@ -1554,7 +1557,7 @@ class DynamoDbSerializer:
         expression_attribute_values: Item = {}
 
         for key, value in items.items():
-            normalized_key = utils.snake_case(key)
+            normalized_key = self.string_utils.snake_case(key)
             dynamodb_attribute = self.serialize_att(value)
 
             # Add to the update_expression string
