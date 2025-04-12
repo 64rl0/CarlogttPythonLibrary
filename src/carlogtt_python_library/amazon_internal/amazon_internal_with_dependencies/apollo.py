@@ -34,6 +34,7 @@ This module ...
 # Standard Library Imports
 import logging
 import os
+import warnings
 
 # Third Party Library Imports
 from bender import apollo_environment_info  # type: ignore
@@ -45,6 +46,8 @@ from bender.apollo_error import ApolloError  # type: ignore
 
 # List of public names in the module
 __all__ = [
+    'Apollo',
+    # Deprecated
     'get_application_root',
 ]
 
@@ -55,7 +58,37 @@ module_logger = logging.getLogger(__name__)
 #
 
 
+class Apollo:
+    """
+    A handler class for the Apollo API.
+    """
+
+    def get_application_root(self) -> str:
+        """
+        Retrieve the absolute path of the application root directory.
+
+        :return: The absolute path to the application root directory.
+        """
+
+        try:
+            root = os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
+
+        except ApolloError:
+            root = os.path.abspath(apollo_environment_info.BrazilBootstrapEnvironmentInfo().root)
+
+        return root
+
+
 def get_application_root() -> str:
+
+    # TODO(carlogtt): Delete this function after deprecation period
+    msg = (
+        f"[DEPRECATED] '{get_application_root.__name__}' is deprecated. Use the parent"
+        f" class '{Apollo.__qualname__}()' instead."
+    )
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+    module_logger.warning(msg)
+
     try:
         return os.path.abspath(apollo_environment_info.ApolloEnvironmentInfo().root)
     except ApolloError:

@@ -57,7 +57,7 @@ import uuid
 from typing import Optional, TextIO, Union
 
 # Local Folder (Relative) Imports
-from .. import utils
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -153,7 +153,7 @@ class Logger:
         log_fmt: Optional[str] = None,
     ) -> None:
         if log_color not in self._LOG_COLORS:
-            raise ValueError(
+            raise exceptions.LoggerError(
                 f"log_color must be one of the following values: {self._LOG_COLORS.keys()}"
             )
 
@@ -293,7 +293,7 @@ class Logger:
             (e.g. ``LoggerLevel.DEBUG``)
             - A string representing one of the valid log level names
             (e.g. ``"DEBUG"``, ``"INFO"``)
-        :raises ValueError: If the provided string does not match any
+        :raises LoggerError: If the provided string does not match any
             :class:`LoggerLevel` member.
         :return: None
         """
@@ -320,9 +320,8 @@ class Logger:
 
         :param log_level: A string (e.g., 'INFO') or a LoggerLevel enum.
         :return: A LoggerLevel enum member.
-        :raises ValueError: If log_level is an invalid string.
-        :raises TypeError: If log_level is neither a string nor a
-            LoggerLevel.
+        :raises LoggerError: If log_level is an invalid strig or if
+            it's neither a string nor a LoggerLevel.
         """
 
         if isinstance(log_level, str):
@@ -330,7 +329,7 @@ class Logger:
                 self._log_level_enum = LoggerLevel[log_level.upper()]
 
             except KeyError:
-                raise ValueError(
+                raise exceptions.LoggerError(
                     f"Invalid log_level '{log_level}'. Valid options:"
                     f" {', '.join(lvl.name for lvl in LoggerLevel)}"
                 ) from None
@@ -339,6 +338,6 @@ class Logger:
             self._log_level_enum = log_level
 
         else:
-            raise TypeError("log_level must be either a string or LoggerLevel.")
+            raise exceptions.LoggerError("log_level must be either a string or LoggerLevel.")
 
         return self._log_level_enum

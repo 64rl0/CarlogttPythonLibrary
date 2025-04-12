@@ -33,6 +33,7 @@ This module ...
 
 # Standard Library Imports
 import logging
+import warnings
 
 # Third Party Library Imports
 import requests
@@ -46,6 +47,8 @@ from .. import midway
 
 # List of public names in the module
 __all__ = [
+    'AmazonTinyUrl',
+    # Deprecated
     'create_amazon_tiny_url',
 ]
 
@@ -54,6 +57,42 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #
+
+
+class AmazonTinyUrl:
+    """
+    A handler class for the TinyUrl API.
+    """
+
+    def create_amazon_tiny_url(
+        self, long_url: str, cookie_filepath: str = "~/.midway/cookie"
+    ) -> str:
+        """
+        Create a tiny url.
+        Using Amazon backend service https://tiny.amazon.com
+
+        :param long_url: The url to convert to tiny.
+        :param cookie_filepath: The file path to the cookie file.
+               Defaults to "~/.midway/cookie".
+        :return: The tiny url for the agenda preview.
+        """
+
+        cookies = midway.extract_valid_cookies(cookie_filepath)
+
+        response = requests.post(
+            url='https://tiny.amazon.com/submit/url',
+            headers={'Accept': 'application/json'},
+            params=[('name', long_url), ('opaque', 1)],
+            cookies=cookies,
+        )
+
+        try:
+            tiny_url = response.json()['short_url']
+
+        except KeyError:
+            tiny_url = ""
+
+        return tiny_url
 
 
 def create_amazon_tiny_url(long_url: str, cookie_filepath: str = "~/.midway/cookie") -> str:
@@ -66,6 +105,14 @@ def create_amazon_tiny_url(long_url: str, cookie_filepath: str = "~/.midway/cook
            Defaults to "~/.midway/cookie".
     :return: The tiny url for the agenda preview.
     """
+
+    # TODO(carlogtt): Delete this function after deprecation period
+    msg = (
+        f"[DEPRECATED] '{create_amazon_tiny_url.__name__}' is deprecated. Use the parent"
+        f" class '{AmazonTinyUrl.__qualname__}()' instead."
+    )
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+    module_logger.warning(msg)
 
     cookies = midway.extract_valid_cookies(cookie_filepath)
 

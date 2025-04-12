@@ -61,71 +61,67 @@ class _CompatibilityProxy:
     (e.g. `cli_red`) and redirect to the CLIStyle class.
     """
 
-    DEPRECATED_CLI_STYLE_VARIABLES = {
-        'cli_black',
-        'cli_red',
-        'cli_green',
-        'cli_yellow',
-        'cli_blue',
-        'cli_magenta',
-        'cli_cyan',
-        'cli_white',
-        'cli_bold_black',
-        'cli_bold_red',
-        'cli_bold_green',
-        'cli_bold_yellow',
-        'cli_bold_blue',
-        'cli_bold_magenta',
-        'cli_bold_cyan',
-        'cli_bold_white',
-        'cli_bg_black',
-        'cli_bg_red',
-        'cli_bg_green',
-        'cli_bg_yellow',
-        'cli_bg_blue',
-        'cli_bg_magenta',
-        'cli_bg_cyan',
-        'cli_bg_white',
-        'cli_bold',
-        'cli_dim',
-        'cli_italic',
-        'cli_underline',
-        'cli_invert',
-        'cli_hidden',
-        'cli_end',
-        'cli_end_bold',
-        'cli_end_dim',
-        'cli_end_italic_underline',
-        'cli_end_invert',
-        'cli_end_hidden',
-        'emoji_green_check_mark',
-        'emoji_hammer_and_wrench',
-        'emoji_clock',
-        'emoji_sparkles',
-        'emoji_stop_sign',
-        'emoji_warning_sign',
-        'emoji_key',
-        'emoji_circle_arrows',
-        'emoji_broom',
-        'emoji_link',
-        'emoji_package',
-        'emoji_network_world',
-    }
-
-    DEPRECATED_STRING_UTILS_VARIABLES = {
-        'get_random_string',
-        'snake_case',
-    }
-
-    DEPRECATED_USER_INPUT_VARIABLES = {
-        'get_user_input_and_validate_int',
-        'get_user_input_confirmation_y_n',
-    }
-
-    DEPRECATED_VALIDATORS_VARIABLES = {
-        'validate_non_empty_strings',
-        'validate_username_requirements',
-        'validate_password_requirements',
+    DEPRECATED_NAMES = {
+        'cli_black': CLIStyle,
+        'cli_red': CLIStyle,
+        'cli_green': CLIStyle,
+        'cli_yellow': CLIStyle,
+        'cli_blue': CLIStyle,
+        'cli_magenta': CLIStyle,
+        'cli_cyan': CLIStyle,
+        'cli_white': CLIStyle,
+        'cli_bold_black': CLIStyle,
+        'cli_bold_red': CLIStyle,
+        'cli_bold_green': CLIStyle,
+        'cli_bold_yellow': CLIStyle,
+        'cli_bold_blue': CLIStyle,
+        'cli_bold_magenta': CLIStyle,
+        'cli_bold_cyan': CLIStyle,
+        'cli_bold_white': CLIStyle,
+        'cli_bg_black': CLIStyle,
+        'cli_bg_red': CLIStyle,
+        'cli_bg_green': CLIStyle,
+        'cli_bg_yellow': CLIStyle,
+        'cli_bg_blue': CLIStyle,
+        'cli_bg_magenta': CLIStyle,
+        'cli_bg_cyan': CLIStyle,
+        'cli_bg_white': CLIStyle,
+        'cli_bold': CLIStyle,
+        'cli_dim': CLIStyle,
+        'cli_italic': CLIStyle,
+        'cli_underline': CLIStyle,
+        'cli_invert': CLIStyle,
+        'cli_hidden': CLIStyle,
+        'cli_end': CLIStyle,
+        'cli_end_bold': CLIStyle,
+        'cli_end_dim': CLIStyle,
+        'cli_end_italic_underline': CLIStyle,
+        'cli_end_invert': CLIStyle,
+        'cli_end_hidden': CLIStyle,
+        'emoji_green_check_mark': CLIStyle,
+        'emoji_hammer_and_wrench': CLIStyle,
+        'emoji_clock': CLIStyle,
+        'emoji_sparkles': CLIStyle,
+        'emoji_stop_sign': CLIStyle,
+        'emoji_warning_sign': CLIStyle,
+        'emoji_key': CLIStyle,
+        'emoji_circle_arrows': CLIStyle,
+        'emoji_broom': CLIStyle,
+        'emoji_link': CLIStyle,
+        'emoji_package': CLIStyle,
+        'emoji_network_world': CLIStyle,
+        'get_random_string': StringUtils,
+        'snake_case': StringUtils,
+        'get_user_input_and_validate_int': UserPrompter,
+        'get_user_input_confirmation_y_n': UserPrompter,
+        'validate_non_empty_strings': InputValidator,
+        'validate_username_requirements': InputValidator,
+        'validate_password_requirements': InputValidator,
+        'get_application_root': Apollo,
+        'create_amazon_tiny_url': AmazonTinyUrl,
+        'phone_tool_lookup': PhoneTool,
+        'cli_midway_auth': MidwayUtils,
+        'extract_valid_cookies': MidwayUtils,
     }
 
     def __getattr__(self, name: str):
@@ -134,46 +130,39 @@ class _CompatibilityProxy:
         location.
         """
 
-        if name in self.DEPRECATED_CLI_STYLE_VARIABLES:
-            upper_name = name.upper()
-            msg = (
-                f"[DEPRECATED] '{name}' is deprecated. Use '{CLIStyle.__qualname__}.{upper_name}'"
-                " instead."
-            )
-
-            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            _module_logger.warning(msg)
-
-            return getattr(CLIStyle, upper_name)
-
-        elif name in self.DEPRECATED_STRING_UTILS_VARIABLES:
-            msg = (
-                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
-                f" '{StringUtils.__qualname__}()' instead."
-            )
-
-            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            _module_logger.warning(msg)
-
-        elif name in self.DEPRECATED_USER_INPUT_VARIABLES:
-            msg = (
-                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
-                f" '{UserPrompter.__qualname__}()' instead."
-            )
-
-            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            _module_logger.warning(msg)
-
-        elif name in self.DEPRECATED_VALIDATORS_VARIABLES:
-            msg = (
-                f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
-                f" '{InputValidator.__qualname__}()' instead."
-            )
-
-            _warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            _module_logger.warning(msg)
+        if name in self.DEPRECATED_NAMES:
+            if self.DEPRECATED_NAMES[name] is CLIStyle:
+                return self._handle_cli_style(name=name)
+            else:
+                return self._warn_user(name=name, new_class=self.DEPRECATED_NAMES[name])
 
         raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+    def _handle_cli_style(self, name: str):
+        upper_name = name.upper()
+        msg = (
+            f"[DEPRECATED] '{name}' is deprecated. Use '{CLIStyle.__qualname__}.{upper_name}'"
+            " instead."
+        )
+
+        _warnings.warn(msg, DeprecationWarning, stacklevel=3)
+        _module_logger.warning(msg)
+
+        return getattr(CLIStyle, upper_name)
+
+    def _warn_user(self, name: str, new_class: type):
+        msg = (
+            f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
+            f" '{new_class.__qualname__}()' instead."
+        )
+
+        _warnings.warn(msg, DeprecationWarning, stacklevel=3)
+        _module_logger.warning(msg)
+
+        raise AttributeError(
+            f"module '{__name__}' has no attribute '{name}'. Use the parent class"
+            f" '{new_class.__qualname__}()' instead."
+        )
 
 
 # Inject the compatibility proxy at module-level

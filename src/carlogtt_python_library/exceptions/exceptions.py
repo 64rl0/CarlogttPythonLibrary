@@ -46,13 +46,14 @@ import warnings
 
 # List of public names in the module
 __all__ = [
-    'MyLibraryException',
+    'CarlogttLibraryBaseException',
     'AwsSigV4SessionError',
     'SimTError',
     'SimTHandlerError',
     'MiradorError',
     'PipelinesError',
     'BindleError',
+    'LoggerError',
     'RedisCacheManagerError',
     'DatabaseError',
     'SQLiteError',
@@ -75,7 +76,7 @@ module_logger = logging.getLogger(__name__)
 #
 
 
-class MyLibraryException(Exception):
+class CarlogttLibraryBaseException(Exception):
     """
     Custom exception class for MyLibrary, providing enhanced
     functionality for error handling and reporting. This class extends
@@ -95,9 +96,9 @@ class MyLibraryException(Exception):
                  representation of the exception as its value.
         """
 
-        return {
-            'exception': repr(self),
-        }
+        response = {'exception': repr(self)}
+
+        return response
 
     def to_json(self) -> str:
         """
@@ -108,18 +109,14 @@ class MyLibraryException(Exception):
                  API response.
         """
 
-        return json.dumps(self.to_dict())
+        response = json.dumps(self.to_dict())
+
+        return response
 
 
-class SimTError(MyLibraryException):
+class SimTError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle SimTicket Handler errors.
-    """
-
-
-class AwsSigV4SessionError(MyLibraryException):
-    """
-    This is the base exception class to handle AwsSigV4Session errors.
     """
 
 
@@ -139,32 +136,44 @@ class SimTHandlerError(SimTError):
         super().__init__(*args)
 
 
-class MiradorError(MyLibraryException):
+class MiradorError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle Mirador Handler errors.
     """
 
 
-class PipelinesError(MyLibraryException):
+class PipelinesError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle Pipelines errors.
     """
 
 
-class BindleError(MyLibraryException):
+class BindleError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle Bindle errors.
     """
 
 
-class RedisCacheManagerError(MyLibraryException):
+class AwsSigV4SessionError(CarlogttLibraryBaseException):
+    """
+    This is the base exception class to handle AwsSigV4Session errors.
+    """
+
+
+class LoggerError(CarlogttLibraryBaseException):
+    """
+    This is the base exception class to handle Logger errors.
+    """
+
+
+class RedisCacheManagerError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle redis cache manager
     errors.
     """
 
 
-class DatabaseError(MyLibraryException):
+class DatabaseError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle database errors.
     """
@@ -200,38 +209,38 @@ class DynamoDBConflictError(DynamoDBError):
     """
 
 
-class S3Error(MyLibraryException):
+class S3Error(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle S3 errors.
     """
 
 
-class SecretsManagerError(MyLibraryException):
+class SecretsManagerError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle SecretsManager errors.
     """
 
 
-class KMSError(MyLibraryException):
+class KMSError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle Key Management Service
     (KMS) errors.
     """
 
 
-class CloudFrontError(MyLibraryException):
+class CloudFrontError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle CloudFront errors.
     """
 
 
-class EC2Error(MyLibraryException):
+class EC2Error(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle EC2 errors.
     """
 
 
-class LambdaError(MyLibraryException):
+class LambdaError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle Lambda errors.
     """
