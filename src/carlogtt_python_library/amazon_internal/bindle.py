@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/amazon_internal/amazon_internal_apis/bindle.py
+# src/carlogtt_library/amazon_internal/bindle.py
 # Created 4/8/25 - 1:31 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -43,7 +43,7 @@ import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports
-from ... import exceptions, utils
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -159,10 +159,10 @@ class Bindle:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.BindleError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.BindleError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.BindleError(f"Operation failed! - {str(ex)}")
+            raise exceptions.BindleError(str(ex))
 
     def _send_bindle_api_request(
         self, request_method: utils.AwsSigV4RequestMethod, operation: str, payload: dict[str, Any]
@@ -188,7 +188,7 @@ class Bindle:
             return response_obj
 
         except Exception as ex:
-            raise exceptions.BindleError(f"Operation failed! - {str(ex)}") from None
+            raise exceptions.BindleError(str(ex)) from None
 
     def invalidate_client_cache(self) -> None:
         """

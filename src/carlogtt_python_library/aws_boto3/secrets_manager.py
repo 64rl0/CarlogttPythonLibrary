@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# secrets_manager.py
+# src/carlogtt_library/aws_boto3/secrets_manager.py
 # Created 11/22/23 - 12:25 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -164,10 +164,10 @@ class SecretsManager:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SecretsManagerError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SecretsManagerError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -227,7 +227,7 @@ class SecretsManager:
             return secrets
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SecretsManagerError(str(ex))
 
     def get_secret(self, secret_id: str, **kwargs) -> Optional[dict[str, str]]:
         """
@@ -267,7 +267,7 @@ class SecretsManager:
             return secret
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SecretsManagerError(str(ex))
 
     def get_secret_password(self, secret_id: str, **kwargs) -> str:
         """
@@ -334,7 +334,7 @@ class SecretsManager:
             return secretsmanager_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SecretsManagerError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SecretsManagerError(str(ex))

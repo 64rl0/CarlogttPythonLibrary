@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# simt.py
+# src/carlogtt_library/amazon_internal/simt.py
 # Created 10/25/23 - 3:55 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -44,7 +44,7 @@ import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports
-from ... import exceptions, utils
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -199,10 +199,10 @@ class SimT:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -249,10 +249,10 @@ class SimT:
                     yield ticket_data
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
     @utils.retry(Exception)
     def _list_tickets_with_retry(self, payload: dict[str, Any]):
@@ -303,13 +303,13 @@ class SimT:
                 return tickety_response['ticket']
 
             except KeyError as ex_inner:
-                raise exceptions.SimTError(f"Operation failed! - {str(ex_inner)}")
+                raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
     @utils.retry(exceptions.SimTError)
     def update_ticket(self, ticket_id: str, payload: dict[str, Any]) -> None:
@@ -334,16 +334,16 @@ class SimT:
             )
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
         if (
             not isinstance(response, dict)
             or response.get('ResponseMetadata', {}).get('HTTPStatusCode') != 200
         ):
-            raise exceptions.SimTError(f"Operation failed! - {str(response)}")
+            raise exceptions.SimTError(str(response))
 
     @utils.retry(exceptions.SimTError)
     def create_ticket_comment(
@@ -390,13 +390,13 @@ class SimT:
                 return tickety_response['commentId']
 
             except KeyError as ex_inner:
-                raise exceptions.SimTError(f"Operation failed! - {str(ex_inner)}")
+                raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
     @utils.retry(exceptions.SimTError)
     def create_ticket(self, ticket_data: dict[str, Any]) -> str:
@@ -419,13 +419,13 @@ class SimT:
                 return ticket_response['id']
 
             except KeyError as ex_inner:
-                raise exceptions.SimTError(f"Operation failed! - {str(ex_inner)}")
+                raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.SimTError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.SimTError(f"Operation failed! - {str(ex)}")
+            raise exceptions.SimTError(str(ex))
 
 
 class SimTicketHandler(SimT):

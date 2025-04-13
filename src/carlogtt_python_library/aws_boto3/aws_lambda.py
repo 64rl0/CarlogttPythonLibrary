@@ -158,10 +158,10 @@ class Lambda:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.LambdaError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.LambdaError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.LambdaError(f"Operation failed! - {str(ex)}")
+            raise exceptions.LambdaError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -216,7 +216,7 @@ class Lambda:
             return lambda_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.LambdaError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.LambdaError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.LambdaError(f"Operation failed! - {str(ex)}")
+            raise exceptions.LambdaError(str(ex))

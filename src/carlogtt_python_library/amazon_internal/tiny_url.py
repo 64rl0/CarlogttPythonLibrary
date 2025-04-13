@@ -39,7 +39,7 @@ import warnings
 import requests
 
 # Local Folder (Relative) Imports
-from .. import midway
+from . import midway
 
 # END IMPORTS
 # ======================================================================

@@ -157,10 +157,10 @@ class KMS:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.KMSError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.KMSError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.KMSError(f"Operation failed! - {str(ex)}")
+            raise exceptions.KMSError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """

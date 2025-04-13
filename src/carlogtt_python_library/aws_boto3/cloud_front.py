@@ -157,10 +157,10 @@ class CloudFront:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.CloudFrontError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.CloudFrontError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.CloudFrontError(f"Operation failed! - {str(ex)}")
+            raise exceptions.CloudFrontError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -215,7 +215,7 @@ class CloudFront:
             return cloud_front_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.CloudFrontError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.CloudFrontError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.CloudFrontError(f"Operation failed! - {str(ex)}")
+            raise exceptions.CloudFrontError(str(ex))

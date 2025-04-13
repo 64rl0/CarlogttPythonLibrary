@@ -581,9 +581,9 @@ def redis_serializer():
     }
     # test_data = "a"
 
-    from carlogtt_library.database.redis_cache_manager import RedisSerializer
+    from carlogtt_library.database.redis_cache_manager import _RedisSerializer
 
-    rs = RedisSerializer()
+    rs = _RedisSerializer()
 
     ser = rs.serialize(test_data)
     pprint(ser)

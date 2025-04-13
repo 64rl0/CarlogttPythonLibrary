@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# s3.py
+# src/carlogtt_library/aws_boto3/s3.py
 # Created 11/9/23 - 10:00 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -161,10 +161,10 @@ class S3:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.S3Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -233,7 +233,7 @@ class S3:
             return filenames_list
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))
 
     def get_file(self, bucket: str, filename: str, **kwargs) -> GetObjectOutputTypeDef:
         """
@@ -252,10 +252,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.S3Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))
 
     def store_file(
         self, bucket: str, filename: str, file: Union[str, bytes], **kwargs
@@ -277,10 +277,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.S3Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))
 
     def delete_file(self, bucket: str, filename: str, **kwargs) -> DeleteObjectOutputTypeDef:
         """
@@ -299,10 +299,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.S3Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))
 
     def create_presigned_url_for_file(
         self, bucket: str, filename: str, expiration_time: int = 3600, **kwargs
@@ -334,7 +334,7 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.S3Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.S3Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.S3Error(str(ex))

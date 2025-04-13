@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# __init__.py -> amazon_internal
+# src/carlogtt_library/amazon_internal/__init__.py
 # Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -34,9 +34,12 @@ This module contains the package imports for the current package.
 # ======================================================================
 
 # Local Folder (Relative) Imports
-from .amazon_internal_apis import *
+from .bindle import *
 from .midway import *
 from .midway_selenium import *
+from .pipelines import *
+from .simt import *
+from .tiny_url import *
 
 # These imports rely on internal Amazon Brazil packages that are not
 # publicly available. If you're running this code outside of Amazon's
@@ -44,7 +47,9 @@ from .midway_selenium import *
 # to ignore. Any functionality requiring these internal packages simply
 # won't be available externally.
 try:
-    from .amazon_internal_with_dependencies import *
+    from .apollo import *
+    from .mirador import *
+    from .phone_tool import *
 
 except ImportError:
     import logging

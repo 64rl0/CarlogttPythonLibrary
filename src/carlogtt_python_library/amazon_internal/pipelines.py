@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/amazon_internal/mirador.py
-# Created 3/24/25 - 2:13 PM UK Time (London) by carlogtt
+# src/carlogtt_library/amazon_internal/pipelines.py
+# Created 4/7/25 - 8:43 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -32,17 +32,19 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import enum
 import logging
 from typing import Any, Optional
 
 # Third Party Library Imports
-import aws_mirador_api_service_python_client_utils  # type: ignore
 import boto3
+import botocore.auth
+import botocore.awsrequest
 import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports
-from ... import exceptions, utils
+from .. import exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -50,35 +52,50 @@ from ... import exceptions, utils
 
 # List of public names in the module
 __all__ = [
-    "Mirador",
+    'Pipelines',
+    'TargetType',
 ]
 
 # Setting up logger for current module
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-MiradorClient = Any
+PipelinesClient = utils.AwsSigV4Session
 
 
-class Mirador:
+class TargetType(enum.Enum):
     """
-    A handler class for the Mirador API.
+    Enum class for the different types of targets that can be used in
+    the PipelinesAPI.
+
+    Targets represent instances in underlying systems, like packages,
+    code deploy apps, etc.
+    """
+
+    BATS = 'BATS'
+    CD = 'CD'
+    CF = 'CF'
+    DG = 'DG'
+    ENV = 'ENV'
+    GEN = 'GEN'
+    OS = 'OS'
+    PKG = 'PKG'
+    VS = 'VS'
+
+
+class Pipelines:
+    """
+    A handler class for the PipelinesAPI.
 
     It includes an option to cache the client session to minimize
     the number of AWS API call.
 
     Internal Amazon API
-    https://prod.artifactbrowser.brazil.aws.dev/packages/AWSMiradorAPIServiceModel/versions/1.0.12187.0/platforms/AL2_x86_64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html
+    https://us-west-2.prod.pipelines-api.builder-tools.aws.dev/model/index.html
 
     :param aws_region_name: The name of the AWS region where the
            service is to be used. This parameter is required to
            configure the AWS client.
-    :param mirador_role_arn: The ARN of the role you received after
-           onboarding.
-    :param mirador_external_id: The external ID you used for onboarding.
-    :param mirador_api_key: The Mirador API key to use.
-    :param mirador_stage: Stage name, must be 'beta', 'gamma', 'prod'.
-           Defaults to 'prod'
     :param aws_profile_name: The name of the AWS profile to use for
            credentials. This is useful if you have multiple profiles
            configured in your AWS credentials file.
@@ -108,10 +125,6 @@ class Mirador:
         self,
         aws_region_name: str,
         *,
-        mirador_role_arn: str,
-        mirador_external_id: str,
-        mirador_api_key: str,
-        mirador_stage: str = 'prod',
         aws_profile_name: Optional[str] = None,
         aws_access_key_id: Optional[str] = None,
         aws_secret_access_key: Optional[str] = None,
@@ -126,28 +139,27 @@ class Mirador:
         self._aws_session_token = aws_session_token
         self._caching = caching
         self._cache: dict[str, Any] = dict()
-        self._mirador_role_arn = mirador_role_arn
-        self._mirador_external_id = mirador_external_id
-        self._mirador_api_key = mirador_api_key
-        self._mirador_stage = mirador_stage
+        self._aws_pipelines_region_name = "us-west-2"
+        self._aws_service_name = "pipelines-api"
+        self._aws_endpoint_url = "https://us-west-2.prod.pipelines-api.builder-tools.aws.dev"
         self._client_parameters = client_parameters if client_parameters else dict()
 
     @property
-    def _client(self) -> MiradorClient:
+    def _client(self) -> PipelinesClient:
         if self._caching:
             if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_mirador_client()
+                self._cache['client'] = self._get_pipelines_client()
             return self._cache['client']
 
         else:
-            return self._get_boto_mirador_client()
+            return self._get_pipelines_client()
 
-    def _get_boto_mirador_client(self) -> MiradorClient:
+    def _get_pipelines_client(self) -> PipelinesClient:
         """
-        Create a low level mirador client.
+        Create a low level pipelines client.
 
-        :return: A mirador client.
-        :raise: MiradorError if function call fails.
+        :return: A PipelinesClient.
+        :raise: PipelinesError if function call fails.
         """
 
         try:
@@ -158,22 +170,50 @@ class Mirador:
                 aws_secret_access_key=self._aws_secret_access_key,
                 aws_session_token=self._aws_session_token,
             )
-            client = aws_mirador_api_service_python_client_utils.new_mirador_client(
-                stage=self._mirador_stage,
-                region=self._aws_region_name,
-                role_arn=self._mirador_role_arn,
-                external_id=self._mirador_external_id,
-                session=boto_session,
-                **self._client_parameters,
+
+            client = utils.AwsSigV4Session(
+                region_name=self._aws_pipelines_region_name,
+                service_name=self._aws_service_name,
+                boto_session=boto_session,
+                protocol=utils.AwsSigV4Protocol.RPCv1,
             )
 
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.PipelinesError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex)}")
+            raise exceptions.PipelinesError(str(ex))
+
+    def _send_pipelines_api_request(
+        self, request_method: utils.AwsSigV4RequestMethod, operation: str, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        """
+        Make an HTTP request to the Pipelines API.
+
+        """
+
+        headers = {
+            "X-Amz-Target": (
+                f"com.amazon.pipelinesapinativeservice.PipelinesAPINativeService.{operation}"
+            ),
+        }
+
+        try:
+            response = self._client.request(
+                method=request_method.value,
+                url=self._aws_endpoint_url,
+                headers=headers,
+                data=payload,
+            )
+
+            response_obj = response.json()
+
+            return response_obj
+
+        except Exception as ex:
+            raise exceptions.PipelinesError(str(ex)) from None
 
     def invalidate_client_cache(self) -> None:
         """
@@ -186,59 +226,72 @@ class Mirador:
         lifecycle.
 
         :return: None.
-        :raise SimTError: Raises an error if caching is not enabled
+        :raise PipelinesError: Raises an error if caching is not enabled
                for this instance.
         """
 
         if not self._cache:
-            raise exceptions.MiradorError(
+            raise exceptions.PipelinesError(
                 f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
             )
 
         self._cache['client'] = None
 
-    @utils.retry(exceptions.MiradorError)
-    def get_finding_attributes(self) -> list[tuple[str, str]]:
+    def get_pipeline_structure(
+        self, *, pipeline_name: Optional[str] = None, pipeline_id: Optional[str] = None
+    ) -> dict[str, Any]:
         """
-        Get the list of finding attributes.
+        Returns the structure of a pipeline based on it’s name or ID.
 
-        :return: A list of tuples containing the attribute name and
-            type.
-        :raise: MiradorError if function call fails.
-        """
-
-        try:
-            response = self._client.get_finding_attributes(api_key=self._mirador_api_key)
-
-            attributes = [(attrib.name, attrib.type) for attrib in response.attributes]
-
-            return attributes
-
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex.response)}")
-
-        except Exception as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex)}")
-
-    @utils.retry(exceptions.MiradorError)
-    def get_resource_attributes(self) -> list[tuple[str, str]]:
-        """
-        Get the list of resource attributes.
-
-        :return: A list of tuples containing the attribute name and
-            type.
-        :raise: MiradorError if function call fails.
+        :param pipeline_name: The name of the pipeline.
+        :param pipeline_id: The id of the pipeline.
+        :return: The pipeline structure.
+        :raise: PipelinesError if function call fails.
         """
 
-        try:
-            response = self._client.get_resource_attributes(api_key=self._mirador_api_key)
+        if pipeline_name and pipeline_id:
+            raise exceptions.PipelinesError("Pipeline name and ID are mutually exclusive!")
 
-            attributes = [(attrib.name, attrib.type) for attrib in response.attributes]
+        if pipeline_name:
+            payload = {"pipelineName": pipeline_name}
+        elif pipeline_id:
+            payload = {"pipelineId": pipeline_id}
+        else:
+            raise exceptions.PipelinesError("Pipeline name or ID is required!")
 
-            return attributes
+        operation = "GetPipelineStructure"
 
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex.response)}")
+        response = self._send_pipelines_api_request(
+            request_method=utils.AwsSigV4RequestMethod.POST, operation=operation, payload=payload
+        )
 
-        except Exception as ex:
-            raise exceptions.MiradorError(f"Operation failed! - {str(ex)}")
+        return response
+
+    def get_pipelines_containing_target(
+        self, target_name: str, target_type: TargetType, in_primary_pipeline: bool
+    ) -> dict[str, Any]:
+        """
+        Returns a list of pipeline names which contain the provided
+        target.
+
+        :param target_name: The name of the target.
+        :param target_type: The type of the target.
+        :param in_primary_pipeline: Whether the target is in the primary
+            pipeline.
+        :return: The list of pipelines containing the target.
+        :raise: PipelinesError if function call fails.
+        """
+
+        payload = {
+            "targetName": target_name,
+            "targetType": target_type.value,
+            "inPrimaryPipeline": in_primary_pipeline,
+        }
+
+        operation = "GetPipelinesContainingTarget"
+
+        response = self._send_pipelines_api_request(
+            request_method=utils.AwsSigV4RequestMethod.POST, operation=operation, payload=payload
+        )
+
+        return response

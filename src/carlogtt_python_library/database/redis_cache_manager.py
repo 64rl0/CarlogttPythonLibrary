@@ -103,7 +103,7 @@ class RedisCacheManager:
 
         self._categories = set(category_keys)
         self._redis_cached_client: Optional[redis.client.Redis] = None
-        self._serializer = RedisSerializer()
+        self._serializer = _RedisSerializer()
 
     @property
     def _redis_client(self) -> redis.client.Redis:
@@ -421,7 +421,146 @@ class RedisCacheManager:
             raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
 
 
-class RedisSerializer:
+class _RedisEncoder(json.JSONEncoder):
+    """
+    _RedisEncoder extends the JSONEncoder to support additional
+    data types.
+    """
+
+    def default(self, obj: Any) -> Any:
+        """
+        Override the default method to handle additional data types.
+
+        A function that gets called for objects that can’t otherwise
+        be serialized. It should return a JSON encodable version of
+        the object.
+
+        :param obj: The object to be serialized.
+        :return: The serialized form of the object.
+        """
+
+        if isinstance(obj, (set, tuple, bytes, complex)):
+            return self._default(obj)
+
+        else:
+            raise exceptions.RedisCacheManagerError(
+                f"Object of type {type(obj)!r} for {obj!r} is not supported by Redis serialization."
+            )
+
+    def _default(self, obj: Any) -> Any:
+        """
+        Custom method to handle serialization recursively of
+        specific types.
+
+        :param obj: The object to be serialized.
+        :return: The serialized form of the object.
+        """
+
+        if isinstance(obj, set):
+            return {'__sentinel_type__': 'set', 'data': [self._default(el) for el in obj]}
+
+        elif isinstance(obj, bytes):
+            return {'__sentinel_type__': 'bytes', 'data': obj.decode('utf-8')}
+
+        elif isinstance(obj, complex):
+            return {'__sentinel_type__': 'complex_num', 'data': [obj.real, obj.imag]}
+
+        # Note to future carlogtt, tuple does not call the default
+        # function as they are not seen as unserializable obj, but
+        # they are seen as list
+        elif isinstance(obj, tuple):
+            return {'__sentinel_type__': 'tuple', 'data': [self._default(el) for el in obj]}
+
+        else:
+            return obj
+
+    def encode(self, obj: Any) -> str:
+        """
+        Return a JSON string representation of a Python data
+        structure.
+
+        :param obj: The object to be serialized.
+        :return: The JSON string representation of the object.
+        """
+
+        # Handle tuples because JSON is converting them to lists
+        # Note to future carlogtt, not sure set will ever get here
+        if isinstance(obj, (dict, set, list, tuple)):
+            obj = self._encode(obj)
+
+        return super().encode(o=obj)
+
+    def _encode(self, obj: Any) -> Any:
+        """
+        Custom method to recursively encode tuple data type.
+
+        :param obj: The object to be serialized.
+        :return: The encoded form of the object.
+        """
+
+        # The super encode method would convert tuples to lists, so
+        # we need to intercept that and convert tuples to dict with
+        # a sentinel_value
+        # Also dicts and lists can contain tuples
+        if isinstance(obj, dict):
+            obj = {key: self._encode(value) for key, value in obj.items()}
+
+        elif isinstance(obj, list):
+            obj = [self._encode(el) for el in obj]
+
+        elif isinstance(obj, tuple):
+            obj = {'__sentinel_type__': 'tuple', 'data': [self._encode(el) for el in obj]}
+
+        # Note to future carlogtt, not sure set will ever get here
+        # as they are converted to dict in the above default method
+        elif isinstance(obj, set):
+            obj = {self._encode(el) for el in obj}
+
+        return obj
+
+
+class _RedisDecoder(json.JSONDecoder):
+    """
+    _RedisDecoder extends the JSONDecoder to support the
+    deserialization of additional data types encoded by the
+    _RedisEncoder.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(object_hook=self.object_hook, *args, **kwargs)
+
+    @staticmethod
+    def object_hook(dict_obj: dict[str, Any]) -> Any:
+        """
+        object_hook is an optional function that will be called with
+        the result of any object literal decoded (a dict).
+        The return value of object_hook will be used instead of the
+        dict.
+
+        Custom object hook to convert dictionaries back to original
+        data types based on sentinel type.
+
+        :param dict_obj: The dictionary to be converted.
+        :return: The deserialized object.
+        """
+
+        if '__sentinel_type__' in dict_obj:
+            if dict_obj['__sentinel_type__'] == 'set':
+                return set(dict_obj['data'])
+
+            elif dict_obj['__sentinel_type__'] == 'tuple':
+                return tuple(dict_obj['data'])
+
+            elif dict_obj['__sentinel_type__'] == 'bytes':
+                return dict_obj['data'].encode('utf-8')
+
+            elif dict_obj['__sentinel_type__'] == 'complex':
+                return complex(dict_obj['data'][0], dict_obj['data'][1])
+
+        return dict_obj
+
+
+class _RedisSerializer:
     """
     RedisSerializer is a utility class for serializing and deserializing
     complex Python data types to JSON format and back.
@@ -434,144 +573,6 @@ class RedisSerializer:
     storage and then back to Python objects when retrieved.
     """
 
-    class _RedisEncoder(json.JSONEncoder):
-        """
-        _RedisEncoder extends the JSONEncoder to support additional
-        data types.
-        """
-
-        def default(self, obj: Any) -> Any:
-            """
-            Override the default method to handle additional data types.
-
-            A function that gets called for objects that can’t otherwise
-            be serialized. It should return a JSON encodable version of
-            the object.
-
-            :param obj: The object to be serialized.
-            :return: The serialized form of the object.
-            """
-
-            if isinstance(obj, (set, tuple, bytes, complex)):
-                return self._default(obj)
-
-            else:
-                raise exceptions.RedisCacheManagerError(
-                    f"Object of type {type(obj)!r} for {obj!r} is not supported by Redis"
-                    " serialization."
-                )
-
-        def _default(self, obj: Any) -> Any:
-            """
-            Custom method to handle serialization recursively of
-            specific types.
-
-            :param obj: The object to be serialized.
-            :return: The serialized form of the object.
-            """
-
-            if isinstance(obj, set):
-                return {'__sentinel_type__': 'set', 'data': [self._default(el) for el in obj]}
-
-            elif isinstance(obj, bytes):
-                return {'__sentinel_type__': 'bytes', 'data': obj.decode('utf-8')}
-
-            elif isinstance(obj, complex):
-                return {'__sentinel_type__': 'complex_num', 'data': [obj.real, obj.imag]}
-
-            # Note to future carlogtt, tuple does not call the default
-            # function as they are not seen as unserializable obj, but
-            # they are seen as list
-            elif isinstance(obj, tuple):
-                return {'__sentinel_type__': 'tuple', 'data': [self._default(el) for el in obj]}
-
-            else:
-                return obj
-
-        def encode(self, obj: Any) -> str:
-            """
-            Return a JSON string representation of a Python data
-            structure.
-
-            :param obj: The object to be serialized.
-            :return: The JSON string representation of the object.
-            """
-
-            # Handle tuples because JSON is converting them to lists
-            # Note to future carlogtt, not sure set will ever get here
-            if isinstance(obj, (dict, set, list, tuple)):
-                obj = self._encode(obj)
-
-            return super().encode(o=obj)
-
-        def _encode(self, obj: Any) -> Any:
-            """
-            Custom method to recursively encode tuple data type.
-
-            :param obj: The object to be serialized.
-            :return: The encoded form of the object.
-            """
-
-            # The super encode method would convert tuples to lists, so
-            # we need to intercept that and convert tuples to dict with
-            # a sentinel_value
-            # Also dicts and lists can contain tuples
-            if isinstance(obj, dict):
-                obj = {key: self._encode(value) for key, value in obj.items()}
-
-            elif isinstance(obj, list):
-                obj = [self._encode(el) for el in obj]
-
-            elif isinstance(obj, tuple):
-                obj = {'__sentinel_type__': 'tuple', 'data': [self._encode(el) for el in obj]}
-
-            # Note to future carlogtt, not sure set will ever get here
-            # as they are converted to dict in the above default method
-            elif isinstance(obj, set):
-                obj = {self._encode(el) for el in obj}
-
-            return obj
-
-    class _RedisDecoder(json.JSONDecoder):
-        """
-        _RedisDecoder extends the JSONDecoder to support the
-        deserialization of additional data types encoded by the
-        _RedisEncoder.
-        """
-
-        def __init__(self, *args, **kwargs) -> None:
-            super().__init__(object_hook=self.object_hook, *args, **kwargs)
-
-        @staticmethod
-        def object_hook(dict_obj: dict[str, Any]) -> Any:
-            """
-            object_hook is an optional function that will be called with
-            the result of any object literal decoded (a dict).
-            The return value of object_hook will be used instead of the
-            dict.
-
-            Custom object hook to convert dictionaries back to original
-            data types based on sentinel type.
-
-            :param dict_obj: The dictionary to be converted.
-            :return: The deserialized object.
-            """
-
-            if '__sentinel_type__' in dict_obj:
-                if dict_obj['__sentinel_type__'] == 'set':
-                    return set(dict_obj['data'])
-
-                elif dict_obj['__sentinel_type__'] == 'tuple':
-                    return tuple(dict_obj['data'])
-
-                elif dict_obj['__sentinel_type__'] == 'bytes':
-                    return dict_obj['data'].encode('utf-8')
-
-                elif dict_obj['__sentinel_type__'] == 'complex':
-                    return complex(dict_obj['data'][0], dict_obj['data'][1])
-
-            return dict_obj
-
     def serialize(self, obj: Any) -> str:
         """
         Serialize a Python object to a JSON string using the custom
@@ -581,7 +582,7 @@ class RedisSerializer:
         :return: The JSON string representation of the object.
         """
 
-        return json.dumps(obj=obj, cls=self._RedisEncoder)
+        return json.dumps(obj=obj, cls=_RedisEncoder)
 
     def deserialize(self, s: str) -> Any:
         """
@@ -592,7 +593,7 @@ class RedisSerializer:
         :return: The deserialized Python object.
         """
 
-        return json.loads(s=s, cls=self._RedisDecoder)
+        return json.loads(s=s, cls=_RedisDecoder)
 
     @staticmethod
     def serialize_redis_key(category: str, key: Optional[str] = None) -> str:

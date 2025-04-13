@@ -156,10 +156,10 @@ class EC2:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.EC2Error(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.EC2Error(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.EC2Error(f"Operation failed! - {str(ex)}")
+            raise exceptions.EC2Error(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """

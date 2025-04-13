@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# database_dynamo.py
+# src/carlogtt_library/database/database_dynamo.py
 # Created 9/30/23 - 4:38 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -223,10 +223,10 @@ class DynamoDB:
             return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
     def invalidate_client_cache(self) -> None:
         """
@@ -264,10 +264,10 @@ class DynamoDB:
             dynamodb_response = self._client.list_tables()
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         # If TableNames is not present then return an empty list
         try:
@@ -297,10 +297,10 @@ class DynamoDB:
                     dynamodb_response = self._scan_with_retry(dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
-                    raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                    raise exceptions.DynamoDBError(str(ex.response))
 
                 except Exception as ex:
-                    raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+                    raise exceptions.DynamoDBError(str(ex))
 
                 if dynamodb_response.get('Items') and len(dynamodb_response['Items']) > 0:
                     # Convert the DynamoDB attribute values to
@@ -326,7 +326,7 @@ class DynamoDB:
                     break
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
     @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
     def _scan_with_retry(
@@ -385,10 +385,10 @@ class DynamoDB:
             dynamodb_response = self._client.get_item(TableName=table, Key=partition_key)
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         dynamodb_item = dynamodb_response.get('Item')
 
@@ -513,8 +513,7 @@ class DynamoDB:
         # exception as there is nothing to update
         if not items:
             raise exceptions.DynamoDBError(
-                "Operation failed! - No values to update were passed to the DynamoDB"
-                " update_item_in_table method."
+                "No values to update were passed to the DynamoDB update_item_in_table method."
             )
 
         # Initialize a dictionary with all the arguments to pass into
@@ -580,10 +579,10 @@ class DynamoDB:
                 raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
 
             else:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         # If we get here it means that the item has been updated
         # successfully therefore we return it
@@ -634,10 +633,10 @@ class DynamoDB:
                 dynamodb_response = self._client.delete_item(TableName=table, Key=partition_key)
 
             except botocore.exceptions.ClientError as ex:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
             except Exception as ex:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+                raise exceptions.DynamoDBError(str(ex))
 
             response.append(dynamodb_response)
 
@@ -679,10 +678,10 @@ class DynamoDB:
                 raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
 
             else:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         return dynamodb_response
 
@@ -1012,10 +1011,10 @@ class DynamoDB:
                 raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
 
             else:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         return response
 
@@ -1073,16 +1072,16 @@ class DynamoDB:
                 counter = None
 
             except botocore.exceptions.ClientError as ex:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
             except Exception as ex:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+                raise exceptions.DynamoDBError(str(ex))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         if not counter:
             self.put_item(
@@ -1132,10 +1131,10 @@ class DynamoDB:
                 raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
 
             else:
-                raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+                raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         # If we get here it means that the item has been added
         # successfully therefore we return it
@@ -1259,10 +1258,10 @@ class DynamoDB:
             dynamodb_response = self._client.describe_table(TableName=table)
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex.response)}")
+            raise exceptions.DynamoDBError(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(f"Operation failed! - {str(ex)}")
+            raise exceptions.DynamoDBError(str(ex))
 
         # Get the PartitionKey Key
         for idx, schemas in enumerate(dynamodb_response['Table']['KeySchema']):
@@ -1291,7 +1290,7 @@ class DynamoDB:
             return float
 
         else:
-            raise exceptions.DynamoDBError("Operation failed! - PartitionKey Key Type not found")
+            raise exceptions.DynamoDBError("PartitionKey Key Type not found")
 
 
 class DynamoDbSerializer:

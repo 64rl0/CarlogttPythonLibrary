@@ -87,7 +87,7 @@ def test_update_ticket_client_error():
         simt.update_ticket("TICKET123", {"status": "closed"})
         assert False, "Expected SimTError but none was raised."
     except mylib.SimTError as e:
-        assert "Operation failed!" in str(e)
+        assert isinstance(e, mylib.SimTError)
 
 
 def test_update_ticket_generic_exception():
@@ -101,7 +101,7 @@ def test_update_ticket_generic_exception():
         simt.update_ticket("TICKET123", {"status": "closed"})
         assert False, "Expected SimTError but none was raised."
     except mylib.SimTError as e:
-        assert "Operation failed!" in str(e)
+        assert isinstance(e, mylib.SimTError)
 
 
 def test_update_ticket_invalid_response():
@@ -115,7 +115,7 @@ def test_update_ticket_invalid_response():
         simt.update_ticket("TICKET123", {"status": "closed"})
         assert False, "Expected SimTError but none was raised."
     except mylib.SimTError as e:
-        assert "Operation failed!" in str(e)
+        assert isinstance(e, mylib.SimTError)
 
 
 def test_update_ticket_invalid_response_type():
@@ -129,7 +129,7 @@ def test_update_ticket_invalid_response_type():
         simt.update_ticket("TICKET123", {"status": "closed"})
         assert False, "Expected SimTError but none was raised."
     except mylib.SimTError as e:
-        assert "Operation failed!" in str(e)
+        assert isinstance(e, mylib.SimTError)
 
 
 def ticket_details():
