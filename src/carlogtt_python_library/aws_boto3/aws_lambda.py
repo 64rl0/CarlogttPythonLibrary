@@ -216,7 +216,7 @@ class Lambda:
             return lambda_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.LambdaError(str(ex.response))
+            raise exceptions.LambdaError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.LambdaError(str(ex))
+            raise exceptions.LambdaError(str(ex)) from None

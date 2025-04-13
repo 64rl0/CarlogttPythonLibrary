@@ -264,10 +264,10 @@ class DynamoDB:
             dynamodb_response = self._client.list_tables()
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(str(ex.response))
+            raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
         # If TableNames is not present then return an empty list
         try:
@@ -297,10 +297,10 @@ class DynamoDB:
                     dynamodb_response = self._scan_with_retry(dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
-                    raise exceptions.DynamoDBError(str(ex.response))
+                    raise exceptions.DynamoDBError(str(ex.response)) from None
 
                 except Exception as ex:
-                    raise exceptions.DynamoDBError(str(ex))
+                    raise exceptions.DynamoDBError(str(ex)) from None
 
                 if dynamodb_response.get('Items') and len(dynamodb_response['Items']) > 0:
                     # Convert the DynamoDB attribute values to
@@ -326,7 +326,7 @@ class DynamoDB:
                     break
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
     @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
     def _scan_with_retry(
@@ -385,10 +385,10 @@ class DynamoDB:
             dynamodb_response = self._client.get_item(TableName=table, Key=partition_key)
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(str(ex.response))
+            raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
         dynamodb_item = dynamodb_response.get('Item')
 
@@ -448,12 +448,16 @@ class DynamoDB:
         elif partition_key_value is not None and auto_generate_partition_key_value is False:
             # If we don't need to increment the counter we just put the
             # item in the table
-            item_put = self._put_single_item(
-                table=table,
-                partition_key_key=partition_key_key,
-                partition_key_value=partition_key_value,
-                **items,
-            )
+            try:
+                item_put = self._put_single_item(
+                    table=table,
+                    partition_key_key=partition_key_key,
+                    partition_key_value=partition_key_value,
+                    **items,
+                )
+
+            except Exception as ex:
+                raise exceptions.DynamoDBError(str(ex)) from None
 
         elif partition_key_value is None and auto_generate_partition_key_value is True:
             # If we need to increment the counter we do it with an
@@ -489,12 +493,20 @@ class DynamoDB:
         partition_key: dict[str, PartitionKeyValue],
         condition_attribute: Optional[dict[str, Any]] = None,
         **items: AttributeValue,
-    ):
+    ) -> dict[str, AttributeValueDeserialized]:
         """
+        Performs a strict update on an existing item in DynamoDB.
+
+        This method enforces that the item with the specified partition
+        key must already exist before updating. If the item does not
+        exist, or if any specified condition does not match, the update
+        fails with a `DynamoDBConflictError`. No new item is created in
+        this scenario.
+
         Edits an existing item’s attributes. If
         condition_attribute_value is passed, the item will be updated
         only if condition_attribute_value is a match with the value
-        stored in DynamoDB under last_modified_timestamp.
+        stored in DynamoDB.
 
         :param table: DynamoDB table name.
         :param partition_key: DynamoDB partition key as dict of
@@ -518,7 +530,138 @@ class DynamoDB:
 
         # Initialize a dictionary with all the arguments to pass into
         # the DynamoDB update_item call
-        dynamodb_update_item_args: dict[str, Any] = {'TableName': table, 'ReturnValues': 'ALL_OLD'}
+        dynamodb_update_item_args: dict[str, Any] = {
+            'TableName': table,
+            'ReturnValues': 'ALL_OLD',
+        }
+
+        # Serialize partition key
+        # We cant mutate the original dictionary because of the
+        # retry decorator will need to run through it again in case
+        # of failure
+        partition_key_key, partition_key_value = next(iter(partition_key.items()))
+        partition_key_serialized = self._serializer.serialize_p_key(
+            partition_key_key, partition_key_value
+        )
+
+        # Serialize attributes
+        update_expression, expression_attribute_names, expression_attribute_values = (
+            self._serializer.serialize_update_items(**items)
+        )
+
+        # Build a condition expression for “strict update”
+        dynamodb_update_item_args.update(
+            {'ConditionExpression': f"attribute_exists(#{partition_key_key})"}
+        )
+        expression_attribute_names.update({f"#{partition_key_key}": partition_key_key})
+
+        # Check if a condition is required
+        if condition_attribute is not None:
+            # Unpack condition attribute dictionary
+            # We cant mutate the original dictionary because of the
+            # retry decorator will need to run through it again in case
+            # of failure
+            condition_attribute_key, condition_attribute_value = next(
+                iter(condition_attribute.items())
+            )
+
+            # If condition attribute exists pass it to the DynamoDB call
+            dynamodb_update_item_args.update({
+                'ConditionExpression': (
+                    f"{dynamodb_update_item_args['ConditionExpression']} AND"
+                    f" #{condition_attribute_key} = :condition_attribute_value_placeholder"
+                )
+            })
+
+            # #condition_attribute_key has to be passed
+            # along the ExpressionAttributeNames because is used by the
+            # ConditionExpression
+            expression_attribute_names[f"#{condition_attribute_key}"] = condition_attribute_key
+
+            # :condition_attribute_value_placeholder has to be passed
+            # along the ExpressionAttributeValues because is used by the
+            # ConditionExpression
+            expression_attribute_values[':condition_attribute_value_placeholder'] = (
+                self._serializer.serialize_att(condition_attribute_value)
+            )
+
+        # Update DynamoDB call arguments
+        dynamodb_update_item_args['Key'] = partition_key_serialized
+        dynamodb_update_item_args['UpdateExpression'] = update_expression
+        dynamodb_update_item_args['ExpressionAttributeNames'] = expression_attribute_names
+        dynamodb_update_item_args['ExpressionAttributeValues'] = expression_attribute_values
+
+        module_logger.debug(dynamodb_update_item_args)
+
+        try:
+            dynamodb_response = self._client.update_item(**dynamodb_update_item_args)
+
+        except botocore.exceptions.ClientError as ex:
+            if "ConditionalCheckFailed" in str(ex):
+                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
+
+            else:
+                raise exceptions.DynamoDBError(str(ex.response)) from None
+
+        except Exception as ex:
+            raise exceptions.DynamoDBError(str(ex)) from None
+
+        # If we get here it means that the item has been updated
+        # successfully therefore we return it
+        old_item = dynamodb_response.get('Attributes', {})
+        old_item_deserialized = {
+            key: self._serializer.deserialize_att(value) for key, value in old_item.items()
+        }
+        updated_item = {**partition_key, **old_item_deserialized, **items}
+
+        # Because the **items in the updated_item dict is not serialized
+        # we need to normalize the whole dict before returning a dict of
+        # type dict[str, AttributeValueDeserialized]
+        updated_item_deserialized = self._serializer.normalize_item(updated_item)
+
+        return updated_item_deserialized
+
+    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    def upsert_item(
+        self,
+        table: str,
+        partition_key: dict[str, PartitionKeyValue],
+        condition_attribute: Optional[dict[str, Any]] = None,
+        **items: AttributeValue,
+    ) -> dict[str, AttributeValueDeserialized]:
+        """
+        Upsert-like operation.
+
+        1. Tries to update an existing item (strict update).
+        2. If that update fails because the item does not exist, it
+        puts a brand-new item.
+
+        :param table: DynamoDB table name.
+        :param partition_key: DynamoDB partition key as dict of
+            partition_key {key: value}.
+        :param condition_attribute: DynamoDB attribute to matched as
+            dict of attribute_to_match {key: value}. When sent to
+            DynamoDB, the attribute will be as a condition to match.
+        :param items: Values for items to be updated.
+        :return: The updated DynamoDB Item deserialized.
+        :raise DynamoDBError: If update fails.
+        :raise DynamoDBConflictError: If update fails due to a conflict.
+        """
+
+        # items is an optional parameter by default as using the **
+        # However, if no values are passed as **items we raise an
+        # exception as there is nothing to update
+        if not items:
+            raise exceptions.DynamoDBError(
+                "No values to update were passed to the DynamoDB update_item_in_table method."
+            )
+
+        # Initialize a dictionary with all the arguments to pass into
+        # the DynamoDB update_item call
+        dynamodb_update_item_args: dict[str, Any] = {
+            'TableName': table,
+            'ReturnValues': 'ALL_OLD',
+        }
 
         # Serialize partition key
         # We cant mutate the original dictionary because of the
@@ -576,13 +719,13 @@ class DynamoDB:
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
-                raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
+                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
 
             else:
-                raise exceptions.DynamoDBError(str(ex.response))
+                raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
         # If we get here it means that the item has been updated
         # successfully therefore we return it
@@ -592,7 +735,12 @@ class DynamoDB:
         }
         updated_item = {**partition_key, **old_item_deserialized, **items}
 
-        return updated_item
+        # Because the **items in the updated_item dict is not serialized
+        # we need to normalize the whole dict before returning a dict of
+        # type dict[str, AttributeValueDeserialized]
+        updated_item_deserialized = self._serializer.normalize_item(updated_item)
+
+        return updated_item_deserialized
 
     @utils.retry(exceptions.DynamoDBError, 3, 1)
     def delete_item(
@@ -600,7 +748,7 @@ class DynamoDB:
         table: str,
         partition_key_key: str,
         partition_key_value: Union[PartitionKeyValue, Iterable[PartitionKeyValue]],
-    ):
+    ) -> list[dict[str, AttributeValueDeserialized]]:
         """
         Deletes item(s) in a table by primary key.
 
@@ -613,7 +761,7 @@ class DynamoDB:
         :param partition_key_value: The value or an iterable of values
             of the partition key of the item or items to delete from
             DynamoDB.
-        :return: A list of responses from the deletion operations.
+        :return: A list of deleted DynamoDB Items deserialized.
         :raise DynamoDBError: If deletion fails.
         """
 
@@ -624,21 +772,38 @@ class DynamoDB:
         else:
             partition_key_values = list(partition_key_value)
 
-        response = []
+        # Prepare response list
+        response: list[dict[str, AttributeValueDeserialized]] = []
 
         for partition_key_value in partition_key_values:
             partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
 
+            # Initialize a dictionary with all the arguments to pass
+            # into the DynamoDB delete_item call
+            dynamodb_delete_item_args: dict[str, Any] = {
+                'TableName': table,
+                'Key': partition_key,
+                'ReturnValues': 'ALL_OLD',
+            }
+
             try:
-                dynamodb_response = self._client.delete_item(TableName=table, Key=partition_key)
+                dynamodb_response = self._client.delete_item(**dynamodb_delete_item_args)
 
             except botocore.exceptions.ClientError as ex:
-                raise exceptions.DynamoDBError(str(ex.response))
+                raise exceptions.DynamoDBError(str(ex.response)) from None
 
             except Exception as ex:
-                raise exceptions.DynamoDBError(str(ex))
+                raise exceptions.DynamoDBError(str(ex)) from None
 
-            response.append(dynamodb_response)
+            # If we get here it means that the item has been deleted
+            # successfully therefore we return it
+            old_item = dynamodb_response.get('Attributes', {})
+            old_item_deserialized = {
+                key: self._serializer.deserialize_att(value) for key, value in old_item.items()
+            }
+            deleted_item = {**partition_key, **old_item_deserialized}
+
+            response.append(deleted_item)
 
         return response
 
@@ -649,7 +814,7 @@ class DynamoDB:
         partition_key_key: str,
         partition_key_value: PartitionKeyValue,
         attributes_to_delete: Iterable[str],
-    ):
+    ) -> dict[str, AttributeValueDeserialized]:
         """
         Deletes item specific values in a table by primary key.
 
@@ -658,7 +823,7 @@ class DynamoDB:
         :param partition_key_value: The value of the partition key.
         :param attributes_to_delete: An iterable of specific attributes
             that are to be deleted from DynamoDB.
-        :return: Response from deletion.
+        :return: The updated DynamoDB Item deserialized.
         :raise DynamoDBError: If deletion fails.
         """
 
@@ -668,32 +833,45 @@ class DynamoDB:
             item_value: {'Action': "DELETE"} for item_value in attributes_to_delete
         }
 
+        dynamodb_update_item_args: dict[str, Any] = {
+            'TableName': table,
+            'Key': partition_key,
+            'AttributeUpdates': attribute_updates,
+            'ReturnValues': 'ALL_NEW',
+        }
+
         try:
-            dynamodb_response = self._client.update_item(
-                TableName=table, Key=partition_key, AttributeUpdates=attribute_updates
-            )
+            dynamodb_response = self._client.update_item(**dynamodb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
-                raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
+                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
 
             else:
-                raise exceptions.DynamoDBError(str(ex.response))
+                raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
-        return dynamodb_response
+        # If we get here it means that the item has been updated
+        # successfully therefore we return it
+        new_item = dynamodb_response.get('Attributes', {})
+        new_item_deserialized = {
+            key: self._serializer.deserialize_att(value) for key, value in new_item.items()
+        }
+
+        return new_item_deserialized
 
     @utils.retry(exceptions.DynamoDBError, 3, 1)
     def atomic_writes(
         self,
         put: Optional[Iterable[dict[str, AttributeValue]]] = None,
         update: Optional[Iterable[dict[str, AttributeValue]]] = None,
+        upsert: Optional[Iterable[dict[str, AttributeValue]]] = None,
         delete: Optional[Iterable[dict[str, AttributeValue]]] = None,
         condition_check: Optional[Iterable[dict[str, AttributeValue]]] = None,
         **kwargs,
-    ):
+    ) -> dict[str, list[dict[str, AttributeValueDeserialized]]]:
         """
         A synchronous write operation that groups up to 100 action
         requests. These actions can target items in different tables.
@@ -710,6 +888,17 @@ class DynamoDB:
             }
         :param update: Initiates an UpdateItem operation to update an
             existing item.
+            schema = {
+            'TableName': "string DynamoDB Table Name",
+            'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            'Items': "dict containing all the values for items to be
+            updated",
+            'ConditionAttribute': "OPTIONAL - attribute to matched
+            as dict of attribute_to_match {key: value}",
+            }
+        :param upsert: Initiates an UpdateOrInsertItem operation to
+            update an existing item or insert if not in the table.
             schema = {
             'TableName': "string DynamoDB Table Name",
             'PartitionKey': "The partition key as dict of partition_key
@@ -741,6 +930,7 @@ class DynamoDB:
             schema = {
             'Put': "list of items writes to DynamoDB",
             'Update': "list of items writes to DynamoDB",
+            'Upsert': "list of items writes to DynamoDB",
             'Delete': "list of items writes to DynamoDB",
             'ConditionCheck': "list of items writes to DynamoDB",
             }
@@ -752,6 +942,7 @@ class DynamoDB:
         # Initialize missing arguments
         put = put or {}
         update = update or {}
+        upsert = upsert or {}
         delete = delete or {}
         condition_check = condition_check or {}
 
@@ -760,16 +951,17 @@ class DynamoDB:
         transact_items: list[type_defs.TransactWriteItemTypeDef] = []
 
         # Prepare the response object
-        response: dict[str, list[dict[str, AttributeValue]]] = {
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]] = {
             'Put': [],
             'Update': [],
+            'Upsert': [],
             'Delete': [],
             'ConditionCheck': [],
         }
 
         module_logger.debug(
-            f"Atomic Writes in Table - Put: {put}, Update: {update}, Delete: {delete},"
-            f" ConditionCheck: {condition_check}"
+            f"Atomic Writes in Table initial request - Put: {put}, Update: {update}, Delete:"
+            f" {delete}, ConditionCheck: {condition_check}"
         )
 
         # Normalize each put item in the list for DynamoDB
@@ -896,9 +1088,14 @@ class DynamoDB:
                 self._serializer.serialize_update_items(**el['Items'])
             )
 
+            # Build a condition expression for “strict update”
+            condition_expression = f"attribute_exists(#{partition_key_key})"
+            expression_attribute_names.update({f"#{partition_key_key}": partition_key_key})
+
             el_update_serialized: type_defs.UpdateTypeDef = {
                 'TableName': el['TableName'],
                 'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
+                'ConditionExpression': condition_expression,
                 'UpdateExpression': update_expression,
                 'ExpressionAttributeNames': expression_attribute_names,
                 'ExpressionAttributeValues': expression_attribute_values,
@@ -919,7 +1116,8 @@ class DynamoDB:
                 # call
                 el_update_serialized.update({
                     'ConditionExpression': (
-                        f"#{condition_att_key} = :condition_attribute_value_placeholder"
+                        f"{el_update_serialized['ConditionExpression']} AND"
+                        f" #{condition_att_key} = :condition_attribute_value_placeholder"
                     )
                 })
 
@@ -950,6 +1148,78 @@ class DynamoDB:
             )
             updated_item[p_key_k] = p_key_v
             response['Update'].append(updated_item)
+
+        # Normalize each upsert item in the list for DynamoDB
+        # transactional call
+        for el in upsert:
+            assert isinstance(el['TableName'], str)
+            assert isinstance(el['Items'], Mapping)
+            assert isinstance(el['PartitionKey'], MutableMapping)
+
+            # We cant mutate the original dictionary because of the
+            # retry decorator will need to run through it again in case
+            # of failure
+            partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
+            assert isinstance(partition_key_value, (str, bytes, int, float))
+
+            update_expression, expression_attribute_names, expression_attribute_values = (
+                self._serializer.serialize_update_items(**el['Items'])
+            )
+
+            el_upsert_serialized: type_defs.UpdateTypeDef = {
+                'TableName': el['TableName'],
+                'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
+                'UpdateExpression': update_expression,
+                'ExpressionAttributeNames': expression_attribute_names,
+                'ExpressionAttributeValues': expression_attribute_values,
+            }
+
+            # Check if a condition is passed in
+            if el.get('ConditionAttribute') is not None:
+                # Unpack condition attribute dictionary
+                assert isinstance(el['ConditionAttribute'], MutableMapping)
+                # We cant mutate the original dictionary because of the
+                # retry decorator will need to run through it again in
+                # case of failure
+                condition_att_key, condition_att_value = next(
+                    iter(el['ConditionAttribute'].items())
+                )
+
+                # If condition attribute exists pass it to the DynamoDB
+                # call
+                el_upsert_serialized.update({
+                    'ConditionExpression': (
+                        f"#{condition_att_key} = :condition_attribute_value_placeholder"
+                    )
+                })
+
+                # #condition_att_key has to be passed
+                # along the ExpressionAttributeNames because is used by
+                # the ConditionExpression
+                expression_attribute_names[f"#{condition_att_key}"] = condition_att_key
+
+                # :condition_attribute_value_placeholder has to be
+                # passed along the ExpressionAttributeValues because
+                # is used by the ConditionExpression
+                expression_attribute_values[':condition_attribute_value_placeholder'] = (
+                    self._serializer.serialize_att(condition_att_value)
+                )
+
+            # Append the 'update' item to the DynamoDB atomic call
+            transact_items.append({'Update': el_upsert_serialized})
+
+            # Append the 'upsert' item to the return list
+            upsert_item = {
+                key[1:-12]: self._serializer.deserialize_att(value)
+                for key, value in expression_attribute_values.items()
+            }
+            if el.get('ConditionAttribute') is not None:
+                del upsert_item['condition_attribute_value']
+            p_key_k, p_key_v = self._serializer.deserialize_p_key(
+                el_upsert_serialized['Key'],  # type: ignore
+            )
+            upsert_item[p_key_k] = p_key_v
+            response['Upsert'].append(upsert_item)
 
         # Normalize each delete item in the list for DynamoDB
         # transactional call
@@ -1002,19 +1272,21 @@ class DynamoDB:
             # Append the 'condition_check' item to the return list
             response['ConditionCheck'].append({partition_key_key: partition_key_value})
 
+        module_logger.debug(f"Atomic Writes in Table serialized request - {transact_items}")
+
         # Make the DynamoDB atomic api call
         try:
             self._client.transact_write_items(TransactItems=transact_items, **kwargs)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
-                raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
+                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
 
             else:
-                raise exceptions.DynamoDBError(str(ex.response))
+                raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
         return response
 
@@ -1049,20 +1321,24 @@ class DynamoDB:
         except self._client.exceptions.ResourceNotFoundException:
             module_logger.debug(f"Table: {sys_table} not found in DynamoDB, Creating it.")
 
+            # Initialize a dictionary with all the arguments to pass
+            # into the DynamoDB put_item call
+            dynamodb_create_table_args: dict[str, Any] = {
+                'TableName': sys_table,
+                'BillingMode': 'PAY_PER_REQUEST',
+                'AttributeDefinitions': [{
+                    'AttributeName': 'pk_id',
+                    'AttributeType': 'S',
+                }],
+                'KeySchema': [{
+                    'AttributeName': 'pk_id',
+                    'KeyType': 'HASH',
+                }],
+                'DeletionProtectionEnabled': True,
+            }
+
             try:
-                self._client.create_table(
-                    TableName=sys_table,
-                    BillingMode='PAY_PER_REQUEST',
-                    AttributeDefinitions=[{
-                        'AttributeName': 'pk_id',
-                        'AttributeType': 'S',
-                    }],
-                    KeySchema=[{
-                        'AttributeName': 'pk_id',
-                        'KeyType': 'HASH',
-                    }],
-                    DeletionProtectionEnabled=True,
-                )
+                self._client.create_table(**dynamodb_create_table_args)
 
                 # Give it time to create the table
                 time.sleep(15)
@@ -1078,10 +1354,10 @@ class DynamoDB:
                 raise exceptions.DynamoDBError(str(ex))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(str(ex.response))
+            raise exceptions.DynamoDBError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
+            raise exceptions.DynamoDBError(str(ex)) from None
 
         if not counter:
             self.put_item(
@@ -1119,16 +1395,20 @@ class DynamoDB:
         additional_items = self._serializer.serialize_put_items(**items)
         all_items_serialized = {**partition_key, **additional_items}
 
+        # Initialize a dictionary with all the arguments to pass into
+        # the DynamoDB put_item call
+        dynamodb_put_item_args: dict[str, Any] = {
+            'TableName': table,
+            'Item': all_items_serialized,
+            'ConditionExpression': f"attribute_not_exists({partition_key_key})",
+        }
+
         try:
-            self._client.put_item(
-                TableName=table,
-                Item=all_items_serialized,
-                ConditionExpression=f"attribute_not_exists({partition_key_key})",
-            )
+            self._client.put_item(**dynamodb_put_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
-                raise exceptions.DynamoDBConflictError(f"Conflict Detected! - {str(ex.response)}")
+                raise exceptions.DynamoDBConflictError(str(ex.response))
 
             else:
                 raise exceptions.DynamoDBError(str(ex.response))
@@ -1572,3 +1852,24 @@ class DynamoDbSerializer:
         update_expression = update_expression[:-2]
 
         return update_expression, expression_attribute_names, expression_attribute_values
+
+    def normalize_item(self, item: dict[str, Any]) -> dict[str, AttributeValueDeserialized]:
+        """
+        Serialize a Python item to DynamoDB format and then deserialize
+        it back to ensure a fully consistent DynamoDB-deserialized
+        structure.
+
+        :param item: A dict of Python data, possibly partially
+            deserialized or in raw Python format.
+        :return: A dict representing the item in full
+            DynamoDB-deserialized format
+            (i.e., matching AttributeValueDeserialized).
+        """
+
+        item_serialized = {key: self.serialize_att(value) for key, value in item.items()}
+
+        item_deserialized = {
+            key: self.deserialize_att(value) for key, value in item_serialized.items()
+        }
+
+        return item_deserialized

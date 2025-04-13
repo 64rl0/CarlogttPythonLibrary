@@ -215,7 +215,7 @@ class CloudFront:
             return cloud_front_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.CloudFrontError(str(ex.response))
+            raise exceptions.CloudFrontError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.CloudFrontError(str(ex))
+            raise exceptions.CloudFrontError(str(ex)) from None

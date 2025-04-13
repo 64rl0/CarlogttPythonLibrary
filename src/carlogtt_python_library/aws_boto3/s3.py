@@ -213,7 +213,7 @@ class S3:
                     s3_response = self._client.list_objects_v2(**list_objects_v2_params, **kwargs)
 
                 except botocore.exceptions.ClientError as ex_inner:
-                    raise exceptions.S3Error(f"{str(ex_inner.response)}")
+                    raise exceptions.S3Error(str(ex_inner.response))
 
                 for file in s3_response.get('Contents', {}):
                     try:
@@ -233,7 +233,7 @@ class S3:
             return filenames_list
 
         except Exception as ex:
-            raise exceptions.S3Error(str(ex))
+            raise exceptions.S3Error(str(ex)) from None
 
     def get_file(self, bucket: str, filename: str, **kwargs) -> GetObjectOutputTypeDef:
         """
@@ -252,10 +252,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(str(ex.response))
+            raise exceptions.S3Error(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.S3Error(str(ex))
+            raise exceptions.S3Error(str(ex)) from None
 
     def store_file(
         self, bucket: str, filename: str, file: Union[str, bytes], **kwargs
@@ -277,10 +277,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(str(ex.response))
+            raise exceptions.S3Error(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.S3Error(str(ex))
+            raise exceptions.S3Error(str(ex)) from None
 
     def delete_file(self, bucket: str, filename: str, **kwargs) -> DeleteObjectOutputTypeDef:
         """
@@ -299,10 +299,10 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(str(ex.response))
+            raise exceptions.S3Error(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.S3Error(str(ex))
+            raise exceptions.S3Error(str(ex)) from None
 
     def create_presigned_url_for_file(
         self, bucket: str, filename: str, expiration_time: int = 3600, **kwargs
@@ -334,7 +334,7 @@ class S3:
             return s3_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(str(ex.response))
+            raise exceptions.S3Error(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.S3Error(str(ex))
+            raise exceptions.S3Error(str(ex)) from None

@@ -249,10 +249,10 @@ class SimT:
                     yield ticket_data
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(str(ex.response))
+            raise exceptions.SimTError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SimTError(str(ex))
+            raise exceptions.SimTError(str(ex)) from None
 
     @utils.retry(Exception)
     def _list_tickets_with_retry(self, payload: dict[str, Any]):
@@ -306,10 +306,10 @@ class SimT:
                 raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(str(ex.response))
+            raise exceptions.SimTError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SimTError(str(ex))
+            raise exceptions.SimTError(str(ex)) from None
 
     @utils.retry(exceptions.SimTError)
     def update_ticket(self, ticket_id: str, payload: dict[str, Any]) -> None:
@@ -334,10 +334,10 @@ class SimT:
             )
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(str(ex.response))
+            raise exceptions.SimTError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SimTError(str(ex))
+            raise exceptions.SimTError(str(ex)) from None
 
         if (
             not isinstance(response, dict)
@@ -393,10 +393,10 @@ class SimT:
                 raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(str(ex.response))
+            raise exceptions.SimTError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SimTError(str(ex))
+            raise exceptions.SimTError(str(ex)) from None
 
     @utils.retry(exceptions.SimTError)
     def create_ticket(self, ticket_data: dict[str, Any]) -> str:
@@ -422,10 +422,10 @@ class SimT:
                 raise exceptions.SimTError(str(ex_inner))
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SimTError(str(ex.response))
+            raise exceptions.SimTError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SimTError(str(ex))
+            raise exceptions.SimTError(str(ex)) from None
 
 
 class SimTicketHandler(SimT):

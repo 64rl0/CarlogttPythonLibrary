@@ -215,10 +215,10 @@ class Mirador:
             return attributes
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.MiradorError(str(ex.response))
+            raise exceptions.MiradorError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.MiradorError(str(ex))
+            raise exceptions.MiradorError(str(ex)) from None
 
     @utils.retry(exceptions.MiradorError)
     def get_resource_attributes(self) -> list[tuple[str, str]]:
@@ -238,7 +238,7 @@ class Mirador:
             return attributes
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.MiradorError(str(ex.response))
+            raise exceptions.MiradorError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.MiradorError(str(ex))
+            raise exceptions.MiradorError(str(ex)) from None

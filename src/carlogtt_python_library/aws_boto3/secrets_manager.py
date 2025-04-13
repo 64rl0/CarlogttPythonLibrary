@@ -215,7 +215,7 @@ class SecretsManager:
                     secretsmanager_response = self._client.list_secrets(**list_secrets_args)
 
                 except botocore.exceptions.ClientError as ex_inner:
-                    raise exceptions.SecretsManagerError(f"{str(ex_inner.response)}")
+                    raise exceptions.SecretsManagerError(str(ex_inner.response))
 
                 secrets.extend(secretsmanager_response["SecretList"])
 
@@ -227,7 +227,7 @@ class SecretsManager:
             return secrets
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(str(ex))
+            raise exceptions.SecretsManagerError(str(ex)) from None
 
     def get_secret(self, secret_id: str, **kwargs) -> Optional[dict[str, str]]:
         """
@@ -253,7 +253,7 @@ class SecretsManager:
                 )
 
             except botocore.exceptions.ClientError as ex_inner:
-                raise exceptions.SecretsManagerError(f"{str(ex_inner.response)}")
+                raise exceptions.SecretsManagerError(str(ex_inner.response))
 
             secret_str = secretsmanager_response.get('SecretString')
 
@@ -267,7 +267,7 @@ class SecretsManager:
             return secret
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(str(ex))
+            raise exceptions.SecretsManagerError(str(ex)) from None
 
     def get_secret_password(self, secret_id: str, **kwargs) -> str:
         """
@@ -334,7 +334,7 @@ class SecretsManager:
             return secretsmanager_response
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.SecretsManagerError(str(ex.response))
+            raise exceptions.SecretsManagerError(str(ex.response)) from None
 
         except Exception as ex:
-            raise exceptions.SecretsManagerError(str(ex))
+            raise exceptions.SecretsManagerError(str(ex)) from None
