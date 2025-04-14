@@ -200,7 +200,7 @@ class CloudFront:
         :raise CloudFrontError: If operation fails.
         """
 
-        create_inv_payload: type_defs.CreateInvalidationRequestRequestTypeDef = {
+        create_inv_payload: type_defs.CreateInvalidationRequestTypeDef = {
             'DistributionId': distribution,
             'InvalidationBatch': {
                 'Paths': {
