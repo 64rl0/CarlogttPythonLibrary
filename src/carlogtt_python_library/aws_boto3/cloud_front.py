@@ -39,7 +39,8 @@ from typing import Any, Literal, Optional
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_cloudfront.client import CloudFrontClient
+import mypy_boto3_cloudfront
+from mypy_boto3_cloudfront import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -57,7 +58,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+CloudFrontClient = mypy_boto3_cloudfront.client.CloudFrontClient
 
 
 class CloudFront:
@@ -184,7 +185,9 @@ class CloudFront:
 
         self._cache['client'] = None
 
-    def invalidate_distribution(self, distribution: str, path: str = "/*", **kwargs):
+    def invalidate_distribution(
+        self, distribution: str, path: str = "/*", **kwargs
+    ) -> type_defs.CreateInvalidationResultTypeDef:
         """
         Create a new invalidation.
 
@@ -197,20 +200,22 @@ class CloudFront:
         :raise CloudFrontError: If operation fails.
         """
 
-        try:
-            cloud_front_response = self._client.create_invalidation(
-                DistributionId=distribution,
-                InvalidationBatch={
-                    'Paths': {
-                        'Quantity': 1,
-                        'Items': [
-                            path,
-                        ],
-                    },
-                    'CallerReference': str(time.time_ns()),
+        create_inv_payload: type_defs.CreateInvalidationRequestRequestTypeDef = {
+            'DistributionId': distribution,
+            'InvalidationBatch': {
+                'Paths': {
+                    'Quantity': 1,
+                    'Items': [
+                        path,
+                    ],
                 },
-                **kwargs,
-            )
+                'CallerReference': str(time.time_ns()),
+            },
+            **kwargs,  # type: ignore
+        }
+
+        try:
+            cloud_front_response = self._client.create_invalidation(**create_inv_payload)
 
             return cloud_front_response
 

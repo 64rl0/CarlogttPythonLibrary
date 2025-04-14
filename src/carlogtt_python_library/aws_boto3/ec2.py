@@ -38,7 +38,7 @@ from typing import Any, Literal, Optional
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_ec2.client import EC2Client
+import mypy_boto3_ec2
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -56,7 +56,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+EC2Client = mypy_boto3_ec2.client.EC2Client
 
 
 class EC2:

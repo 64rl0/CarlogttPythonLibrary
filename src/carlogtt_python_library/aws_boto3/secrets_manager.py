@@ -39,13 +39,8 @@ from typing import Any, Literal, Optional
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_secretsmanager.client import SecretsManagerClient
-from mypy_boto3_secretsmanager.type_defs import (
-    DeleteSecretRequestTypeDef,
-    DeleteSecretResponseTypeDef,
-    ListSecretsRequestTypeDef,
-    SecretListEntryTypeDef,
-)
+import mypy_boto3_secretsmanager
+from mypy_boto3_secretsmanager import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -63,7 +58,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+SecretsManagerClient = mypy_boto3_secretsmanager.client.SecretsManagerClient
 
 
 class SecretsManager:
@@ -191,7 +186,7 @@ class SecretsManager:
 
         self._cache['client'] = None
 
-    def get_all_secrets(self) -> list[SecretListEntryTypeDef]:
+    def get_all_secrets(self) -> list[type_defs.SecretListEntryTypeDef]:
         """
         Retrieves a list of all secrets stored in AWS Secrets Manager.
 
@@ -206,7 +201,7 @@ class SecretsManager:
         :raise SecretsManagerError: If operation fails.
         """
 
-        list_secrets_args: ListSecretsRequestTypeDef = {}
+        list_secrets_args: type_defs.ListSecretsRequestTypeDef = {}
         secrets = []
 
         try:
@@ -246,11 +241,14 @@ class SecretsManager:
         :raise SecretsManagerError: If operation fails.
         """
 
+        get_secret_value_payload: type_defs.GetSecretValueRequestTypeDef = {
+            'SecretId': secret_id,
+            **kwargs,  # type: ignore
+        }
+
         try:
             try:
-                secretsmanager_response = self._client.get_secret_value(
-                    SecretId=secret_id, **kwargs
-                )
+                secretsmanager_response = self._client.get_secret_value(**get_secret_value_payload)
 
             except botocore.exceptions.ClientError as ex_inner:
                 raise exceptions.SecretsManagerError(str(ex_inner.response))
@@ -298,7 +296,7 @@ class SecretsManager:
         secret_id: str,
         recovery_days: int = 30,
         force_delete: bool = False,
-    ) -> DeleteSecretResponseTypeDef:
+    ) -> type_defs.DeleteSecretResponseTypeDef:
         """
         Deletes a secret from AWS Secrets Manager.
         This method supports both immediate deletion and scheduled
@@ -320,7 +318,9 @@ class SecretsManager:
         :raise SecretsManagerError: If operation fails.
         """
 
-        delete_secret_args: DeleteSecretRequestTypeDef = {'SecretId': secret_id}
+        delete_secret_args: type_defs.DeleteSecretRequestTypeDef = {
+            'SecretId': secret_id,
+        }
 
         if force_delete:
             delete_secret_args['ForceDeleteWithoutRecovery'] = True

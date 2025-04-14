@@ -39,8 +39,8 @@ from typing import Any, Literal, Optional
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_lambda.client import LambdaClient
-from mypy_boto3_lambda.type_defs import InvocationResponseTypeDef
+import mypy_boto3_lambda
+from mypy_boto3_lambda import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -58,7 +58,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+LambdaClient = mypy_boto3_lambda.client.LambdaClient
 
 
 class Lambda:
@@ -185,7 +185,7 @@ class Lambda:
 
         self._cache['client'] = None
 
-    def invoke(self, function_name: str, **kwargs) -> InvocationResponseTypeDef:
+    def invoke(self, function_name: str, **kwargs) -> type_defs.InvocationResponseTypeDef:
         """
         Invokes a Lambda function.
 
@@ -203,8 +203,13 @@ class Lambda:
         :raise LambdaError: If operation fails.
         """
 
+        invoke_payload: type_defs.InvocationRequestTypeDef = {
+            'FunctionName': function_name,
+            **kwargs,  # type: ignore
+        }
+
         try:
-            lambda_response = self._client.invoke(FunctionName=function_name, **kwargs)
+            lambda_response = self._client.invoke(**invoke_payload)
 
             # Convert lambda response Payload from StreamingBody to
             # python dict

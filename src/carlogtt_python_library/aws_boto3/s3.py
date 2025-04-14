@@ -38,13 +38,8 @@ from typing import Any, Literal, Optional, Union
 # Third Party Library Imports
 import boto3
 import botocore.exceptions
-from mypy_boto3_s3.client import S3Client
-from mypy_boto3_s3.type_defs import (
-    DeleteObjectOutputTypeDef,
-    GetObjectOutputTypeDef,
-    ListObjectsV2RequestTypeDef,
-    PutObjectOutputTypeDef,
-)
+import mypy_boto3_s3
+from mypy_boto3_s3 import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
@@ -62,6 +57,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
+S3Client = mypy_boto3_s3.client.S3Client
 
 
 class S3:
@@ -200,17 +196,19 @@ class S3:
         :return: A list of the files in the bucket.
         :raise S3Error: If operation fails.
         """
+
         try:
             filenames_list: list[str] = []
 
-            list_objects_v2_params: ListObjectsV2RequestTypeDef = {
+            list_objects_v2_params: type_defs.ListObjectsV2RequestTypeDef = {
                 'Bucket': bucket,
                 'Prefix': folder_path,
+                **kwargs,  # type: ignore
             }
 
             while True:
                 try:
-                    s3_response = self._client.list_objects_v2(**list_objects_v2_params, **kwargs)
+                    s3_response = self._client.list_objects_v2(**list_objects_v2_params)
 
                 except botocore.exceptions.ClientError as ex_inner:
                     raise exceptions.S3Error(str(ex_inner.response))
@@ -235,7 +233,7 @@ class S3:
         except Exception as ex:
             raise exceptions.S3Error(str(ex)) from None
 
-    def get_file(self, bucket: str, filename: str, **kwargs) -> GetObjectOutputTypeDef:
+    def get_file(self, bucket: str, filename: str, **kwargs) -> type_defs.GetObjectOutputTypeDef:
         """
         Retrieves objects from Amazon S3.
 
@@ -246,8 +244,14 @@ class S3:
         :raise S3Error: If operation fails.
         """
 
+        get_obj_payload: type_defs.GetObjectRequestTypeDef = {
+            'Bucket': bucket,
+            'Key': filename,
+            **kwargs,  # type: ignore
+        }
+
         try:
-            s3_response = self._client.get_object(Bucket=bucket, Key=filename, **kwargs)
+            s3_response = self._client.get_object(**get_obj_payload)
 
             return s3_response
 
@@ -259,7 +263,7 @@ class S3:
 
     def store_file(
         self, bucket: str, filename: str, file: Union[str, bytes], **kwargs
-    ) -> PutObjectOutputTypeDef:
+    ) -> type_defs.PutObjectOutputTypeDef:
         """
         Store objects to Amazon S3.
 
@@ -271,8 +275,15 @@ class S3:
         :raise S3Error: If operation fails.
         """
 
+        put_obj_pyaload: type_defs.PutObjectRequestTypeDef = {
+            'Bucket': bucket,
+            'Key': filename,
+            'Body': file,
+            **kwargs,  # type: ignore
+        }
+
         try:
-            s3_response = self._client.put_object(Bucket=bucket, Key=filename, Body=file, **kwargs)
+            s3_response = self._client.put_object(**put_obj_pyaload)
 
             return s3_response
 
@@ -282,7 +293,9 @@ class S3:
         except Exception as ex:
             raise exceptions.S3Error(str(ex)) from None
 
-    def delete_file(self, bucket: str, filename: str, **kwargs) -> DeleteObjectOutputTypeDef:
+    def delete_file(
+        self, bucket: str, filename: str, **kwargs
+    ) -> type_defs.DeleteObjectOutputTypeDef:
         """
         Delete objects from Amazon S3.
 
@@ -293,8 +306,14 @@ class S3:
         :raise S3Error: If operation fails.
         """
 
+        delete_obj_payload: type_defs.DeleteObjectRequestTypeDef = {
+            'Bucket': bucket,
+            'Key': filename,
+            **kwargs,  # type: ignore
+        }
+
         try:
-            s3_response = self._client.delete_object(Bucket=bucket, Key=filename, **kwargs)
+            s3_response = self._client.delete_object(**delete_obj_payload)
 
             return s3_response
 
@@ -321,15 +340,18 @@ class S3:
         :raise S3Error: If operation fails.
         """
 
-        try:
-            client_method_params = {'Bucket': bucket, 'Key': filename}
+        generate_url_payload: dict[str, Any] = {
+            'ClientMethod': 'get_object',
+            'Params': {
+                'Bucket': bucket,
+                'Key': filename,
+            },
+            'ExpiresIn': expiration_time,
+            **kwargs,
+        }
 
-            s3_response = self._client.generate_presigned_url(
-                ClientMethod='get_object',
-                Params=client_method_params,
-                ExpiresIn=expiration_time,
-                **kwargs,
-            )
+        try:
+            s3_response = self._client.generate_presigned_url(**generate_url_payload)
 
             return s3_response
 

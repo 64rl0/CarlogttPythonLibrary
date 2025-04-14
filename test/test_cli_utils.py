@@ -58,4 +58,8 @@ print(mylib.cli_black)
 print(mylib.CLIStyle.CLI_BLACK)
 print(mylib.CLIStyle.CLI_END)
 
-print(mylib.snake_case('ThisIsATest'))
+try:
+    print(mylib.snake_case('ThisIsATest'))
+
+except AttributeError as ex:
+    print(repr(ex))

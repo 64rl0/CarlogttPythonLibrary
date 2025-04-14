@@ -43,8 +43,8 @@ from typing import Any, Literal, Optional, TypedDict, Union
 import boto3
 import botocore.config
 import botocore.exceptions
+import mypy_boto3_dynamodb
 from mypy_boto3_dynamodb import type_defs
-from mypy_boto3_dynamodb.client import DynamoDBClient
 
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
@@ -62,6 +62,8 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
+DynamoDBClient = mypy_boto3_dynamodb.client.DynamoDBClient
+
 # Placeholder, replace Any with AttributeValue later
 DynamoDbList = Sequence[Any]
 DynamoDbListDeserialized = Sequence[Any]

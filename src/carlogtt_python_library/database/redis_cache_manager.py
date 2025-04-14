@@ -56,7 +56,7 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-#
+RedisClient = redis.client.Redis
 
 
 class RedisCacheManager:
@@ -106,7 +106,7 @@ class RedisCacheManager:
         self._serializer = _RedisSerializer()
 
     @property
-    def _redis_client(self) -> redis.client.Redis:
+    def _redis_client(self) -> RedisClient:
         """
         Lazily initializes and returns the Redis client.
 
