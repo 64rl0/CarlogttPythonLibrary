@@ -94,6 +94,9 @@ SQLValueType = Any
 
 
 class Database(abc.ABC):
+
+    db_utils: database_utils.DatabaseUtils
+
     @abc.abstractmethod
     def open_db_connection(self) -> None:
         pass
