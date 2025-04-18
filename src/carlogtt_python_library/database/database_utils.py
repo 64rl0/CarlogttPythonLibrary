@@ -33,7 +33,8 @@ This module ...
 
 # Standard Library Imports
 import logging
-from pathlib import Path
+import pathlib
+import warnings
 from typing import Union
 
 # END IMPORTS
@@ -42,6 +43,8 @@ from typing import Union
 
 # List of public names in the module
 __all__ = [
+    'DatabaseUtils',
+    # Deprecated
     'sql_query_reader',
 ]
 
@@ -52,7 +55,30 @@ module_logger = logging.getLogger(__name__)
 #
 
 
-def sql_query_reader(file_path: Union[Path, str]) -> str:
+class DatabaseUtils:
+    """
+    A utility class for handling various database-related operations.
+    """
+
+    def sql_query_reader(self, file_path: Union[pathlib.Path, str]) -> str:
+        """
+        Reads an SQL query from a file and returns it as a string.
+
+        This function simplifies the process of loading SQL queries
+        from files, avoiding the need for manual file handling. It
+        supports both string paths and Pathlib Path objects as input.
+
+        :param file_path: The path to the SQL file. This can be a string
+               or a Pathlib Path object.
+        :return: The content of the SQL file as a string.
+        """
+
+        query = pathlib.Path(file_path).read_text()
+
+        return query
+
+
+def sql_query_reader(file_path: Union[pathlib.Path, str]) -> str:
     """
     Reads an SQL query from a file and returns it as a string.
 
@@ -65,6 +91,14 @@ def sql_query_reader(file_path: Union[Path, str]) -> str:
     :return: The content of the SQL file as a string.
     """
 
-    query = Path(file_path).read_text()
+    msg = (
+        f"[DEPRECATED] '{sql_query_reader.__name__}' is deprecated in package '{__package__}'. Use"
+        f" the parent class '{DatabaseUtils.__qualname__}()' instead."
+    )
+
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+    module_logger.warning(msg)
+
+    query = pathlib.Path(file_path).read_text()
 
     return query

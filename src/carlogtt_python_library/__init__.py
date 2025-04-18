@@ -150,8 +150,8 @@ class _CompatibilityProxy:
     def _handle_cli_style(self, name: str):
         upper_name = name.upper()
         msg = (
-            f"[DEPRECATED] '{name}' is deprecated. Use '{CLIStyle.__qualname__}.{upper_name}'"
-            " instead."
+            f"[DEPRECATED] '{name}' is deprecated in package '{__package__}'. Use"
+            f" '{CLIStyle.__qualname__}.{upper_name}' instead."
         )
 
         _warnings.warn(msg, DeprecationWarning, stacklevel=3)
@@ -161,7 +161,7 @@ class _CompatibilityProxy:
 
     def _warn_user(self, name: str, new_class: type):
         msg = (
-            f"[DEPRECATED] '{name}' is deprecated. Use the parent class"
+            f"[DEPRECATED] '{name}' is deprecated in package '{__package__}'. Use the parent class"
             f" '{new_class.__qualname__}()' instead."
         )
 

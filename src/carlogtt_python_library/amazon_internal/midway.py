@@ -38,7 +38,6 @@ import re
 import subprocess
 import sys
 import time
-import warnings
 
 # Local Folder (Relative) Imports
 from .. import utils
@@ -50,9 +49,6 @@ from .. import utils
 # List of public names in the module
 __all__ = [
     'MidwayUtils',
-    # Deprecated
-    'cli_midway_auth',
-    'extract_valid_cookies',
 ]
 
 # Setting up logger for current module
@@ -162,117 +158,3 @@ class MidwayUtils:
                 raise ValueError(f"No valid cookies found in {real_cookie_filepath}")
 
         return cookies
-
-
-def cli_midway_auth(max_retries: int = 3, options: str = "-s"):
-    """
-    Run mwinit -s as bash command.
-
-    :param max_retries: The maximum number of total attempts.
-           Default is 3.
-    :param options: The options to pass to the mwinit command.
-           Default is -s
-    :return: None
-    """
-
-    # TODO(carlogtt): Delete this function after deprecation period
-    msg = (
-        f"[DEPRECATED] '{cli_midway_auth.__name__}' is deprecated. Use the parent"
-        f" class '{MidwayUtils.__qualname__}()' instead."
-    )
-    warnings.warn(msg, DeprecationWarning, stacklevel=2)
-    module_logger.warning(msg)
-
-    for i in range(max_retries):
-        # Run mwinit -s
-        command = "mwinit {options} || exit 1".format(options=options)
-
-        # Run the command using subprocess.Popen
-        process = subprocess.Popen(command, shell=True, executable="/bin/bash")
-
-        # Wait for the process to complete
-        process.wait()
-
-        # Get the return code of the process
-        return_code = process.returncode
-
-        # Check the return code to see if the command was successful
-        if return_code == 0:
-            break
-
-        else:
-            if i == max_retries - 1:
-                print(
-                    utils.CLIStyle.CLI_BOLD_RED
-                    + "\n[ERROR] Authentication to Midway failed.\n"
-                    + utils.CLIStyle.CLI_END,
-                    flush=True,
-                )
-                sys.exit(1)
-
-            print(
-                utils.CLIStyle.CLI_BOLD_RED
-                + f"\n[ERROR] Authentication to Midway failed. Retrying {i + 2}...\n"
-                + utils.CLIStyle.CLI_END,
-                flush=True,
-            )
-
-
-def extract_valid_cookies(cookie_filepath: str = "~/.midway/cookie") -> dict[str, str]:
-    """
-    Retrieves valid cookies from a specified cookie file, filtering
-    based on cookie that start with #Http and valid cookie expiration
-    time.
-    Return a dictionary of cookie names and their values.
-
-    :param cookie_filepath: The file path to the cookie file.
-           Defaults to "~/.midway/cookie".
-    :return: A dictionary where each key-value pair corresponds to a
-             cookie name and its value extracted from the file.
-    """
-
-    # TODO(carlogtt): Delete this function after deprecation period
-    msg = (
-        f"[DEPRECATED] '{extract_valid_cookies.__name__}' is deprecated. Use the parent"
-        f" class '{MidwayUtils.__qualname__}()' instead."
-    )
-    warnings.warn(msg, DeprecationWarning, stacklevel=2)
-    module_logger.warning(msg)
-
-    real_cookie_filepath = os.path.realpath(os.path.expanduser(cookie_filepath))
-
-    if not os.path.exists(real_cookie_filepath) or not os.path.isfile(real_cookie_filepath):
-        raise ValueError(f"cookie_filepath: {real_cookie_filepath} not found!")
-
-    cookies: dict[str, str] = {}
-
-    search_pattern = re.compile("^#Http", re.IGNORECASE)
-
-    with open(real_cookie_filepath, 'r') as cookie_file:
-        for cookie in cookie_file:
-            if not search_pattern.match(cookie):
-                continue
-
-            cookie_fields = cookie.split()
-
-            # Cookie fields
-            # 0 - Domain
-            # 1 - Flag
-            # 2 - Path
-            # 3 - Secure
-            # 4 - Expiration Time
-            # 5 - Name
-            # 6 - Value
-
-            if len(cookie_fields) != 7:
-                continue
-
-            if int(cookie_fields[4]) <= time.time():
-                continue
-
-            cookies.update({cookie_fields[5]: cookie_fields[6]})
-
-        if not cookies:
-            raise ValueError(f"No valid cookies found in {real_cookie_filepath}")
-
-    return cookies

@@ -435,9 +435,12 @@ class SimTicketHandler(SimT):
     """
 
     def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "[DEPRECATED] 'SimTicketHandler' is deprecated. Please use 'SimT' instead.",
-            DeprecationWarning,
-            stacklevel=2,
+        msg = (
+            f"[DEPRECATED] '{__package__}' class 'SimTicketHandler' is deprecated. Use 'SimT'"
+            " instead."
         )
+
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+        module_logger.warning(msg)
+
         super().__init__(*args, **kwargs)

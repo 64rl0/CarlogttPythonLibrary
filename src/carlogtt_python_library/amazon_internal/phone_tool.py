@@ -34,7 +34,6 @@ This module ...
 # Standard Library Imports
 import json
 import logging
-import warnings
 
 # Third Party Library Imports
 import requests
@@ -47,8 +46,6 @@ import requests_midway
 # List of public names in the module
 __all__ = [
     'PhoneTool',
-    # Deprecated
-    'phone_tool_lookup',
 ]
 
 # Setting up logger for current module
@@ -90,38 +87,3 @@ class PhoneTool:
             json_data = {'error': response.text}
 
         return json_data
-
-
-def phone_tool_lookup(alias: str) -> dict[str, str]:
-    """
-    This function will retrieve the Phone Tool user data based on the
-    user alias.
-
-    :param alias: The Amazon user alias used to look up on Phone Tool.
-    :return: All the data available in Phone Tool inside a dictionary.
-    """
-
-    # TODO(carlogtt): Delete this function after deprecation period
-    msg = (
-        f"[DEPRECATED] '{phone_tool_lookup.__name__}' is deprecated. Use the parent"
-        f" class '{PhoneTool.__qualname__}()' instead."
-    )
-    warnings.warn(msg, DeprecationWarning, stacklevel=2)
-    module_logger.warning(msg)
-
-    try:
-        response = requests.get(
-            url=f"https://phonetool.amazon.com/users/{alias}.json",
-            auth=requests_midway.RequestsMidway(),
-        )
-
-    except requests_midway.requests_midway.RequestsMidwayException as e:
-        return {'RequestsMidwayException raised:': str(e)}
-
-    if response.ok:
-        json_data = json.loads(response.text)
-
-    else:
-        json_data = {'error_code': str(response.status_code)}
-
-    return json_data

@@ -128,11 +128,14 @@ class SimTHandlerError(SimTError):
 
     def __init__(self, *args):
         # Issue a DeprecationWarning at runtime
-        warnings.warn(
-            "[DEPRECATED] 'SimTHandlerError' is deprecated. Please use 'SimTError' instead.",
-            DeprecationWarning,
-            stacklevel=2,
+        msg = (
+            f"[DEPRECATED] '{__package__}' class 'SimTHandlerError' is deprecated. Use"
+            " 'SimTError' instead."
         )
+
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+        module_logger.warning(msg)
+
         super().__init__(*args)
 
 

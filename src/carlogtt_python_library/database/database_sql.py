@@ -47,6 +47,7 @@ from mysql.connector.pooling import PooledMySQLConnection
 
 # Local Folder (Relative) Imports
 from .. import exceptions, utils
+from . import database_utils
 
 # psycopg2 is defined as an optional dependency. We use this try/except
 # to gracefully handle environments where psycopg2 is not installed
@@ -125,6 +126,12 @@ class MySQL(Database):
     :param password: Password to authenticate with the MySQL server.
     :param port: Port number of the MySQL server.
     :param database_schema: Name of the database schema to use.
+
+    **Attributes**
+
+    ``db_utils``
+        Instance of :class:`~database_utils.DatabaseUtils`
+        (helper for reading external SQL files, etc.).
     """
 
     def __init__(self, host: str, user: str, password: str, port: str, database_schema: str):
@@ -134,6 +141,7 @@ class MySQL(Database):
         self._port = port
         self._database_schema = database_schema
         self._db_connection: Optional[MySQLConn] = None
+        self.db_utils = database_utils.DatabaseUtils()
 
     @property
     def db_connection(self) -> MySQLConn:
@@ -172,7 +180,7 @@ class MySQL(Database):
         except mysql.connector.Error as ex:
             message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
             module_logger.error(message)
-            raise exceptions.MySQLError(message)
+            raise exceptions.MySQLError(message) from None
 
     @utils.retry(exceptions.MySQLError)
     def close_db_connection(self) -> None:
@@ -193,8 +201,9 @@ class MySQL(Database):
         except mysql.connector.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
             module_logger.error(message)
-            raise exceptions.MySQLError(message)
+            raise exceptions.MySQLError(message) from None
 
+    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
     def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
         """
         Send data to MySQL database.
@@ -219,12 +228,13 @@ class MySQL(Database):
                 f" traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.MySQLError(message)
+            raise exceptions.MySQLError(message) from None
 
         finally:
             db_cursor.close()
             self.close_db_connection()
 
+    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
     def fetch_from_db(
         self,
         sql_query: str,
@@ -273,7 +283,7 @@ class MySQL(Database):
                 f" traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.MySQLError(message)
+            raise exceptions.MySQLError(message) from None
 
         finally:
             # cursor.reset typically discards the results of the last
@@ -295,6 +305,12 @@ class PostgreSQL(Database):
     :param password: Password to authenticate with the Postgres server.
     :param port: Port number of the Postgres server.
     :param database_schema: Name of the database schema to use.
+
+    **Attributes**
+
+    ``db_utils``
+        Instance of :class:`~database_utils.DatabaseUtils`
+        (helper for reading external SQL files, etc.).
     """
 
     def __init__(self, host: str, user: str, password: str, port: str, database_schema: str):
@@ -304,6 +320,7 @@ class PostgreSQL(Database):
         self._port = port
         self._database_schema = database_schema
         self._db_connection: Optional[PGConnection] = None
+        self.db_utils = database_utils.DatabaseUtils()
 
     @property
     def db_connection(self) -> PGConnection:
@@ -342,7 +359,7 @@ class PostgreSQL(Database):
         except psycopg2.OperationalError as ex:
             message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
             module_logger.error(message)
-            raise exceptions.PostgresError(message)
+            raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError)
     def close_db_connection(self) -> None:
@@ -361,7 +378,7 @@ class PostgreSQL(Database):
         except psycopg2.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
             module_logger.error(message)
-            raise exceptions.PostgresError(message)
+            raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def send_to_db(self, sql_query: str, sql_values: Union[tuple, str]) -> None:
@@ -387,7 +404,7 @@ class PostgreSQL(Database):
                 f"operation failed! traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.PostgresError(message)
+            raise exceptions.PostgresError(message) from None
 
         finally:
             db_cursor.close()
@@ -441,7 +458,7 @@ class PostgreSQL(Database):
                 f" traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.PostgresError(message)
+            raise exceptions.PostgresError(message) from None
 
         finally:
             db_cursor.close()
@@ -454,12 +471,19 @@ class SQLite(Database):
 
     :param sqlite_db_path: Fullpath to the SQLite database file.
     :param filename: Name of the SQLite database file.
+
+    **Attributes**
+
+    ``db_utils``
+        Instance of :class:`~database_utils.DatabaseUtils`
+        (helper for reading external SQL files, etc.).
     """
 
     def __init__(self, sqlite_db_path: Union[str, pathlib.Path], filename: str):
         self._sqlite_db_path = sqlite_db_path
         self._filename = filename
         self._db_connection: Optional[sqlite3.Connection] = None
+        self.db_utils = database_utils.DatabaseUtils()
 
     @property
     def db_connection(self) -> sqlite3.Connection:
@@ -504,7 +528,7 @@ class SQLite(Database):
                 f"While connecting to [{self._filename}] operation failed! traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.SQLiteError(message)
+            raise exceptions.SQLiteError(message) from None
 
     def close_db_connection(self) -> None:
         """
@@ -524,7 +548,7 @@ class SQLite(Database):
         except sqlite3.OperationalError as ex:
             message = f"While closing [{self._filename}] operation failed! traceback: {repr(ex)}"
             module_logger.error(message)
-            raise exceptions.SQLiteError(message)
+            raise exceptions.SQLiteError(message) from None
 
     def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
         """
@@ -550,7 +574,7 @@ class SQLite(Database):
                 f" traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.SQLiteError(message)
+            raise exceptions.SQLiteError(message) from None
 
         finally:
             db_cursor.close()
@@ -617,7 +641,7 @@ class SQLite(Database):
                 f" traceback: {repr(ex)}"
             )
             module_logger.error(message)
-            raise exceptions.SQLiteError(message)
+            raise exceptions.SQLiteError(message) from None
 
         finally:
             db_cursor.close()

@@ -33,6 +33,7 @@ application.
 # ======================================================================
 
 # Standard Library Imports
+import enum
 import functools
 import logging
 import time
@@ -48,6 +49,7 @@ __all__ = [
     'retry',
     'benchmark_execution',
     'log_execution',
+    'BenchmarkResolution',
 ]
 
 # Setting up logger for current module
@@ -57,6 +59,18 @@ module_logger = logging.getLogger(__name__)
 OriginalFunction = Callable[..., Any]
 InnerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
+
+
+class BenchmarkResolution(enum.Enum):
+    """
+    Defines time resolution units and their corresponding duration in
+    seconds.
+    """
+
+    SECONDS = ("seconds", 1)
+    MINUTES = ("minutes", 60)
+    HOURS = ("hours", 3600)
+    DAYS = ("days", 86400)
 
 
 def retry(
@@ -126,7 +140,8 @@ def retry(
 
 
 def benchmark_execution(
-    logger: logging.Logger = module_logger, resolution: str = 'sec'
+    logger: logging.Logger = module_logger,
+    resolution: Union[str, BenchmarkResolution] = BenchmarkResolution.SECONDS,
 ) -> DecoratorFunction:
     """
     Measure and log the execution time of the decorated function.
@@ -135,24 +150,41 @@ def benchmark_execution(
         the execution time of the decorated function.
         If not explicitly provided, the function uses Python's standard
         logging module as a default logger.
-    :param resolution: The time unit to use in the log message. Must be
-        one of {"sec", "min", "hour", "day"}. Defaults to "sec".
+    :param resolution: The time unit for reporting execution time.
+        Can be either:
+        - A string from {"sec", "min", "hour", "day"}, or
+        - An instance of BenchmarkResolution
+        (e.g. BenchmarkResolution.SECONDS).
+        Defaults to BenchmarkResolution.SECONDS.
     """
 
     valid_resolutions = {
-        "sec": ("seconds", 1),
-        "min": ("minutes", 60),
-        "hour": ("hours", 3600),
-        "day": ("days", 86400),
+        "sec": BenchmarkResolution.SECONDS,
+        "min": BenchmarkResolution.MINUTES,
+        "hour": BenchmarkResolution.HOURS,
+        "day": BenchmarkResolution.DAYS,
     }
 
     # Validate the resolution
-    if resolution not in valid_resolutions:
-        raise ValueError(
-            f"Invalid resolution '{resolution}'. Must be one of: {list(valid_resolutions.keys())}"
+    if isinstance(resolution, str):
+        try:
+            resolution_enum = valid_resolutions[resolution]
+        except KeyError:
+            raise ValueError(
+                f"Invalid resolution '{resolution}'. Must be one of:"
+                f" {list(valid_resolutions.keys())}"
+            )
+
+    elif issubclass(type(resolution), BenchmarkResolution):
+        resolution_enum = resolution
+
+    else:
+        raise TypeError(
+            f"Invalid type for 'resolution': expected str (one of {list(valid_resolutions.keys())})"
+            f" or a 'BenchmarkResolution' value, but got {type(resolution)}."
         )
 
-    unit_label, divisor = valid_resolutions[resolution]
+    unit_label, divisor = resolution_enum.value
 
     def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
         @functools.wraps(original_func)
