@@ -33,10 +33,13 @@ This module ...
 
 # Standard Library Imports
 import abc
+import datetime
+import decimal
 import logging
 import pathlib
 import sqlite3
-from collections.abc import Generator
+import time
+from collections.abc import Generator, Iterable, Sequence
 from typing import Any, Optional, Union
 
 # Third Party Library Imports
@@ -90,7 +93,20 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 MySQLConn = Union[MySQLConnectionAbstract, PooledMySQLConnection]
-SQLValueType = Any
+SQLValueType = Union[
+    bool,
+    bytes,
+    float,
+    int,
+    str,
+    decimal.Decimal,
+    datetime.date,
+    datetime.time,
+    datetime.datetime,
+    datetime.timedelta,
+    time.struct_time,
+    None,
+]
 
 
 class Database(abc.ABC):
@@ -106,14 +122,18 @@ class Database(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
+        pass
+
+    @abc.abstractmethod
+    def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
         pass
 
     @abc.abstractmethod
     def fetch_from_db(
         self,
         sql_query: str,
-        sql_values: Union[tuple[SQLValueType, ...], str],
+        sql_values: Sequence[SQLValueType] = (),
         *,
         fetch_one: bool = False,
     ) -> Generator[dict[str, Any], None, None]:
@@ -181,8 +201,10 @@ class MySQL(Database):
             )
 
         except mysql.connector.Error as ex:
-            message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.error(message)
+            message = (
+                f"While connecting to host [{self._host}] operation failed! traceback: {repr(ex)}"
+            )
+            module_logger.debug(message)
             raise exceptions.MySQLError(message) from None
 
     @utils.retry(exceptions.MySQLError)
@@ -195,19 +217,17 @@ class MySQL(Database):
         """
 
         try:
-            assert isinstance(self._db_connection, MySQLConnectionAbstract) or isinstance(
-                self._db_connection, PooledMySQLConnection
-            ), "Database connection is not open!"
-
-            self._db_connection.close()
+            if self._db_connection:
+                self._db_connection.close()
+                self._db_connection = None
 
         except mysql.connector.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.MySQLError(message) from None
 
     @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
         """
         Send data to MySQL database.
 
@@ -223,14 +243,56 @@ class MySQL(Database):
 
             self.db_connection.commit()
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
-        except mysql.connector.OperationalError as ex:
+        except mysql.connector.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
+            raise exceptions.MySQLError(message) from None
+
+        finally:
+            db_cursor.close()
+            self.close_db_connection()
+
+    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
+    def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
+        """
+        Execute the same SQL statement many times in a single
+        ACID‑compliant transaction. Commit only if every execution
+        succeeds, otherwise roll back.
+
+        :param sql_query: The parametrized SQL string.
+        :param sql_values: Any iterable yielding values to be
+            substituted in the SQL query.
+        :raise MySQLError: (after rollback) If the operation fails.
+        """
+
+        db_cursor = self.db_connection.cursor(prepared=True)
+
+        try:
+            # executemany sends the whole batch; server handles each row
+            # list() ensures we don’t exhaust a generator if retries
+            db_cursor.executemany(sql_query, list(sql_values))
+
+            self.db_connection.commit()
+
+            module_logger.debug(
+                "Database atomic batch executed and committed successfully: "
+                f"{db_cursor.rowcount} rows affected by SQL query {sql_query=}"
+            )
+
+        except mysql.connector.Error as ex:
+            # Atomicity guarantee
+            self.db_connection.rollback()
+
+            message = (
+                f"Database atomic batch for SQL query {sql_query} failed on host [{self._host}]. "
+                f"Rolled back the entire transaction. Traceback: {repr(ex)}"
+            )
+            module_logger.debug(message)
             raise exceptions.MySQLError(message) from None
 
         finally:
@@ -239,11 +301,7 @@ class MySQL(Database):
 
     @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
     def fetch_from_db(
-        self,
-        sql_query: str,
-        sql_values: Union[tuple[SQLValueType, ...], str],
-        *,
-        fetch_one: bool = False,
+        self, sql_query: str, sql_values: Sequence[SQLValueType] = (), *, fetch_one: bool = False
     ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from MySQL database.
@@ -261,7 +319,7 @@ class MySQL(Database):
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
                 next_row = db_cursor.fetchone()
@@ -280,22 +338,16 @@ class MySQL(Database):
                     # end so the sentinel is met by the iter function
                     yield from iter(db_cursor.fetchone, None)
 
-        except (mysql.connector.OperationalError, mysql.connector.errors.ProgrammingError) as ex:
+        except mysql.connector.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.MySQLError(message) from None
 
         finally:
-            # cursor.reset typically discards the results of the last
-            # query and resets the cursor to its initial state, without
-            # affecting the underlying database connection. This is
-            # useful if you've fetched some rows from a result but want
-            # to discard the remaining unfetched rows and reuse the
-            # cursor for another query.
-            db_cursor.reset()
+            db_cursor.close()
             self.close_db_connection()
 
 
@@ -359,9 +411,11 @@ class PostgreSQL(Database):
                 port=self._port,
             )
 
-        except psycopg2.OperationalError as ex:
-            message = f"While connecting to [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.error(message)
+        except psycopg2.Error as ex:
+            message = (
+                f"While connecting to host [{self._host}] operation failed! traceback: {repr(ex)}"
+            )
+            module_logger.debug(message)
             raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError)
@@ -380,11 +434,11 @@ class PostgreSQL(Database):
 
         except psycopg2.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple, str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
         """
         Send data to PostgreSQL database.
 
@@ -397,16 +451,59 @@ class PostgreSQL(Database):
 
         try:
             db_cursor.execute(sql_query, sql_values)
+
             self.db_connection.commit()
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
         except psycopg2.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._host}] "
+                f"While executing SQL query {sql_query=} on host [{self._host}] "
                 f"operation failed! traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
+            raise exceptions.PostgresError(message) from None
+
+        finally:
+            db_cursor.close()
+            self.close_db_connection()
+
+    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
+    def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
+        """
+        Execute the same SQL statement many times in a single
+        ACID‑compliant transaction. Commit only if every execution
+        succeeds, otherwise roll back.
+
+        :param sql_query: The parametrized SQL string.
+        :param sql_values: Any iterable yielding values to be
+            substituted in the SQL query.
+        :raise PostgresError: (after rollback) If the operation fails.
+        """
+
+        db_cursor = self.db_connection.cursor()
+
+        try:
+            # executemany sends the whole batch; server handles each row
+            # list() ensures we don’t exhaust a generator if retries
+            db_cursor.executemany(sql_query, list(sql_values))
+
+            self.db_connection.commit()
+
+            module_logger.debug(
+                "Database atomic batch executed and committed successfully: "
+                f"{db_cursor.rowcount} rows affected by SQL query {sql_query=}"
+            )
+
+        except psycopg2.Error as ex:
+            # Atomicity guarantee
+            self.db_connection.rollback()
+
+            message = (
+                f"Database atomic batch for SQL query {sql_query} failed on host [{self._host}]. "
+                f"Rolled back the entire transaction. Traceback: {repr(ex)}"
+            )
+            module_logger.debug(message)
             raise exceptions.PostgresError(message) from None
 
         finally:
@@ -415,11 +512,7 @@ class PostgreSQL(Database):
 
     @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def fetch_from_db(
-        self,
-        sql_query: str,
-        sql_values: Union[tuple, str],
-        *,
-        fetch_one: bool = False,
+        self, sql_query: str, sql_values: Sequence[SQLValueType] = (), *, fetch_one: bool = False
     ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from PostgreSQL database.
@@ -437,7 +530,7 @@ class PostgreSQL(Database):
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
                 next_row = db_cursor.fetchone()
@@ -457,10 +550,10 @@ class PostgreSQL(Database):
 
         except psycopg2.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._host}] operation failed!"
+                f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.PostgresError(message) from None
 
         finally:
@@ -526,11 +619,12 @@ class SQLite(Database):
             # at runtime using the PRAGMA command
             self._db_connection.execute("PRAGMA foreign_keys = ON;")
 
-        except sqlite3.OperationalError as ex:
+        except sqlite3.Error as ex:
             message = (
-                f"While connecting to [{self._filename}] operation failed! traceback: {repr(ex)}"
+                f"While connecting to host [{self._filename}] operation failed! traceback:"
+                f" {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.SQLiteError(message) from None
 
     def close_db_connection(self) -> None:
@@ -541,19 +635,16 @@ class SQLite(Database):
         """
 
         try:
-            assert isinstance(
-                self._db_connection, sqlite3.Connection
-            ), "Database connection is not open!"
+            if self._db_connection:
+                self._db_connection.close()
+                self._db_connection = None
 
-            self._db_connection.close()
-            self._db_connection = None
-
-        except sqlite3.OperationalError as ex:
+        except sqlite3.Error as ex:
             message = f"While closing [{self._filename}] operation failed! traceback: {repr(ex)}"
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.SQLiteError(message) from None
 
-    def send_to_db(self, sql_query: str, sql_values: Union[tuple[SQLValueType, ...], str]) -> None:
+    def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
         """
         Send data to SQLite database.
 
@@ -567,16 +658,57 @@ class SQLite(Database):
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            db_cursor.connection.commit()
+            self.db_connection.commit()
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
-        except (sqlite3.OperationalError, sqlite3.IntegrityError) as ex:
+        except sqlite3.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._filename}] operation failed!"
-                f" traceback: {repr(ex)}"
+                f"While executing SQL query {sql_query=} on host [{self._filename}] operation"
+                f" failed! traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
+            raise exceptions.SQLiteError(message) from None
+
+        finally:
+            db_cursor.close()
+            self.close_db_connection()
+
+    def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
+        """
+        Execute the same SQL statement many times in a single
+        ACID‑compliant transaction. Commit only if every execution
+        succeeds, otherwise roll back.
+
+        :param sql_query: The parametrized SQL string.
+        :param sql_values: Any iterable yielding values to be
+            substituted in the SQL query.
+        :raise SQLiteError: (after rollback) If the operation fails.
+        """
+
+        db_cursor = self.db_connection.cursor()
+
+        try:
+            # executemany sends the whole batch; server handles each row
+            # list() ensures we don’t exhaust a generator if retries
+            db_cursor.executemany(sql_query, list(sql_values))
+
+            self.db_connection.commit()
+
+            module_logger.debug(
+                "Database atomic batch executed and committed successfully: "
+                f"{db_cursor.rowcount} rows affected by SQL query {sql_query=}"
+            )
+
+        except sqlite3.Error as ex:
+            # Atomicity guarantee
+            self.db_connection.rollback()
+
+            message = (
+                f"Database atomic batch for SQL query {sql_query} failed on host"
+                f" [{self._filename}]. Rolled back the entire transaction. Traceback: {repr(ex)}"
+            )
+            module_logger.debug(message)
             raise exceptions.SQLiteError(message) from None
 
         finally:
@@ -584,11 +716,7 @@ class SQLite(Database):
             self.close_db_connection()
 
     def fetch_from_db(
-        self,
-        sql_query: str,
-        sql_values: Union[tuple[SQLValueType, ...], str],
-        *,
-        fetch_one: bool = False,
+        self, sql_query: str, sql_values: Sequence[SQLValueType] = (), *, fetch_one: bool = False
     ) -> Generator[dict[str, Any], None, None]:
         """
         Fetch data from SQLite database.
@@ -600,52 +728,52 @@ class SQLite(Database):
         :raise SQLiteError: If the operation fails.
         """
 
-        def _next_row_dict() -> Optional[dict[str, Any]]:
-            """
-            Returns the next row as a dictionary or None if no
-            more rows.
-
-            :return: The next row as a dictionary or None.
-            """
-
-            row_fetched = db_cursor.fetchone()
-            if row_fetched is None:
-                return None
-            else:
-                return dict(row_fetched)
-
         db_cursor = self.db_connection.cursor()
 
         try:
             db_cursor.execute(sql_query, sql_values)
 
-            module_logger.info(f"Database SQL query {sql_query=} executed successfully")
+            module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
             if fetch_one:
-                next_row = _next_row_dict()
+                next_row = self._next_row_dict(db_cursor=db_cursor)
                 if next_row is None:
                     yield {}
                 else:
                     yield next_row
 
             else:
-                next_row = _next_row_dict()
+                next_row = self._next_row_dict(db_cursor=db_cursor)
                 if next_row is None:
                     yield {}
                 else:
                     yield next_row
                     # _next_row_dict will return None when at the end
                     # so the sentinel is met by the iter function
-                    yield from iter(_next_row_dict, None)
+                    yield from iter(lambda: self._next_row_dict(db_cursor=db_cursor), None)
 
-        except sqlite3.OperationalError as ex:
+        except sqlite3.Error as ex:
             message = (
-                f"While executing SQL query {sql_query=} to [{self._filename}] operation failed!"
-                f" traceback: {repr(ex)}"
+                f"While executing SQL query {sql_query=} on host [{self._filename}] operation"
+                f" failed! traceback: {repr(ex)}"
             )
-            module_logger.error(message)
+            module_logger.debug(message)
             raise exceptions.SQLiteError(message) from None
 
         finally:
             db_cursor.close()
             self.close_db_connection()
+
+    def _next_row_dict(self, db_cursor: sqlite3.Cursor) -> Optional[dict[str, Any]]:
+        """
+        Returns the next row as a dictionary or None if no
+        more rows.
+
+        :return: The next row as a dictionary or None.
+        """
+
+        row_fetched = db_cursor.fetchone()
+        if row_fetched is None:
+            return None
+        else:
+            return dict(row_fetched)

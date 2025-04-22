@@ -124,11 +124,6 @@ def test_mysql_coverage():
         with pytest.raises(MySQLError):
             mysql_db.open_db_connection()
 
-    # Test assertion error on closing connection without opening it
-    mysql_db._db_connection = None
-    with pytest.raises(AssertionError):
-        mysql_db.close_db_connection()
-
 
 def test_sqlite_coverage():
     # Create a SQLite instance pointing to an in-memory DB
@@ -163,11 +158,6 @@ def test_sqlite_coverage():
     with patch("sqlite3.connect", side_effect=SQLiteError("Connection failed")):
         with pytest.raises(SQLiteError):
             sqlite_db.open_db_connection()
-
-    # Test assertion error on closing connection without opening it
-    sqlite_db._db_connection = None
-    with pytest.raises(AssertionError):
-        sqlite_db.close_db_connection()
 
 
 def test_postgresql_coverage():
