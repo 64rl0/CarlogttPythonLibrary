@@ -38,7 +38,6 @@ from typing import Any, Optional
 # Third Party Library Imports
 import aws_mirador_api_service_python_client_utils  # type: ignore
 import boto3
-import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports

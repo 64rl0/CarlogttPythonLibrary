@@ -47,7 +47,6 @@ from typing import Union
 
 # Third Party Library Imports
 import cryptography.fernet
-import cryptography.hazmat.backends
 import cryptography.hazmat.primitives.ciphers.algorithms
 import cryptography.hazmat.primitives.ciphers.modes
 import cryptography.hazmat.primitives.hashes
@@ -55,6 +54,9 @@ import cryptography.hazmat.primitives.hmac
 import cryptography.hazmat.primitives.kdf.hkdf
 import cryptography.hazmat.primitives.kdf.scrypt
 import cryptography.hazmat.primitives.padding
+
+# Local Folder (Relative) Imports
+from .. import exceptions
 
 # END IMPORTS
 # ======================================================================
@@ -148,6 +150,9 @@ class Cryptography:
         :returns: The generated key in the specified output format.
         """
 
+        if not isinstance(key_type, KeyType):
+            raise exceptions.CryptographyError(f"Invalid key type: {key_type}")
+
         # Create a random bytes
         key = os.urandom(key_type.value)
 
@@ -161,6 +166,9 @@ class Cryptography:
 
         elif key_output is KeyOutputType.BASE64:
             return base64.urlsafe_b64encode(key)
+
+        else:
+            raise exceptions.CryptographyError(f"Invalid key output type: {key_output}")
 
     def serialize_key_for_str_storage(self, key: bytes) -> str:
         """

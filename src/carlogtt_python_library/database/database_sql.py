@@ -204,7 +204,7 @@ class MySQL(Database):
             message = (
                 f"While connecting to host [{self._host}] operation failed! traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
     @utils.retry(exceptions.MySQLError)
@@ -223,7 +223,7 @@ class MySQL(Database):
 
         except mysql.connector.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
     @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
@@ -250,7 +250,7 @@ class MySQL(Database):
                 f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
         finally:
@@ -292,7 +292,7 @@ class MySQL(Database):
                 f"Database atomic batch for SQL query {sql_query} failed on host [{self._host}]. "
                 f"Rolled back the entire transaction. Traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
         finally:
@@ -343,7 +343,7 @@ class MySQL(Database):
                 f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
         finally:
@@ -415,7 +415,7 @@ class PostgreSQL(Database):
             message = (
                 f"While connecting to host [{self._host}] operation failed! traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError)
@@ -434,7 +434,7 @@ class PostgreSQL(Database):
 
         except psycopg2.Error as ex:
             message = f"While closing [{self._host}] operation failed! traceback: {repr(ex)}"
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
     @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
@@ -461,7 +461,7 @@ class PostgreSQL(Database):
                 f"While executing SQL query {sql_query=} on host [{self._host}] "
                 f"operation failed! traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
         finally:
@@ -503,7 +503,7 @@ class PostgreSQL(Database):
                 f"Database atomic batch for SQL query {sql_query} failed on host [{self._host}]. "
                 f"Rolled back the entire transaction. Traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
         finally:
@@ -553,7 +553,7 @@ class PostgreSQL(Database):
                 f"While executing SQL query {sql_query=} on host [{self._host}] operation failed!"
                 f" traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
         finally:
@@ -624,7 +624,7 @@ class SQLite(Database):
                 f"While connecting to host [{self._filename}] operation failed! traceback:"
                 f" {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.SQLiteError(message) from None
 
     def close_db_connection(self) -> None:
@@ -641,7 +641,7 @@ class SQLite(Database):
 
         except sqlite3.Error as ex:
             message = f"While closing [{self._filename}] operation failed! traceback: {repr(ex)}"
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.SQLiteError(message) from None
 
     def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
@@ -667,7 +667,7 @@ class SQLite(Database):
                 f"While executing SQL query {sql_query=} on host [{self._filename}] operation"
                 f" failed! traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.SQLiteError(message) from None
 
         finally:
@@ -708,7 +708,7 @@ class SQLite(Database):
                 f"Database atomic batch for SQL query {sql_query} failed on host"
                 f" [{self._filename}]. Rolled back the entire transaction. Traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.SQLiteError(message) from None
 
         finally:
@@ -757,7 +757,7 @@ class SQLite(Database):
                 f"While executing SQL query {sql_query=} on host [{self._filename}] operation"
                 f" failed! traceback: {repr(ex)}"
             )
-            module_logger.debug(message)
+            module_logger.error(message)
             raise exceptions.SQLiteError(message) from None
 
         finally:

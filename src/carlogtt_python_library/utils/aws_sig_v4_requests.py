@@ -109,7 +109,7 @@ class AwsSigV4Session(requests.Session):
         self,
         region_name: str,
         service_name: str,
-        boto_session: boto3.Session,
+        boto_session: boto3.session.Session,
         protocol: AwsSigV4Protocol,
     ):
         super().__init__()

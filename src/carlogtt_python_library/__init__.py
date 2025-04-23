@@ -53,6 +53,7 @@ from .utils import *
 
 # Setting up logger for current module
 _module_logger = _logging.getLogger(__name__)
+_module_logger.addHandler(_logging.NullHandler())
 
 
 class _CompatibilityProxy:

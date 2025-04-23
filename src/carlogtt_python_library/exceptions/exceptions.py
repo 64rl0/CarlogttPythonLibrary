@@ -48,6 +48,7 @@ import warnings
 __all__ = [
     'CarlogttLibraryBaseException',
     'AwsSigV4SessionError',
+    'CryptographyError',
     'SimTError',
     'SimTHandlerError',
     'MiradorError',
@@ -160,6 +161,12 @@ class BindleError(CarlogttLibraryBaseException):
 class AwsSigV4SessionError(CarlogttLibraryBaseException):
     """
     This is the base exception class to handle AwsSigV4Session errors.
+    """
+
+
+class CryptographyError(CarlogttLibraryBaseException):
+    """
+    This is the base exception class to handle Cryptography errors.
     """
 
 

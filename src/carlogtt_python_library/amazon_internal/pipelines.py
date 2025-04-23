@@ -38,9 +38,6 @@ from typing import Any, Optional
 
 # Third Party Library Imports
 import boto3
-import botocore.auth
-import botocore.awsrequest
-import botocore.config
 import botocore.exceptions
 
 # Local Folder (Relative) Imports
