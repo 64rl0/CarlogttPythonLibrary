@@ -299,10 +299,10 @@ class DynamoDB:
                     dynamodb_response = self._scan_with_retry(dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
-                    raise exceptions.DynamoDBError(str(ex.response)) from None
+                    raise exceptions.DynamoDBError(str(ex.response))
 
                 except Exception as ex:
-                    raise exceptions.DynamoDBError(str(ex)) from None
+                    raise exceptions.DynamoDBError(str(ex))
 
                 if dynamodb_response.get('Items') and len(dynamodb_response['Items']) > 0:
                     # Convert the DynamoDB attribute values to
@@ -316,6 +316,10 @@ class DynamoDB:
                     )
 
                     yield from deserialized_items
+
+                else:
+                    # Nothing to yield
+                    yield from ()
 
                 # If LastEvaluatedKey is present then we need to scan
                 # for more items

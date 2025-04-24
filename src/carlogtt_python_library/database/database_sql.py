@@ -324,14 +324,16 @@ class MySQL(Database):
             if fetch_one:
                 next_row = db_cursor.fetchone()
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield next_row
 
             else:
                 next_row = db_cursor.fetchone()
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield next_row
                     # db_cursor.fetchone will return None when at the
@@ -535,14 +537,16 @@ class PostgreSQL(Database):
             if fetch_one:
                 next_row = db_cursor.fetchone()
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield dict(next_row)
 
             else:
                 next_row = db_cursor.fetchone()
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield dict(next_row)
                     # Fetch the rest one by one until None is returned
@@ -738,14 +742,16 @@ class SQLite(Database):
             if fetch_one:
                 next_row = self._next_row_dict(db_cursor=db_cursor)
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield next_row
 
             else:
                 next_row = self._next_row_dict(db_cursor=db_cursor)
                 if next_row is None:
-                    yield {}
+                    # Nothing to yield
+                    yield from ()
                 else:
                     yield next_row
                     # _next_row_dict will return None when at the end
