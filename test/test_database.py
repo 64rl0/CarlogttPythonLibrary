@@ -149,10 +149,10 @@ def test_sqlite_coverage():
 
     # Call fetch_from_db (once with fetch_one=False, once with fetch_one=True)
     result = list(sqlite_db.fetch_from_db("SELECT 1 WHERE FALSE", '', fetch_one=False))
-    assert result == [{}]
+    assert result == []
 
     result = list(sqlite_db.fetch_from_db("SELECT 1 WHERE FALSE", '', fetch_one=True))
-    assert result == [{}]
+    assert result == []
 
     # Mock SQLite connection error to test exception handling
     with patch("sqlite3.connect", side_effect=SQLiteError("Connection failed")):

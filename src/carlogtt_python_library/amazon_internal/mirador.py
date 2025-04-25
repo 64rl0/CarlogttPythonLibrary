@@ -196,7 +196,7 @@ class Mirador:
 
         self._cache['client'] = None
 
-    @utils.retry(exceptions.MiradorError)
+    @utils.retry(exception_to_check=exceptions.MiradorError)
     def get_finding_attributes(self) -> list[tuple[str, str]]:
         """
         Get the list of finding attributes.
@@ -219,7 +219,7 @@ class Mirador:
         except Exception as ex:
             raise exceptions.MiradorError(str(ex)) from None
 
-    @utils.retry(exceptions.MiradorError)
+    @utils.retry(exception_to_check=exceptions.MiradorError)
     def get_resource_attributes(self) -> list[tuple[str, str]]:
         """
         Get the list of resource attributes.

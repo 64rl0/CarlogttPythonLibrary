@@ -240,7 +240,13 @@ class SimT:
 
         try:
             while next_token:
-                tickety_response = self._list_tickets_with_retry(payload)
+                with utils.retry(exception_to_check=Exception) as retryer:
+                    tickety_response = retryer(
+                        self._client.list_tickets,
+                        awsAccountId=self._aws_account_id,
+                        ticketingSystemName=self._ticketing_system_name,
+                        **payload,
+                    )
 
                 next_token = tickety_response.get('nextToken', '')
                 payload.update({'nextToken': next_token})
@@ -254,29 +260,7 @@ class SimT:
         except Exception as ex:
             raise exceptions.SimTError(str(ex)) from None
 
-    @utils.retry(Exception)
-    def _list_tickets_with_retry(self, payload: dict[str, Any]):
-        """
-        Perform the `list_tickets` operation with automatic retries for
-        transient exceptions.
-
-        :param payload:
-            The parameters to pass to the underlying client's
-            `list_tickets` call. Typically includes filters,
-            nextToken, etc.
-        :return:
-            The raw response dictionary from `list_tickets`, which
-            includes a potential `nextToken` and a list of ticket
-            summaries in the `ticketSummaries` key.
-        """
-
-        return self._client.list_tickets(
-            awsAccountId=self._aws_account_id,
-            ticketingSystemName=self._ticketing_system_name,
-            **payload,
-        )
-
-    @utils.retry(exceptions.SimTError)
+    @utils.retry(exception_to_check=exceptions.SimTError)
     def get_ticket_details(
         self,
         ticket_id: str,
@@ -311,7 +295,7 @@ class SimT:
         except Exception as ex:
             raise exceptions.SimTError(str(ex)) from None
 
-    @utils.retry(exceptions.SimTError)
+    @utils.retry(exception_to_check=exceptions.SimTError)
     def update_ticket(self, ticket_id: str, payload: dict[str, Any]) -> None:
         """
         Updates a ticket in the ticketing system.
@@ -345,7 +329,7 @@ class SimT:
         ):
             raise exceptions.SimTError(str(response))
 
-    @utils.retry(exceptions.SimTError)
+    @utils.retry(exception_to_check=exceptions.SimTError)
     def create_ticket_comment(
         self,
         ticket_id: str,
@@ -398,7 +382,7 @@ class SimT:
         except Exception as ex:
             raise exceptions.SimTError(str(ex)) from None
 
-    @utils.retry(exceptions.SimTError)
+    @utils.retry(exception_to_check=exceptions.SimTError)
     def create_ticket(self, ticket_data: dict[str, Any]) -> str:
         """
         Create a ticket in the ticketing system and return the

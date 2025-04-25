@@ -124,7 +124,26 @@ class RedisCacheManager:
 
         return self._redis_cached_client
 
-    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, tries=2, delay_secs=1)
+    def invalidate_client_cache(self) -> None:
+        """
+        Clears the cached client.
+
+        This method allows manually invalidating the cached client,
+        forcing a new client instance to be created on the next access.
+
+        :return: None.
+        :raise RedisCacheManagerError: Raises an error if caching is not
+            enabled for this instance.
+        """
+
+        if not self._redis_cached_client:
+            raise exceptions.RedisCacheManagerError(
+                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
+            )
+
+        self._redis_cached_client = None
+
+    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, delay_secs=1)
     def has(self, category: str, key: str) -> bool:
         """
         Checks if a key exists in the cache.
@@ -136,24 +155,23 @@ class RedisCacheManager:
             accessing Redis.
         """
 
-        if category in self._categories:
+        if category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
+        try:
             redis_key = self._serializer.serialize_redis_key(category, key)
 
-            try:
-                redis_response = self._redis_client.exists(redis_key)
-
-            except Exception as ex:
-                raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
+            redis_response = self._redis_client.exists(redis_key)
 
             # Returns the number of keys that exist
             exists = redis_response == 1
 
             return exists
 
-        else:
-            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+        except Exception as ex:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
 
-    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, tries=2, delay_secs=1)
+    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, delay_secs=1)
     def get(self, category: str, key: str) -> Optional[Any]:
         """
         Retrieves a value from the cache.
@@ -165,28 +183,26 @@ class RedisCacheManager:
             accessing Redis.
         """
 
-        if category in self._categories:
+        if category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
+        try:
             redis_key = self._serializer.serialize_redis_key(category, key)
 
-            try:
-                redis_response = self._redis_client.get(redis_key)
-
-            except Exception as ex:
-                raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
+            redis_response = self._redis_client.get(redis_key)
 
             if redis_response:
                 assert isinstance(redis_response, str)
                 response = self._serializer.deserialize(redis_response)
-
             else:
                 response = None
 
             return response
 
-        else:
-            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+        except Exception as ex:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
 
-    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, tries=2, delay_secs=1)
+    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, delay_secs=1)
     def set(self, category: str, key: str, value: Any) -> bool:
         """
         Sets a value in the cache.
@@ -200,27 +216,23 @@ class RedisCacheManager:
             accessing Redis.
         """
 
-        if category in self._categories:
+        if category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
+        try:
             redis_key = self._serializer.serialize_redis_key(category, key)
             redis_value = self._serializer.serialize(value)
 
-            try:
-                redis_response = self._redis_client.set(redis_key, redis_value)
+            redis_response = self._redis_client.set(redis_key, redis_value)
 
-                if redis_response:
-                    assert isinstance(redis_response, bool)
-                    return redis_response
+            response = bool(redis_response)
 
-                else:
-                    return False
+            return response
 
-            except Exception as ex:
-                raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
+        except Exception as ex:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
 
-        else:
-            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
-
-    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, tries=2, delay_secs=1)
+    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, delay_secs=1)
     def delete(self, category: str, key: str) -> bool:
         """
         Invalidates a specific key in the cache.
@@ -233,22 +245,21 @@ class RedisCacheManager:
             accessing Redis.
         """
 
-        if category in self._categories:
+        if category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
+        try:
             redis_key = self._serializer.serialize_redis_key(category, key)
 
-            try:
-                redis_response = self._redis_client.delete(redis_key)
-
-            except Exception as ex:
-                raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
+            redis_response = self._redis_client.delete(redis_key)
 
             # Returns the number of keys invalidated
             invalidated = redis_response == 1
 
             return invalidated
 
-        else:
-            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+        except Exception as ex:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
 
     def clear(self, category: Optional[str] = None) -> bool:
         """
@@ -262,15 +273,11 @@ class RedisCacheManager:
             accessing Redis.
         """
 
+        if category and category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
         if category:
-            if category in self._categories:
-                categories = {category}
-
-            else:
-                raise exceptions.RedisCacheManagerError(
-                    f"[CACHE] - Category {category} not recognized"
-                )
-
+            categories = {category}
         else:
             categories = self._categories
 
@@ -278,21 +285,14 @@ class RedisCacheManager:
         running_total = 0
 
         for cat in categories:
-            # Check there are keys in the cache
-            redis_keys = self.get_keys(category=cat)
-            if redis_keys is None:
-                continue
-
-            for redis_key in redis_keys:
+            for redis_key in self.get_keys(category=cat):
                 keys_to_delete += 1
                 if self.delete(category=cat, key=redis_key):
                     running_total += 1
 
-        if running_total == keys_to_delete:
-            return True
+        response = running_total == keys_to_delete
 
-        else:
-            return False
+        return response
 
     def keys_count(self, category: Optional[str] = None) -> int:
         """
@@ -308,95 +308,47 @@ class RedisCacheManager:
             accessing Redis.
         """
 
+        if category and category not in self._categories:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
         if category:
-            if category in self._categories:
-                categories = {category}
-
-            else:
-                raise exceptions.RedisCacheManagerError(
-                    f"[CACHE] - Category {category} not recognized"
-                )
-
+            categories = {category}
         else:
             categories = self._categories
 
         running_total = 0
 
         for cat in categories:
-            # Check there are keys in the cache
-            redis_keys = self.get_keys(category=cat)
-            if redis_keys is None:
-                continue
-
-            for _ in redis_keys:
+            for _ in self.get_keys(category=cat):
                 running_total += 1
 
         return running_total
 
-    def get_category(self, category: str) -> Optional[Iterator[tuple[str, Any]]]:
-        """
-        Retrieves key-value pairs for all items in the specified cache
-        category.
-
-        :param category: The cache category.
-        :return: An iterator of the cached key-value pairs, or None if
-            no items in cache.
-        :raise: RedisCacheManagerError if an error occurs while
-            accessing Redis.
-        """
-
-        redis_keys = self.get_keys(category=category)
-        redis_values = self.get_values(category=category)
-
-        if redis_keys is None or redis_values is None:
-            return None
-
-        response = zip(redis_keys, redis_values)
-
-        return response
-
-    @utils.retry(exception_to_check=exceptions.RedisCacheManagerError, tries=2, delay_secs=1)
-    def get_keys(self, category: str) -> Optional[Iterator[str]]:
+    def get_keys(self, category: str) -> Generator[str, None, None]:
         """
         Retrieves all keys in the specified cache category.
 
         :param category: The cache category.
-        :return: An iterator of the cached keys, or None if no keys
-            in cache.
+        :return: An iterator of the cached keys.
         :raise: RedisCacheManagerError if an error occurs while
             accessing Redis.
         """
 
-        if category in self._categories:
-            redis_key_pattern = self._serializer.serialize_redis_key(category)
-
-            try:
-                redis_response = self._redis_client.scan_iter(match=redis_key_pattern)
-
-            except Exception as ex:
-                raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
-
-            try:
-                first_value = next(redis_response)
-
-            except StopIteration:
-                return None
-
-            def gen_wrapper() -> Generator[str, None, None]:
-                yield first_value.split(':', 1)[1]
-
-                for value in redis_response:
-                    yield value.split(':', 1)[1]
-
-            # This is the iterator we are going to return
-            keys = gen_wrapper()
-
-            return keys
-
-        else:
+        if category not in self._categories:
             raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
 
-    def get_values(self, category: str) -> Optional[Iterator[Any]]:
+        try:
+            redis_key_pattern = self._serializer.serialize_redis_key(category)
+
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                redis_response = retryer(self._redis_client.scan_iter, match=redis_key_pattern)
+
+            yield from (value.split(':', 1)[1] for value in redis_response)
+
+        except Exception as ex:
+            raise exceptions.RedisCacheManagerError(f"[CACHE] - Redis error: {str(ex)}")
+
+    def get_values(self, category: str) -> Iterator[Any]:
         """
         Retrieves all values in the specified cache category.
 
@@ -407,18 +359,33 @@ class RedisCacheManager:
             accessing Redis.
         """
 
-        if category in self._categories:
-            redis_keys = self.get_keys(category=category)
-
-            if redis_keys is None:
-                return None
-
-            response = (self.get(category=category, key=redis_key) for redis_key in redis_keys)
-
-            return response
-
-        else:
+        if category not in self._categories:
             raise exceptions.RedisCacheManagerError(f"[CACHE] - Category {category} not recognized")
+
+        response = (
+            self.get(category=category, key=redis_key)
+            for redis_key in self.get_keys(category=category)
+        )
+
+        return response
+
+    def get_category(self, category: str) -> Iterator[tuple[str, Any]]:
+        """
+        Retrieves key-value pairs for all items in the specified cache
+        category.
+
+        :param category: The cache category.
+        :return: An iterator of the cached key-value pairs.
+        :raise: RedisCacheManagerError if an error occurs while
+            accessing Redis.
+        """
+
+        redis_keys = self.get_keys(category=category)
+        redis_values = self.get_values(category=category)
+
+        response = zip(redis_keys, redis_values)
+
+        return response
 
 
 class _RedisEncoder(json.JSONEncoder):

@@ -252,7 +252,7 @@ class DynamoDB:
 
         self._cache['client'] = None
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def get_tables(self) -> list[str]:
         """
         Returns an array of table names associated with the current
@@ -296,7 +296,8 @@ class DynamoDB:
         try:
             while True:
                 try:
-                    dynamodb_response = self._scan_with_retry(dynamodb_scan_args)
+                    with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                        dynamodb_response = retryer(self._client.scan, **dynamodb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
                     raise exceptions.DynamoDBError(str(ex.response))
@@ -334,24 +335,6 @@ class DynamoDB:
         except Exception as ex:
             raise exceptions.DynamoDBError(str(ex)) from None
 
-    @utils.retry(exception_to_check=Exception, tries=3, delay_secs=1)
-    def _scan_with_retry(
-        self, dynamodb_scan_args: type_defs.ScanInputTypeDef
-    ) -> type_defs.ScanOutputTypeDef:
-        """
-        Scan a DynamoDB table with built-in retry logic.
-
-        :param dynamodb_scan_args:
-            Dictionary of parameters for the DynamoDB `scan` operation,
-            e.g. `{"TableName": "my-table", "FilterExpression": ...}`.
-        :return:
-            The raw DynamoDB scan response from the Boto3 client. This
-            includes items (if any), plus pagination data like
-            `LastEvaluatedKey`.
-        """
-
-        return self._client.scan(**dynamodb_scan_args)
-
     def get_items_count(self, table: str) -> int:
         """
         Returns the number of items in a table.
@@ -368,7 +351,7 @@ class DynamoDB:
 
         return running_total
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def get_item(
         self, table: str, partition_key_key: str, partition_key_value: PartitionKeyValue
     ) -> Optional[dict[str, AttributeValueDeserialized]]:
@@ -492,7 +475,7 @@ class DynamoDB:
 
         return item_put
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def update_item(
         self,
         table: str,
@@ -627,7 +610,7 @@ class DynamoDB:
 
         return updated_item_deserialized
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def upsert_item(
         self,
         table: str,
@@ -748,7 +731,7 @@ class DynamoDB:
 
         return updated_item_deserialized
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def delete_item(
         self,
         table: str,
@@ -813,7 +796,7 @@ class DynamoDB:
 
         return response
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def delete_item_att(
         self,
         table: str,
@@ -868,7 +851,7 @@ class DynamoDB:
 
         return new_item_deserialized
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def atomic_writes(
         self,
         put: Optional[Iterable[dict[str, AttributeValue]]] = None,
@@ -1296,7 +1279,7 @@ class DynamoDB:
 
         return response
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def put_atomic_counter(
         self,
         table: str,
@@ -1374,7 +1357,7 @@ class DynamoDB:
                 last_modified_timestamp=time.time_ns(),
             )
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def _put_single_item(
         self,
         table: str,
@@ -1526,7 +1509,7 @@ class DynamoDB:
 
         return el_update_serialized
 
-    @utils.retry(exceptions.DynamoDBError, 3, 1)
+    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def _get_pk_type(self, table: str) -> Union[type[bytes], type[str], type[float]]:
         """
         Scan the table and return the type of the PartitionKeyItem Key.

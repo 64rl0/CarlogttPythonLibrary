@@ -182,7 +182,7 @@ class MySQL(Database):
 
         return self._db_connection
 
-    @utils.retry(exceptions.MySQLError)
+    @utils.retry(exception_to_check=exceptions.MySQLError)
     def open_db_connection(self) -> None:
         """
         Open a MySQL db connection.
@@ -207,7 +207,7 @@ class MySQL(Database):
             module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
-    @utils.retry(exceptions.MySQLError)
+    @utils.retry(exception_to_check=exceptions.MySQLError)
     def close_db_connection(self) -> None:
         """
         Close the MySQL db connection.
@@ -226,7 +226,6 @@ class MySQL(Database):
             module_logger.error(message)
             raise exceptions.MySQLError(message) from None
 
-    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
     def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
         """
         Send data to MySQL database.
@@ -239,9 +238,9 @@ class MySQL(Database):
         db_cursor = self.db_connection.cursor(prepared=True)
 
         try:
-            db_cursor.execute(sql_query, sql_values)
-
-            self.db_connection.commit()
+            with utils.retry(exception_to_check=Exception) as retryer:
+                retryer(db_cursor.execute, sql_query, sql_values)
+                retryer(self.db_connection.commit)
 
             module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
@@ -257,7 +256,6 @@ class MySQL(Database):
             db_cursor.close()
             self.close_db_connection()
 
-    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
     def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
         """
         Execute the same SQL statement many times in a single
@@ -275,9 +273,9 @@ class MySQL(Database):
         try:
             # executemany sends the whole batch; server handles each row
             # list() ensures we don’t exhaust a generator if retries
-            db_cursor.executemany(sql_query, list(sql_values))
-
-            self.db_connection.commit()
+            with utils.retry(exception_to_check=Exception) as retryer:
+                retryer(db_cursor.executemany, sql_query, list(sql_values))
+                retryer(self.db_connection.commit)
 
             module_logger.debug(
                 "Database atomic batch executed and committed successfully: "
@@ -299,7 +297,7 @@ class MySQL(Database):
             db_cursor.close()
             self.close_db_connection()
 
-    @utils.retry(exceptions.MySQLError, tries=3, delay_secs=2)
+    @utils.retry(exception_to_check=exceptions.MySQLError, delay_secs=2)
     def fetch_from_db(
         self, sql_query: str, sql_values: Sequence[SQLValueType] = (), *, fetch_one: bool = False
     ) -> Generator[dict[str, Any], None, None]:
@@ -395,7 +393,7 @@ class PostgreSQL(Database):
 
         return self._db_connection
 
-    @utils.retry(exceptions.PostgresError)
+    @utils.retry(exception_to_check=exceptions.PostgresError)
     def open_db_connection(self) -> None:
         """
         Open a PostgreSQL db connection.
@@ -420,7 +418,7 @@ class PostgreSQL(Database):
             module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
-    @utils.retry(exceptions.PostgresError)
+    @utils.retry(exception_to_check=exceptions.PostgresError)
     def close_db_connection(self) -> None:
         """
         Close the PostgreSQL db connection.
@@ -439,7 +437,6 @@ class PostgreSQL(Database):
             module_logger.error(message)
             raise exceptions.PostgresError(message) from None
 
-    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def send_to_db(self, sql_query: str, sql_values: Sequence[SQLValueType] = ()) -> None:
         """
         Send data to PostgreSQL database.
@@ -452,9 +449,9 @@ class PostgreSQL(Database):
         db_cursor = self.db_connection.cursor()
 
         try:
-            db_cursor.execute(sql_query, sql_values)
-
-            self.db_connection.commit()
+            with utils.retry(exception_to_check=Exception) as retryer:
+                retryer(db_cursor.execute, sql_query, sql_values)
+                retryer(self.db_connection.commit)
 
             module_logger.debug(f"Database SQL query {sql_query=} executed successfully")
 
@@ -470,7 +467,6 @@ class PostgreSQL(Database):
             db_cursor.close()
             self.close_db_connection()
 
-    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
     def send_many_to_db(self, sql_query: str, sql_values: Iterable[Sequence[SQLValueType]]) -> None:
         """
         Execute the same SQL statement many times in a single
@@ -488,9 +484,9 @@ class PostgreSQL(Database):
         try:
             # executemany sends the whole batch; server handles each row
             # list() ensures we don’t exhaust a generator if retries
-            db_cursor.executemany(sql_query, list(sql_values))
-
-            self.db_connection.commit()
+            with utils.retry(exception_to_check=Exception) as retryer:
+                retryer(db_cursor.executemany, sql_query, list(sql_values))
+                retryer(self.db_connection.commit)
 
             module_logger.debug(
                 "Database atomic batch executed and committed successfully: "
@@ -512,7 +508,7 @@ class PostgreSQL(Database):
             db_cursor.close()
             self.close_db_connection()
 
-    @utils.retry(exceptions.PostgresError, tries=3, delay_secs=2)
+    @utils.retry(exception_to_check=exceptions.PostgresError, delay_secs=2)
     def fetch_from_db(
         self, sql_query: str, sql_values: Sequence[SQLValueType] = (), *, fetch_one: bool = False
     ) -> Generator[dict[str, Any], None, None]:

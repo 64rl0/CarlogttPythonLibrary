@@ -38,7 +38,7 @@ import functools
 import logging
 import time
 from collections.abc import Callable, Iterable
-from typing import Any, Union
+from typing import Any, Literal, Union
 
 # END IMPORTS
 # ======================================================================
@@ -58,6 +58,7 @@ module_logger = logging.getLogger(__name__)
 # Type aliases
 OriginalFunction = Callable[..., Any]
 InnerFunction = Callable[..., Any]
+RetryerFunction = Callable[..., Any]
 DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
 
 
@@ -73,70 +74,130 @@ class BenchmarkResolution(enum.Enum):
     DAYS = ("days", 86400)
 
 
-def retry(
-    exception_to_check: Union[type[Exception], Iterable[type[Exception]]],
-    tries: int = 4,
-    delay_secs: int = 3,
-    delay_multiplier: int = 2,
-    logger: logging.Logger = module_logger,
-) -> DecoratorFunction:
+class retry:  # noqa
     """
-    Retry calling the decorated function using an exponential backoff
-    multiplier.
+    Retry helper that works both as a decorator and as a context
+    manager, using an exponential backoff multiplier.
+
+    Examples
+    --------
+    Decorator usage::
+
+        @retry((TimeoutError, ConnectionError), tries=5, delay_secs=1)
+        def fetch(url: str) -> bytes:
+            ...
+
+    Context-manager usage::
+
+        with retry(ValueError, tries=3) as retryer:
+            data = retryer(load_csv, "data.csv")
+            retryer(save_report, path="out.pdf", data=data)
 
     :param exception_to_check: the exception to check. may be a tuple
-           of exceptions to check
+        of exceptions to check
     :param tries: number of times to try (not retry) before giving up
     :param delay_secs: initial delay between retries in seconds
     :param delay_multiplier: delay multiplier e.g. value of 2 will
-           double the delay each retry
+        double the delay each retry
     :param logger: The logging.Logger instance to be used for logging
-           the execution time of the decorated function.
-           If not explicitly provided, the function uses
-           Python's standard logging module as a default logger.
+        the execution time of the decorated function.
+        If not explicitly provided, the function uses Python's standard
+        logging module as a default logger.
     """
 
-    def decorator_retry(original_func: OriginalFunction) -> InnerFunction:
+    def __init__(
+        self,
+        exception_to_check: Union[type[Exception], Iterable[type[Exception]]],
+        tries: int = 4,
+        delay_secs: int = 3,
+        delay_multiplier: int = 2,
+        logger: logging.Logger = module_logger,
+    ) -> None:
+        self.exception_to_check = exception_to_check
+        self.tries = self.tot_tries = tries
+        self.delay_secs = delay_secs
+        self.delay_multiplier = delay_multiplier
+        self.logger = logger
+
+        # Convert single exception to a tuple
+        if isinstance(self.exception_to_check, Iterable):
+            self.exceptions = tuple(self.exception_to_check)
+        else:
+            self.exceptions = tuple([self.exception_to_check])
+
+        # Assert all exc in the exception tuple are exception types
+        if not all(isinstance(exc, type) and issubclass(exc, Exception) for exc in self.exceptions):
+            raise ValueError(
+                "exception_to_check must be an exception type or an iterable of exception types"
+            )
+
+    def __call__(self, original_func: OriginalFunction) -> InnerFunction:
+        return self._decorator(original_func)
+
+    def __enter__(self) -> RetryerFunction:
+        """
+        Enter the retry context.
+
+        :returns: retryer – a small helper::
+        """
+
+        return self._retryer
+
+    def __exit__(self, exc_type, exc, exc_tb) -> Literal[False]:
+        """
+        Exit the retry context.
+
+        Returning False tells Python to propagate any exception that
+        occurred inside the with block.
+        """
+
+        return False
+
+    def _retryer(self, original_func: OriginalFunction, *args: Any, **kwargs: Any) -> Any:
+        """
+        Internal one-shot wrapper used by the context-manager helper.
+
+        :raises TypeError: If original_func is not callable.
+        """
+
+        if not callable(original_func):
+            raise TypeError(
+                "retryer expected a callable as its first argument, "
+                f"but received {original_func!r} (type: {type(original_func).__name__})"
+            )
+
+        return self._decorator(original_func)(*args, **kwargs)
+
+    def _decorator(self, original_func: OriginalFunction) -> InnerFunction:
+        """
+        Build the retrying wrapper around original_func.
+        """
+
         @functools.wraps(original_func)
         def inner(*args: Any, **kwargs: Any) -> Any:
-            nonlocal tries
-            nonlocal delay_secs
-
-            # Convert single exception to a tuple
-            if isinstance(exception_to_check, Iterable):
-                exceptions = tuple(exception_to_check)
-
-            else:
-                exceptions = tuple([exception_to_check])
-
-            # Assert all exc in the exception tuple are exception types
-            if not all(isinstance(exc, type) and issubclass(exc, Exception) for exc in exceptions):
-                raise ValueError(
-                    "exception_to_check must be an exception type or an iterable of exception types"
-                )
-
-            while tries > 1:
+            while self.tries > 1:
                 try:
                     return original_func(*args, **kwargs)
 
-                except exceptions as ex:
-                    message = f"[RETRY]: {repr(ex)}, Retrying in {delay_secs} seconds..."
+                except self.exceptions as ex:
+                    message = (
+                        f"[RETRY {self.tot_tries - self.tries + 2}/{self.tot_tries}]: Caught"
+                        f" {repr(ex)}, Retrying in {self.delay_secs} seconds..."
+                    )
 
                     # Log error
-                    logger.debug(message)
+                    self.logger.debug(message)
 
                     # Wait to retry
-                    time.sleep(delay_secs)
+                    time.sleep(self.delay_secs)
 
                     # Increase delay for next retry
-                    tries -= 1
-                    delay_secs *= delay_multiplier
+                    self.tries -= 1
+                    self.delay_secs *= self.delay_multiplier
 
             return original_func(*args, **kwargs)
 
         return inner
-
-    return decorator_retry
 
 
 def benchmark_execution(
