@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_tickety.py
+# test/test_simt.py
 # Created 2/20/25 - 12:21 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -33,17 +33,12 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-from pprint import pprint
-from typing import Any
+from typing import Any, Optional
 from unittest.mock import MagicMock
 
 # Third Party Library Imports
 import botocore.exceptions
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -53,7 +48,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
+#
 
 # Type aliases
 #
@@ -70,7 +65,7 @@ def _patch_boto_and_retry(monkeypatch):
     class _FakeTickety:
         def __init__(self):
             self._pages = 0
-            self.updated_payload: dict[str, Any] | None = None
+            self.updated_payload: Optional[dict[str, Any]] = None
 
         # list_tickets paginates: first call returns nextToken, second doesn't
         def list_tickets(self, **_kw):
@@ -158,6 +153,18 @@ def simt_fresh():
     return SimT("eu-west-1", caching=False)
 
 
+@pytest.fixture
+def simt_instance():
+    import carlogtt_library as mylib
+
+    return mylib.SimT('eu-west-1')
+
+
+@pytest.fixture
+def mock_client():
+    return MagicMock()
+
+
 # ----------------------------------------------------------------------
 # 3.  Tests
 # ----------------------------------------------------------------------
@@ -230,43 +237,9 @@ def test_simticket_handler_deprecation():
         handler = SimTicketHandler("us-east-1")
 
 
-# ----------------------------------------------------------------------
-# Monkey-patches applied automatically to every test
-# ----------------------------------------------------------------------
-@pytest.fixture(autouse=True)
-def _patch_decorators_retry(monkeypatch):
-    """
-    Replace decorators.retry with a do-nothing decorator/context-manager.
-    """
-
-    class _NoopRetry:
-        def __call__(self, fn):  # decorator form
-            return fn
-
-        def __enter__(self):  # context-manager form
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.retry",
-        lambda *a, **kw: _NoopRetry(),
-        raising=True,
-    )
-
-
-@pytest.fixture
-def simt_instance():
-    return mylib.SimT('eu-west-1')
-
-
-@pytest.fixture
-def mock_client():
-    return MagicMock()
-
-
 def test_update_ticket_success(simt_instance, mock_client):
+    import carlogtt_library as mylib
+
     simt_instance._cache['client'] = mock_client
     mock_client.update_ticket.return_value = {"ResponseMetadata": {"HTTPStatusCode": 200}}
 
@@ -304,45 +277,3 @@ def test_update_ticket_invalid_response_type(simt_instance, mock_client):
     mock_client.update_ticket.return_value = None
 
     simt_instance.update_ticket("TICKET123", {"status": "closed"})
-
-
-########################################################################
-# TESTS
-########################################################################
-
-
-region = "eu-west-1"
-profile = "amz_inventory_tool_app_prod"
-simt = mylib.SimT(aws_region_name=region, aws_profile_name=profile)
-
-
-def ticket_details():
-    det = simt.get_ticket_details('53170900-0845-4c41-b6a1-f3cedeb7374b')
-    pprint(det)
-
-
-def ticket_update():
-    ticket_id = '53170900-0845-4c41-b6a1-f3cedeb7374b'
-    payload = {'status': 'Assigned'}
-    simt.update_ticket(ticket_id, payload)
-
-
-def get_tickets():
-    filters = {'requesters': [{'namespace': 'MIDWAY', 'value': 'carlogtt'}]}
-    response = simt.get_tickets(filters=filters)
-    for ticket in response:
-        print(ticket)
-
-
-if __name__ == '__main__':
-    funcs = [
-        ticket_details,
-        # ticket_update,
-        # get_tickets,
-    ]
-
-    for func in funcs:
-        print()
-        print("Calling: ", func.__name__)
-        pprint(func())
-        print("*" * 30 + "\n")

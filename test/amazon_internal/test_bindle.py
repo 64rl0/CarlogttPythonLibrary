@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test__entrypoint__.py
-# Created 4/8/25 - 8:25 AM UK Time (London) by carlogtt
+# test/amazon_internal/test_bindle.py
+# Created 4/27/25 - 1:30 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -32,13 +32,18 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# My Library Imports
-import carlogtt_library as mylib
+# Third Party Library Imports
+import pytest
 
 # END IMPORTS
 # ======================================================================
 
 
-master_logger = mylib.Logger(log_name=__name__, log_level=mylib.LoggerLevel.DEBUG)
-master_logger.add_console_handler()
-master_logger.attach_root_logger()
+# List of public names in the module
+# __all__ = []
+
+# Setting up logger for current module
+# module_logger =
+
+# Type aliases
+#

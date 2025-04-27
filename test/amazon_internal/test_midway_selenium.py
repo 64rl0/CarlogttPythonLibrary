@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_logger.py
-# Created 4/12/25 - 9:24 AM UK Time (London) by carlogtt
+# test/amazon_internal/test_midway_selenium.py
+# Created 4/27/25 - 1:30 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -33,10 +33,7 @@ This module ...
 # ======================================================================
 
 # Third Party Library Imports
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
+import pytest
 
 # END IMPORTS
 # ======================================================================
@@ -50,18 +47,3 @@ import carlogtt_library as mylib
 
 # Type aliases
 #
-
-module_logger = master_logger.get_child_logger(__name__)
-
-module_logger.debug("this is a debug message on stderr")
-
-master_logger.change_logger_level(mylib.LoggerLevel.WARNING)
-module_logger.debug("this is a debug message 2 on stderr")
-
-master_logger.change_logger_level('debug')
-module_logger.debug("this is a debug message 3 on stderr")
-module_logger.debug("this is a debug message 4 on stderr")
-
-print('hello')
-
-module_logger.debug("this is a debug message 5 on stderr")

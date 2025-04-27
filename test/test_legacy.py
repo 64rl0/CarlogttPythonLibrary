@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_deprecated.py
+# test/test_legacy.py
 # Created 4/26/25 - 8:51 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -32,18 +32,11 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
 import warnings
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -53,8 +46,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -78,6 +70,8 @@ class _WarnCatcher:
 # Tests ----------------------------------------------------------------
 # ----------------------------------------------------------------------
 def test_cli_style_attr_returns_constant_and_warns():
+    import carlogtt_library as mylib
+
     # Pick one of the legacy names that maps to CLIStyle
     legacy_name = "cli_red"
     expected_attr = "CLI_RED"
@@ -96,6 +90,8 @@ def test_cli_style_attr_returns_constant_and_warns():
 
 
 def test_other_deprecated_name_warns_and_raises():
+    import carlogtt_library as mylib
+
     # This name is mapped to StringUtils, but proxy should raise AttributeError
     legacy_name = "get_random_string"
 
@@ -109,6 +105,8 @@ def test_other_deprecated_name_warns_and_raises():
 
 
 def test_unknown_attribute_no_warning_and_attribute_error():
+    import carlogtt_library as mylib
+
     unknown = "definitely_not_exported"
 
     with _WarnCatcher() as rec:

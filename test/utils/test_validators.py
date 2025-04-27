@@ -34,10 +34,6 @@ This module ...
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -47,8 +43,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -59,6 +54,8 @@ module_logger = master_logger.get_child_logger(__name__)
 # ----------------------------------------------------------------------
 @pytest.fixture(scope="module")
 def iv():
+    import carlogtt_library as mylib
+
     return mylib.InputValidator()
 
 

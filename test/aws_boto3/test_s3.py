@@ -33,15 +33,10 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-from pprint import pprint
 from unittest import mock
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -51,8 +46,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -60,6 +54,8 @@ module_logger = master_logger.get_child_logger(__name__)
 
 @pytest.fixture
 def s3_instance():
+    import carlogtt_library as mylib
+
     return mylib.S3(aws_region_name="us-east-1", caching=True)
 
 
@@ -94,6 +90,8 @@ def test_invalidate_client_cache(s3_instance):
 
 
 def test_invalidate_client_cache_without_caching():
+    import carlogtt_library as mylib
+
     instance = mylib.S3(aws_region_name="us-east-1", caching=False)
     with pytest.raises(Exception) as excinfo:
         instance.invalidate_client_cache()
@@ -136,21 +134,3 @@ def test_create_presigned_url_for_file(mock_client, s3_instance):
     mock_client.generate_presigned_url.return_value = "https://s3.amazon.com/file1.txt"
     url = s3_instance.create_presigned_url_for_file("bucket", "file1.txt")
     assert url.startswith("https://")
-
-
-########################################################################
-# TESTS
-########################################################################
-
-region = "eu-west-1"
-profile = "carlogtt-conduit-dev"
-
-
-if __name__ == '__main__':
-    funcs = []
-
-    for func in funcs:
-        print()
-        print("Calling: ", func.__name__)
-        pprint(func())
-        print("*" * 30 + "\n")

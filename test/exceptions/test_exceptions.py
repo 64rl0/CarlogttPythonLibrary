@@ -37,12 +37,6 @@ import json
 import logging
 import warnings
 
-# Third Party Library Imports
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
-
 # END IMPORTS
 # ======================================================================
 
@@ -51,8 +45,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -63,6 +56,8 @@ def _instantiate_with_warning(*args, **kwargs):
     Instantiate SimTHandlerError while forcing DeprecationWarning
     to be raised each time (even after the first call).
     """
+    import carlogtt_library as mylib
+
     with warnings.catch_warnings(record=True) as record:
         warnings.simplefilter("always", category=DeprecationWarning)
         exc = mylib.SimTHandlerError(*args, **kwargs)
@@ -97,6 +92,8 @@ def test_warning_is_logged(caplog):
 
 def test_inheritance_relationships():
     """The deprecated class should still be compatible with the hierarchy."""
+    import carlogtt_library as mylib
+
     exc, _ = _instantiate_with_warning("kaboom")
 
     assert isinstance(exc, mylib.SimTHandlerError)

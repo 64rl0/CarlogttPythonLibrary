@@ -38,10 +38,6 @@ import itertools
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -51,8 +47,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -74,11 +69,15 @@ def feed_inputs(monkeypatch, answers):
 # get_user_input_and_validate_int
 # ----------------------------------------------------------------------
 def test_get_user_input_and_validate_int_accepts_first_int(monkeypatch):
+    import carlogtt_library as mylib
+
     feed_inputs(monkeypatch, ["42"])
     assert mylib.UserPrompter().get_user_input_and_validate_int() == 42
 
 
 def test_get_user_input_and_validate_int_loops_until_valid(monkeypatch):
+    import carlogtt_library as mylib
+
     # first two answers are not integers, third is valid
     feed_inputs(monkeypatch, ["banana", "3.14", "-7"])
     assert mylib.UserPrompter().get_user_input_and_validate_int() == -7
@@ -97,11 +96,15 @@ def test_get_user_input_and_validate_int_loops_until_valid(monkeypatch):
     ],
 )
 def test_confirmation_default(monkeypatch, answer, expected):
+    import carlogtt_library as mylib
+
     feed_inputs(monkeypatch, [answer])
     assert mylib.UserPrompter().get_user_input_confirmation_y_n() is expected
 
 
 def test_confirmation_default_reprompts(monkeypatch):
+    import carlogtt_library as mylib
+
     # first answer invalid -> loop, second valid
     feed_inputs(monkeypatch, ["maybe", "n"])
     assert mylib.UserPrompter().get_user_input_confirmation_y_n() is False
@@ -122,6 +125,8 @@ def test_confirmation_default_reprompts(monkeypatch):
     ],
 )
 def test_confirmation_custom_tokens(monkeypatch, true_token, false_token, answer, expected):
+    import carlogtt_library as mylib
+
     feed_inputs(monkeypatch, [answer])
     assert (
         mylib.UserPrompter().get_user_input_confirmation_y_n(true=true_token, false=false_token)
@@ -130,6 +135,8 @@ def test_confirmation_custom_tokens(monkeypatch, true_token, false_token, answer
 
 
 def test_confirmation_custom_tokens_reprompt(monkeypatch):
+    import carlogtt_library as mylib
+
     # wrong answer first, then correct custom token
     feed_inputs(monkeypatch, ["maybe", "quit"])
     assert mylib.UserPrompter().get_user_input_confirmation_y_n(true="go", false="quit") is False

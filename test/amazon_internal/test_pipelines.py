@@ -32,19 +32,11 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
-from pprint import pprint
-from typing import Any, Dict
+from typing import Any, Optional
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -54,7 +46,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
+#
 
 # Type aliases
 #
@@ -86,7 +78,7 @@ def _patch_deps(monkeypatch):
 
     # ---- Fake SigV4 Session used by Pipelines._get_pipelines_client --
     class _FakeResponse:
-        def __init__(self, payload: Dict[str, Any] | None = None):
+        def __init__(self, payload: Optional[dict[str, Any]] = None):
             self._payload = payload or {}
 
         def json(self):
@@ -94,7 +86,7 @@ def _patch_deps(monkeypatch):
 
     class _FakeSigV4:
         def __init__(self, **_):
-            self._last_request: Dict[str, Any] | None = None
+            self._last_request: Optional[dict[str, Any]] = None
 
         def request(self, *, method, url, headers, data):
             self._last_request = {
@@ -152,6 +144,8 @@ def test_client_cache_and_invalidate(pipelines_cached):
 
 
 def test_send_api_request_echo(pipelines_fresh):
+    import carlogtt_library as mylib
+
     # private helper exercised indirectly via public method
     res = pipelines_fresh.get_pipelines_containing_target(
         target_name="foo",
@@ -186,55 +180,11 @@ def test_get_pipeline_structure_both_args_raises(pipelines_fresh):
 
 
 def test_get_pipelines_containing_target(pipelines_cached):
+    import carlogtt_library as mylib
+
     res = pipelines_cached.get_pipelines_containing_target(
         target_name="demo",
         target_type=mylib.TargetType.CD,  # type: ignore[attr-defined]
         in_primary_pipeline=False,
     )
     assert res["echo"]["targetType"] == "CD"
-
-
-########################################################################
-# TESTS
-########################################################################
-
-
-region = "eu-west-1"
-profile = "carlogtt-isengard-dev"
-pipelines = mylib.Pipelines(
-    aws_region_name=region,
-    aws_profile_name=profile,
-    caching=True,
-    client_parameters={},
-)
-
-
-def get_pipeline_structure():
-    response = pipelines.get_pipeline_structure(pipeline_name="ADC-OAR")
-
-    return response
-
-
-def pipelines_throttling():
-    counter = 0
-    while True:
-        counter += 1
-        response = pipelines.get_pipeline_structure(pipeline_name="ADC-OAR")
-        print(response)
-        if counter == 20:
-            break
-
-    return response
-
-
-if __name__ == '__main__':
-    funcs = [
-        get_pipeline_structure,
-        # pipelines_throttling,
-    ]
-
-    for func in funcs:
-        print()
-        print("Calling: ", func.__name__)
-        pprint(func())
-        print("*" * 30 + "\n")

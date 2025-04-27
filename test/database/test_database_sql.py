@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_database.py
+# test/test_database_sql.py
 # Created 2/20/25 - 12:54 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -32,21 +32,13 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
 import sqlite3
-from pprint import pprint
 from unittest.mock import patch
 
 # Third Party Library Imports
 import psycopg2.extensions
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -56,7 +48,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
+#
 
 # Type aliases
 #
@@ -202,6 +194,8 @@ def _drain(gen):
 # 4. Tests – ABC enforcement
 # ----------------------------------------------------------------------
 def test_database_is_abstract():
+    import carlogtt_library as mylib
+
     with pytest.raises(TypeError):
         _ = mylib.Database()  # type: ignore[abstract]  (expected to fail)
 
@@ -211,6 +205,8 @@ def test_database_is_abstract():
 # ----------------------------------------------------------------------
 @pytest.fixture
 def mysql():
+    import carlogtt_library as mylib
+
     return mylib.MySQL(
         host="h",
         user="u",
@@ -253,6 +249,8 @@ def test_mysql_error_raises(mysql):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def sqlite(tmp_path):
+    import carlogtt_library as mylib
+
     return mylib.SQLite(sqlite_db_path=":memory:", filename="tmp.db")
 
 
@@ -284,6 +282,8 @@ def test_sqlite_fetch_one(sqlite):
 @pytest.mark.skipif("psycopg2" not in globals() or psycopg2 is None, reason="psycopg2 missing")
 @pytest.fixture
 def postgres():
+    import carlogtt_library as mylib
+
     return mylib.PostgreSQL(
         host="h",
         user="u",
@@ -346,11 +346,15 @@ def _patch_decorators_retry(monkeypatch):
 
 def test_database_abstract_methods():
     """Ensure Database abstract methods remain enforced."""
+    import carlogtt_library as mylib
+
     with pytest.raises(TypeError):
         _ = mylib.Database()
 
 
 def test_mysql_coverage():
+    import carlogtt_library as mylib
+
     # Create a MySQL instance with dummy credentials
     mysql_db = mylib.MySQL(
         host="fake_host",
@@ -402,6 +406,8 @@ def test_mysql_coverage():
 
 
 def test_sqlite_coverage():
+    import carlogtt_library as mylib
+
     # Create a SQLite instance pointing to an in-memory DB
     sqlite_db = mylib.SQLite(":memory:", "fake_sqlite_db")
 
@@ -437,6 +443,8 @@ def test_sqlite_coverage():
 
 
 def test_postgresql_coverage():
+    import carlogtt_library as mylib
+
     pg = mylib.PostgreSQL(
         host="fake_host",
         user="XXXXXXXXX",
@@ -481,36 +489,3 @@ def test_postgresql_coverage():
         list(pg.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=True))
     except (mylib.PostgresError, AssertionError):
         pass
-
-
-########################################################################
-# TESTS
-########################################################################
-
-
-mysql_db = mylib.MySQL(
-    host="fake_host",
-    user="fake_user",
-    password="fake_pass",
-    port="9999",
-    database_schema="fake_db",
-)
-
-
-def sql_query():
-    sql_query = 'INSERT INTO `table` (`string`, `int`, `none`, `float`) VALUES (?, ?, ?, ?)'
-    sql_values = ('hello', 123, None, 23.5)
-
-    mysql_db.send_to_db(sql_query=sql_query, sql_values=sql_values)
-
-
-if __name__ == '__main__':
-    funcs = [
-        # ,
-    ]
-
-    for func in funcs:
-        print()
-        print("Calling: ", func.__name__)
-        pprint(func())
-        print("*" * 30 + "\n")

@@ -32,20 +32,14 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
 import json
 from types import SimpleNamespace
+from typing import Optional
 
 # Third Party Library Imports
 import pytest
 import requests
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -55,8 +49,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -82,7 +75,7 @@ def _patch_decorators_retry(monkeypatch):
             return False
 
     monkeypatch.setattr(
-        "carlogtt_library.utils.decorators.retry",
+        "carlogtt_library.utils.retry",
         lambda *a, **kw: _NoopRetry(),
         raising=True,
     )
@@ -152,7 +145,7 @@ def test_prepare_request_applies_headers_and_signs(monkeypatch, session):
 # ----------------------------------------------------------------------
 # request()  – success & failure paths ----------------------------------
 # ----------------------------------------------------------------------
-def _make_response(status: int, body: str = "OK", json_body: dict | None = None):
+def _make_response(status: int, body: str = "OK", json_body: Optional[dict] = None):
     """Utility to craft a fake requests.Response."""
     resp = requests.Response()
     resp.status_code = status
@@ -182,6 +175,8 @@ def test_request_serializes_data_and_returns(monkeypatch, session):
 
 
 def test_request_raises_on_http_error(monkeypatch, session):
+    import carlogtt_library as mylib
+
     monkeypatch.setattr(
         requests.Session,
         "request",
@@ -194,6 +189,8 @@ def test_request_raises_on_http_error(monkeypatch, session):
 
 
 def test_request_rpcv0_detects_embedded_error(monkeypatch, dummy_boto_session):
+    import carlogtt_library as mylib
+
     ses = mylib.AwsSigV4Session(
         region_name="eu-west-1",
         service_name="execute-api",

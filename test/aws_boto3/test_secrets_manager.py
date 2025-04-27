@@ -32,19 +32,12 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
+import datetime
 import json
-from datetime import datetime, timezone
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -54,8 +47,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -104,7 +96,7 @@ def _patch_boto3(monkeypatch):
         # ---------- deletion ----------
         def delete_secret(self, **kw):
             self.deleted_args = kw
-            return {"DeletionDate": datetime.now(tz=timezone.utc)}
+            return {"DeletionDate": datetime.datetime.now(tz=datetime.timezone.utc)}
 
     # Fake boto3 session that always returns the same fake client
     class _FakeBotoSession:
@@ -125,11 +117,15 @@ def _patch_boto3(monkeypatch):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def cached_manager():
+    import carlogtt_library as mylib
+
     return mylib.SecretsManager("eu-west-1", caching=True)
 
 
 @pytest.fixture
 def fresh_manager():
+    import carlogtt_library as mylib
+
     return mylib.SecretsManager("eu-west-1", caching=False)
 
 
@@ -147,6 +143,8 @@ def test_client_cached(cached_manager):
 
 
 def test_invalidate_without_cache_raises(fresh_manager):
+    import carlogtt_library as mylib
+
     with pytest.raises(mylib.SecretsManagerError):
         fresh_manager.invalidate_client_cache()
 
@@ -183,6 +181,8 @@ def test_get_secret_password_field(cached_manager):
 
 
 def test_get_secret_error_raises(cached_manager):
+    import carlogtt_library as mylib
+
     with pytest.raises(mylib.SecretsManagerError):
         cached_manager.get_secret("not-there")
 

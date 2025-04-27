@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_cryptography.py
+# test/test_encryption.py
 # Created 4/25/25 - 10:16 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -40,7 +40,6 @@ import time
 # Third Party Library Imports
 import pytest
 from cryptography.fernet import Fernet
-from test__entrypoint__ import master_logger
 
 # My Library Imports
 import carlogtt_library as mylib
@@ -53,8 +52,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #

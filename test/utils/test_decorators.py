@@ -35,14 +35,9 @@ This module ...
 # Standard Library Imports
 import logging
 import time
-from pprint import pprint
 
 # Third Party Library Imports
 import pytest
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -52,7 +47,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
+#
 
 # Type aliases
 #
@@ -65,6 +60,8 @@ class CustomException(Exception):
 
 # Test retry decorator
 def test_retry_success():
+    import carlogtt_library as mylib
+
     counter = {"calls": 0}
 
     @mylib.retry(CustomException, tries=3, delay_secs=0)
@@ -79,6 +76,8 @@ def test_retry_success():
 
 
 def test_retry_failure():
+    import carlogtt_library as mylib
+
     @mylib.retry(CustomException, tries=2, delay_secs=0)
     def always_fail():
         raise CustomException("Always fails")
@@ -88,6 +87,8 @@ def test_retry_failure():
 
 
 def test_retry_context_manager():
+    import carlogtt_library as mylib
+
     counter = {"calls": 0}
 
     def might_fail():
@@ -104,6 +105,8 @@ def test_retry_context_manager():
 
 # Test benchmark_execution decorator
 def test_benchmark_execution(caplog):
+    import carlogtt_library as mylib
+
     caplog.set_level(logging.INFO)
 
     @mylib.benchmark_execution()
@@ -118,6 +121,8 @@ def test_benchmark_execution(caplog):
 
 
 def test_benchmark_custom_resolution(caplog):
+    import carlogtt_library as mylib
+
     caplog.set_level(logging.INFO)
 
     @mylib.benchmark_execution(resolution=mylib.BenchmarkResolution.SECONDS)
@@ -131,6 +136,8 @@ def test_benchmark_custom_resolution(caplog):
 
 # Test log_execution decorator
 def test_log_execution(caplog):
+    import carlogtt_library as mylib
+
     caplog.set_level(logging.INFO)
 
     @mylib.log_execution()
@@ -147,16 +154,22 @@ def test_log_execution(caplog):
 
 # Error tests
 def test_retry_invalid_exception():
+    import carlogtt_library as mylib
+
     with pytest.raises(ValueError):
         mylib.retry(["not_an_exception"], tries=2)
 
 
 def test_benchmark_invalid_resolution_type():
+    import carlogtt_library as mylib
+
     with pytest.raises(TypeError):
         mylib.benchmark_execution(resolution=123)
 
 
 def test_benchmark_invalid_resolution_value():
+    import carlogtt_library as mylib
+
     with pytest.raises(ValueError):
         mylib.benchmark_execution(resolution="invalid")
 
@@ -165,40 +178,11 @@ def test_benchmark_invalid_resolution_value():
 # retryer: non-callable argument should raise TypeError
 # ----------------------------------------------------------------------
 def test_retryer_non_callable_arg_raises():
+    import carlogtt_library as mylib
+
     with mylib.retry(Exception) as retryer:
         with pytest.raises(TypeError) as excinfo:
             retryer(42)  # 42 is *not* callable
 
     # optional: assert on the message
     assert "expected a callable as its first argument" in str(excinfo.value)
-
-
-########################################################################
-# TESTS
-########################################################################
-
-
-@mylib.retry(Exception)
-def retry_dec():
-    print('hi')
-    10 / 0
-
-
-def retry_cm():
-    print('hi')
-    with mylib.retry(Exception) as retryer:
-        # retryer(lambda: 10 / 0)
-        retryer(10)
-
-
-if __name__ == '__main__':
-    funcs = [
-        # retry_dec,
-        retry_cm,
-    ]
-
-    for func in funcs:
-        print()
-        print("Calling: ", func.__name__)
-        pprint(func())
-        print("*" * 30 + "\n")

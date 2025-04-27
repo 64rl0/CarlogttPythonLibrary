@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_redis.py
+# test/test_redis_cache_manager.py
 # Created 4/25/25 - 10:32 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
@@ -32,20 +32,14 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Special Imports
-from __future__ import annotations
-
 # Standard Library Imports
 import fnmatch
+from typing import Optional
 
 # Third Party Library Imports
 import pytest
 import redis
 import redis.client
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -55,8 +49,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
-# master_logger.detach_root_logger()
+#
 
 # Type aliases
 #
@@ -77,7 +70,7 @@ class _FakeRedis:
     def exists(self, key: str) -> int:
         return 1 if key in self._store else 0
 
-    def get(self, key: str) -> str | None:
+    def get(self, key: str) -> Optional[str]:
         return self._store.get(key)
 
     def set(self, key: str, val: str) -> bool:
@@ -144,6 +137,8 @@ def _patch_redis_and_retry(monkeypatch):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def manager():
+    import carlogtt_library as mylib
+
     return mylib.RedisCacheManager(
         host="fake-host",
         ssl=False,  # irrelevant for fake backend
@@ -237,6 +232,8 @@ def test_clear_single_and_all(manager):
 # Error paths -----------------------------------------------------------
 # ----------------------------------------------------------------------
 def test_unknown_category_raises(manager):
+    import carlogtt_library as mylib
+
     with pytest.raises(mylib.RedisCacheManagerError):
         manager.set("invalid", "k", 1)
 
@@ -245,6 +242,8 @@ def test_unknown_category_raises(manager):
 # Helper to build a fresh manager for each test
 # --------------------------------------------------------------------------------------
 def _make_manager():
+    import carlogtt_library as mylib
+
     return mylib.RedisCacheManager(
         host="fake",
         ssl=False,
@@ -270,6 +269,8 @@ def _make_manager():
     ],
 )
 def test_unknown_category_raises(method, kwargs):
+    import carlogtt_library as mylib
+
     m = _make_manager()
     with pytest.raises(mylib.RedisCacheManagerError):
         getattr(m, method)("bad_category", **kwargs)
@@ -295,6 +296,8 @@ def test_unknown_category_raises(method, kwargs):
     ],
 )
 def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs):
+    import carlogtt_library as mylib
+
     m = _make_manager()
 
     # patch the attribute on the *instance* so only this test is affected
@@ -314,6 +317,8 @@ def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs)
 # 3) Connection (ping) failure when client is first created
 # --------------------------------------------------------------------------------------
 def test_initial_ping_failure(monkeypatch):
+    import carlogtt_library as mylib
+
     class _BadRedis(_FakeRedis):
         def ping(self):
             raise redis.ConnectionError("cannot connect")

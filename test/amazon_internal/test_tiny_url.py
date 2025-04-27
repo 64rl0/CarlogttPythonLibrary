@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# test/test_cli_utils.py
-# Created 4/10/25 - 1:18 PM UK Time (London) by carlogtt
+# test/amazon_internal/test_tiny_url.py
+# Created 4/27/25 - 6:18 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -32,14 +32,8 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
-# Standard Library Imports
-from pprint import pprint
-
 # Third Party Library Imports
-from test__entrypoint__ import master_logger
-
-# My Library Imports
-import carlogtt_library as mylib
+import pytest
 
 # END IMPORTS
 # ======================================================================
@@ -49,17 +43,7 @@ import carlogtt_library as mylib
 # __all__ = []
 
 # Setting up logger for current module
-module_logger = master_logger.get_child_logger(__name__)
+# module_logger =
 
 # Type aliases
 #
-
-print(mylib.cli_black)
-print(mylib.CLIStyle.CLI_BLACK)
-print(mylib.CLIStyle.CLI_END)
-
-try:
-    print(mylib.snake_case('ThisIsATest'))
-
-except AttributeError as ex:
-    print(repr(ex))
