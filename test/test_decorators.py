@@ -33,9 +33,12 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
+import logging
+import time
 from pprint import pprint
 
 # Third Party Library Imports
+import pytest
 from test__entrypoint__ import master_logger
 
 # My Library Imports
@@ -53,6 +56,126 @@ module_logger = master_logger.get_child_logger(__name__)
 
 # Type aliases
 #
+
+
+# Mocks
+class CustomException(Exception):
+    pass
+
+
+# Test retry decorator
+def test_retry_success():
+    counter = {"calls": 0}
+
+    @mylib.retry(CustomException, tries=3, delay_secs=0)
+    def might_fail():
+        counter["calls"] += 1
+        if counter["calls"] < 2:
+            raise CustomException("Fail once!")
+        return "success"
+
+    assert might_fail() == "success"
+    assert counter["calls"] == 2
+
+
+def test_retry_failure():
+    @mylib.retry(CustomException, tries=2, delay_secs=0)
+    def always_fail():
+        raise CustomException("Always fails")
+
+    with pytest.raises(CustomException):
+        always_fail()
+
+
+def test_retry_context_manager():
+    counter = {"calls": 0}
+
+    def might_fail():
+        counter["calls"] += 1
+        if counter["calls"] < 3:
+            raise CustomException("Fail twice!")
+        return "done"
+
+    with mylib.retry(CustomException, tries=4, delay_secs=0) as retryer:
+        assert retryer(might_fail) == "done"
+
+    assert counter["calls"] == 3
+
+
+# Test benchmark_execution decorator
+def test_benchmark_execution(caplog):
+    caplog.set_level(logging.INFO)
+
+    @mylib.benchmark_execution()
+    def dummy_function():
+        time.sleep(0.01)
+        return "ok"
+
+    result = dummy_function()
+
+    assert result == "ok"
+    assert any("Execution of dummy_function took" in record.message for record in caplog.records)
+
+
+def test_benchmark_custom_resolution(caplog):
+    caplog.set_level(logging.INFO)
+
+    @mylib.benchmark_execution(resolution=mylib.BenchmarkResolution.SECONDS)
+    def dummy_function():
+        time.sleep(0.1)
+        return "ok"
+
+    result = dummy_function()
+    assert result == "ok"
+
+
+# Test log_execution decorator
+def test_log_execution(caplog):
+    caplog.set_level(logging.INFO)
+
+    @mylib.log_execution()
+    def dummy_function():
+        return "hello"
+
+    result = dummy_function()
+
+    assert result == "hello"
+    messages = [record.message for record in caplog.records]
+    assert any("Initiating dummy_function" in msg for msg in messages)
+    assert any("Finished dummy_function" in msg for msg in messages)
+
+
+# Error tests
+def test_retry_invalid_exception():
+    with pytest.raises(ValueError):
+        mylib.retry(["not_an_exception"], tries=2)
+
+
+def test_benchmark_invalid_resolution_type():
+    with pytest.raises(TypeError):
+        mylib.benchmark_execution(resolution=123)
+
+
+def test_benchmark_invalid_resolution_value():
+    with pytest.raises(ValueError):
+        mylib.benchmark_execution(resolution="invalid")
+
+
+# ----------------------------------------------------------------------
+# retryer: non-callable argument should raise TypeError
+# ----------------------------------------------------------------------
+def test_retryer_non_callable_arg_raises():
+    with mylib.retry(Exception) as retryer:
+        with pytest.raises(TypeError) as excinfo:
+            retryer(42)  # 42 is *not* callable
+
+    # optional: assert on the message
+    assert "expected a callable as its first argument" in str(excinfo.value)
+
+
+########################################################################
+# TESTS
+########################################################################
 
 
 @mylib.retry(Exception)

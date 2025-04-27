@@ -68,9 +68,10 @@ class UserPrompter:
                 int(input_value)
 
             except ValueError:
-                continue
+                module_logger.debug(f"Invalid input: {input_value} is not an int")
 
             else:
+                module_logger.debug(f"Valid input: {input_value} is an int")
                 return int(input_value)
 
     def get_user_input_confirmation_y_n(
@@ -88,75 +89,66 @@ class UserPrompter:
 
             if true.isalpha() and false.isalpha():
                 if true.islower() and false.islower():
-                    if input_value[0].lower() == true or input_value[0].lower() == false:
-                        if input_value == true:
+                    if input_value.lower() == true or input_value.lower() == false:
+                        if input_value.lower() == true:
                             return True
-
                         else:
                             return False
 
                 elif true.isupper() and false.isupper():
-                    if input_value[0].upper() == true or input_value[0].upper() == false:
-                        if input_value == true:
+                    if input_value.upper() == true or input_value.upper() == false:
+                        if input_value.upper() == true:
                             return True
-
                         else:
                             return False
 
                 elif true.islower() and false.isupper():
-                    if input_value[0].lower() == true or input_value[0].upper() == false:
-                        if input_value == true:
+                    if input_value.lower() == true or input_value.upper() == false:
+                        if input_value.lower() == true:
                             return True
-
                         else:
                             return False
 
                 elif true.isupper() and false.islower():
-                    if input_value[0].upper() == true or input_value[0].lower() == false:
-                        if input_value == true:
+                    if input_value.upper() == true or input_value.lower() == false:
+                        if input_value.upper() == true:
                             return True
-
                         else:
                             return False
 
             elif true.isalpha():
                 if true.islower():
-                    if input_value[0].lower() == true or input_value[0] == false:
-                        if input_value == true:
+                    if input_value.lower() == true or input_value == false:
+                        if input_value.lower() == true:
                             return True
-
                         else:
                             return False
 
                 elif true.isupper():
-                    if input_value[0].upper() == true or input_value[0] == false:
-                        if input_value == true:
+                    if input_value.upper() == true or input_value == false:
+                        if input_value.upper() == true:
                             return True
-
                         else:
                             return False
 
             elif false.isalpha():
                 if false.islower():
-                    if input_value[0] == true or input_value[0].lower() == false:
+                    if input_value == true or input_value.lower() == false:
                         if input_value == true:
                             return True
-
                         else:
                             return False
 
                 elif false.isupper():
-                    if input_value[0] == true or input_value[0].upper() == false:
+                    if input_value == true or input_value.upper() == false:
                         if input_value == true:
                             return True
-
                         else:
                             return False
 
             else:
-                if input_value[0] == true or input_value[0] == false:
+                if input_value == true or input_value == false:
                     if input_value == true:
                         return True
-
                     else:
                         return False

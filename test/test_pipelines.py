@@ -32,10 +32,15 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
+# Special Imports
+from __future__ import annotations
+
 # Standard Library Imports
 from pprint import pprint
+from typing import Any, Dict
 
 # Third Party Library Imports
+import pytest
 from test__entrypoint__ import master_logger
 
 # My Library Imports
@@ -53,6 +58,146 @@ module_logger = master_logger.get_child_logger(__name__)
 
 # Type aliases
 #
+
+
+# ----------------------------------------------------------------------
+# 1. Autouse fixture – patch boto3 + utils.retry + utils.AwsSigV4Session
+# ----------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def _patch_deps(monkeypatch):
+    """Replace external deps with light fakes for every test."""
+
+    # ---- utils.retry: no-op decorator & ctx-manager ------------------
+    class _NoRetry:
+        def __call__(self, fn):  # decorator form
+            return fn
+
+        def __enter__(self):  # ctx-mgr form
+            return lambda fn, *a, **kw: fn(*a, **kw)
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+    monkeypatch.setattr(
+        "carlogtt_library.utils.retry",
+        lambda *a, **kw: _NoRetry(),
+        raising=True,
+    )
+
+    # ---- Fake SigV4 Session used by Pipelines._get_pipelines_client --
+    class _FakeResponse:
+        def __init__(self, payload: Dict[str, Any] | None = None):
+            self._payload = payload or {}
+
+        def json(self):
+            return self._payload
+
+    class _FakeSigV4:
+        def __init__(self, **_):
+            self._last_request: Dict[str, Any] | None = None
+
+        def request(self, *, method, url, headers, data):
+            self._last_request = {
+                "method": method,
+                "url": url,
+                "headers": headers,
+                "data": data,
+            }
+            # craft echo response
+            return _FakeResponse({"ok": True, "echo": data})
+
+    monkeypatch.setattr("carlogtt_library.utils.AwsSigV4Session", _FakeSigV4, raising=True)
+
+    # ---- Fake boto3 session (never hits AWS) ------------------------
+    class _FakeBotoSession:
+        def __init__(self, **_):
+            pass
+
+        def client(self, *_, **__):
+            pass  # never called because Pipelines uses SigV4 Session
+
+    import boto3.session
+
+    monkeypatch.setattr(boto3.session, "Session", _FakeBotoSession, raising=True)
+
+    yield
+
+
+# ----------------------------------------------------------------------
+# 2. Helpers / fixtures -------------------------------------------------
+# ----------------------------------------------------------------------
+@pytest.fixture
+def pipelines_cached():
+    from carlogtt_library.amazon_internal.pipelines import Pipelines
+
+    return Pipelines("eu-west-1", caching=True)
+
+
+@pytest.fixture
+def pipelines_fresh():
+    from carlogtt_library.amazon_internal.pipelines import Pipelines
+
+    return Pipelines("eu-west-1", caching=False)
+
+
+# ----------------------------------------------------------------------
+# 3. Tests --------------------------------------------------------------
+# ----------------------------------------------------------------------
+def test_client_cache_and_invalidate(pipelines_cached):
+    first = pipelines_cached._client
+    assert first is pipelines_cached._client
+
+    pipelines_cached.invalidate_client_cache()
+    assert first is not pipelines_cached._client
+
+
+def test_send_api_request_echo(pipelines_fresh):
+    # private helper exercised indirectly via public method
+    res = pipelines_fresh.get_pipelines_containing_target(
+        target_name="foo",
+        target_type=mylib.TargetType.PKG,  # type: ignore[attr-defined]
+        in_primary_pipeline=True,
+    )
+    assert res["ok"] and res["echo"]["targetName"] == "foo"
+
+
+def test_get_pipeline_structure_by_name(pipelines_fresh):
+    res = pipelines_fresh.get_pipeline_structure(pipeline_name="MyPipe")
+    assert res["echo"]["pipelineName"] == "MyPipe"
+
+
+def test_get_pipeline_structure_by_id(pipelines_fresh):
+    res = pipelines_fresh.get_pipeline_structure(pipeline_id="abc123")
+    assert res["echo"]["pipelineId"] == "abc123"
+
+
+def test_get_pipeline_structure_missing_args_raises(pipelines_fresh):
+    from carlogtt_library.exceptions import PipelinesError
+
+    with pytest.raises(PipelinesError):
+        pipelines_fresh.get_pipeline_structure()  # neither name nor id
+
+
+def test_get_pipeline_structure_both_args_raises(pipelines_fresh):
+    from carlogtt_library.exceptions import PipelinesError
+
+    with pytest.raises(PipelinesError):
+        pipelines_fresh.get_pipeline_structure(pipeline_name="X", pipeline_id="Y")
+
+
+def test_get_pipelines_containing_target(pipelines_cached):
+    res = pipelines_cached.get_pipelines_containing_target(
+        target_name="demo",
+        target_type=mylib.TargetType.CD,  # type: ignore[attr-defined]
+        in_primary_pipeline=False,
+    )
+    assert res["echo"]["targetType"] == "CD"
+
+
+########################################################################
+# TESTS
+########################################################################
+
 
 region = "eu-west-1"
 profile = "carlogtt-isengard-dev"

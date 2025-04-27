@@ -601,7 +601,14 @@ class DynamoDB:
         old_item_deserialized = {
             key: self._serializer.deserialize_att(value) for key, value in old_item.items()
         }
-        updated_item = {**partition_key, **old_item_deserialized, **items}
+        partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
+            partition_key_serialized
+        )
+        updated_item = {
+            **old_item_deserialized,
+            **items,
+            **{partition_key_key: partition_key_value},
+        }
 
         # Because the **items in the updated_item dict is not serialized
         # we need to normalize the whole dict before returning a dict of
@@ -722,7 +729,14 @@ class DynamoDB:
         old_item_deserialized = {
             key: self._serializer.deserialize_att(value) for key, value in old_item.items()
         }
-        updated_item = {**partition_key, **old_item_deserialized, **items}
+        partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
+            partition_key_serialized
+        )
+        updated_item = {
+            **old_item_deserialized,
+            **items,
+            **{partition_key_key: partition_key_value},
+        }
 
         # Because the **items in the updated_item dict is not serialized
         # we need to normalize the whole dict before returning a dict of
@@ -790,7 +804,10 @@ class DynamoDB:
             old_item_deserialized = {
                 key: self._serializer.deserialize_att(value) for key, value in old_item.items()
             }
-            deleted_item = {**partition_key, **old_item_deserialized}
+            partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
+                partition_key
+            )
+            deleted_item = {**old_item_deserialized, **{partition_key_key: partition_key_value}}
 
             response.append(deleted_item)
 
@@ -1382,7 +1399,7 @@ class DynamoDB:
 
         partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
         additional_items = self._serializer.serialize_put_items(**items)
-        all_items_serialized = {**partition_key, **additional_items}
+        all_items_serialized = {**additional_items, **partition_key}
 
         # Initialize a dictionary with all the arguments to pass into
         # the DynamoDB put_item call
