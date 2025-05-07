@@ -2,7 +2,7 @@
 name = "carlogtt_python_library"
 description = "A versatile Python library offering a collection of reusable utility functions designed to streamline common programming tasks and promote code reusability across various projects."
 readme = "README.md"
-version = "1.5.2"
+version = "1.5.3"
 license = {text = "MIT"}
 authors = [
     {name = "Carlo Gatti", email = "carlo.gatti@me.com"}
