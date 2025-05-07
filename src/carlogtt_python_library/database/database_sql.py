@@ -40,7 +40,7 @@ import pathlib
 import sqlite3
 import time
 from collections.abc import Generator, Iterable, Sequence
-from typing import Any, Optional, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 
 # Third Party Library Imports
 import mysql.connector
@@ -62,8 +62,6 @@ try:
     import psycopg2.extensions
     import psycopg2.extras
 
-    PGConnection = psycopg2.extensions.connection
-
 except ImportError:
     # Setting up logger for current module
     module_logger = logging.getLogger(__name__)
@@ -73,8 +71,6 @@ except ImportError:
     )
 
     psycopg2 = None  # type: ignore
-    PGConnection = NotImplemented  # type: ignore
-
 
 # END IMPORTS
 # ======================================================================
@@ -93,6 +89,12 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 MySQLConn = Union[MySQLConnectionAbstract, PooledMySQLConnection]
+if psycopg2 is not None:
+    PostgreSQLConn = psycopg2.extensions.connection
+else:
+    PostgreSQLConn = None  # type: ignore
+SQLiteConn = sqlite3.Connection
+ConnT = TypeVar("ConnT", MySQLConn, PostgreSQLConn, SQLiteConn)
 SQLValueType = Union[
     bool,
     bytes,
@@ -109,9 +111,14 @@ SQLValueType = Union[
 ]
 
 
-class Database(abc.ABC):
+class Database(abc.ABC, Generic[ConnT]):
 
     db_utils: database_utils.DatabaseUtils
+
+    @property
+    @abc.abstractmethod
+    def db_connection(self) -> ConnT:
+        pass
 
     @abc.abstractmethod
     def open_db_connection(self) -> None:
@@ -140,7 +147,7 @@ class Database(abc.ABC):
         pass
 
 
-class MySQL(Database):
+class MySQL(Database[MySQLConn]):
     """
     Handles MySQL database connections.
 
@@ -351,7 +358,7 @@ class MySQL(Database):
             self.close_db_connection()
 
 
-class PostgreSQL(Database):
+class PostgreSQL(Database[PostgreSQLConn]):
     """
     Handles PostgreSQL database connections.
 
@@ -374,11 +381,11 @@ class PostgreSQL(Database):
         self._password = password
         self._port = port
         self._database_schema = database_schema
-        self._db_connection: Optional[PGConnection] = None
+        self._db_connection: Optional[PostgreSQLConn] = None
         self.db_utils = database_utils.DatabaseUtils()
 
     @property
-    def db_connection(self) -> PGConnection:
+    def db_connection(self) -> PostgreSQLConn:
         """
         Gets the active db connection. If there is not an active
         connection it creates one.
@@ -561,7 +568,7 @@ class PostgreSQL(Database):
             self.close_db_connection()
 
 
-class SQLite(Database):
+class SQLite(Database[SQLiteConn]):
     """
     Handles SQLite database connections.
 
@@ -578,11 +585,11 @@ class SQLite(Database):
     def __init__(self, sqlite_db_path: Union[str, pathlib.Path], filename: str):
         self._sqlite_db_path = sqlite_db_path
         self._filename = filename
-        self._db_connection: Optional[sqlite3.Connection] = None
+        self._db_connection: Optional[SQLiteConn] = None
         self.db_utils = database_utils.DatabaseUtils()
 
     @property
-    def db_connection(self) -> sqlite3.Connection:
+    def db_connection(self) -> SQLiteConn:
         """
         Gets the active db connection. If there is not an active
         connection it creates one.
@@ -593,7 +600,7 @@ class SQLite(Database):
 
         assert isinstance(
             self._db_connection, sqlite3.Connection
-        ), "Expected self._db_connection to be type sqlite3.Connection"
+        ), "Expected self._db_connection to be type SQLiteConn"
 
         return self._db_connection
 
