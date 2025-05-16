@@ -52,42 +52,16 @@ import pytest
 #
 
 
-# ----------------------------------------------------------------------
-# Monkey-patches applied automatically to every test
-# ----------------------------------------------------------------------
-@pytest.fixture(autouse=True)
-def _patch_decorators_retry(monkeypatch):
-    """
-    Replace decorators.retry with a do-nothing decorator/context-manager.
-    """
-
-    class _NoopRetry:
-        def __call__(self, fn):  # decorator form
-            return fn
-
-        def __enter__(self):  # context-manager form
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.retry",
-        lambda *a, **kw: _NoopRetry(),
-        raising=True,
-    )
-
-
 @pytest.fixture
 def dynamodb_instance():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_dynamo import DynamoDB
 
-    return mylib.DynamoDB(aws_region_name="us-east-1", caching=True)
+    return DynamoDB(aws_region_name="us-east-1", caching=True)
 
 
 @pytest.fixture
 def mock_boto3():
-    with mock.patch("carlogtt_library.database.database_dynamo.boto3") as mock_boto3:
+    with mock.patch("carlogtt_library.aws_boto3.aws_service_base.boto3") as mock_boto3:
         yield mock_boto3
 
 
@@ -116,9 +90,9 @@ def test_invalidate_client_cache(dynamodb_instance):
 
 
 def test_invalidate_client_cache_without_caching():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_dynamo import DynamoDB
 
-    instance = mylib.DynamoDB(aws_region_name="us-east-1", caching=False)
+    instance = DynamoDB(aws_region_name="us-east-1", caching=False)
     with pytest.raises(Exception) as excinfo:
         instance.invalidate_client_cache()
     assert "Session caching is not enabled" in str(excinfo.value)

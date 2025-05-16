@@ -9,8 +9,8 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/aws_boto3/aws_lambda.py
-# Created 3/13/24 - 7:25 PM UK Time (London) by carlogtt
+# src/CarlogttLibrary/src/carlogtt_library/aws_boto3/aws_service_base.py
+# Created 5/12/25 - 7:50 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
@@ -32,39 +32,44 @@ This module ...
 # ======================================================================
 
 # Standard Library Imports
-import json
 import logging
-from typing import Any, Optional
+from typing import Any, Generic, Literal, Optional, TypeVar, cast
 
 # Third Party Library Imports
+import boto3
+import botocore.client
 import botocore.exceptions
-import mypy_boto3_lambda
-from mypy_boto3_lambda import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
-from . import aws_service_base
 
 # END IMPORTS
 # ======================================================================
 
 
 # List of public names in the module
-__all__ = [
-    'Lambda',
-]
+__all__: list[str] = []
 
 # Setting up logger for current module
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-LambdaClient = mypy_boto3_lambda.client.LambdaClient
+AwsServiceClient = TypeVar('AwsServiceClient', bound=botocore.client.BaseClient)
+AwsServiceName = Literal[
+    'cloudfront',
+    'dynamodb',
+    'ec2',
+    'kms',
+    'lambda',
+    's3',
+    'secretsmanager',
+]
 
 
-class Lambda(aws_service_base.AwsServiceBase[LambdaClient]):
+class AwsServiceBase(Generic[AwsServiceClient]):
     """
-    The Lambda class provides a simplified interface for interacting
-    with Amazon Lambda services within a Python application.
+    The AwsServiceBase class provides a simplified interface for
+    interacting with Aws services within a Python application.
 
     It includes an option to cache the client session to minimize
     the number of AWS API call.
@@ -107,56 +112,86 @@ class Lambda(aws_service_base.AwsServiceBase[LambdaClient]):
         aws_session_token: Optional[str] = None,
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
+        aws_service_name: AwsServiceName,
+        exception_type: type[exceptions.CarlogttLibraryError],
     ) -> None:
-        super().__init__(
-            aws_region_name=aws_region_name,
-            aws_profile_name=aws_profile_name,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            aws_session_token=aws_session_token,
-            caching=caching,
-            client_parameters=client_parameters,
-            aws_service_name="lambda",
-            exception_type=exceptions.LambdaError,
-        )
+        self._aws_region_name = aws_region_name
+        self._aws_profile_name = aws_profile_name
+        self._aws_access_key_id = aws_access_key_id
+        self._aws_secret_access_key = aws_secret_access_key
+        self._aws_session_token = aws_session_token
+        self._caching = caching
+        self._cache: dict[str, Any] = dict()
+        self._client_parameters = client_parameters if client_parameters else dict()
+        self._aws_service_name = aws_service_name
+        self._aws_service_exception_type = exception_type
 
-    def invoke(self, function_name: str, **kwargs) -> type_defs.InvocationResponseTypeDef:
+    @property
+    def _client(self) -> AwsServiceClient:
         """
-        Invokes a Lambda function.
+        Returns a AwsServiceBase client.
+        Caches the client if caching is enabled.
 
-        :param function_name: The name or ARN of the Lambda function,
-               version, or alias.
-               Function name – my-function (name-only)
-               Function name – my-function:v1 (with alias)
-               Function ARN –
-               arn:aws:lambda:us-west-2:123456789012:function:my-function
-               Partial ARN – 123456789012:function:my-function
-               You can append a version number or alias to any of the
-               formats.
-        :param kwargs: Any other param passed to the underlying boto3.
-        :return: lambda invoke response converted to python dict.
-        :raise LambdaError: If operation fails.
+        :return: The AwsServiceBaseClient.
         """
 
-        invoke_payload: type_defs.InvocationRequestTypeDef = {
-            'FunctionName': function_name,
-            **kwargs,  # type: ignore
-        }
+        if self._caching:
+            if self._cache.get('client') is None:
+                self._cache['client'] = self._get_boto_client()
+            return self._cache['client']
+
+        else:
+            return self._get_boto_client()
+
+    def _get_boto_client(self) -> AwsServiceClient:
+        """
+        Create a low-level AwsServiceBase client.
+
+        :return: The AwsServiceBaseClient.
+        :raises CarlogttLibraryError: (or one of its subclasses supplied
+            via *exception_type*) if operation fails.
+        """
 
         try:
-            lambda_response = self._client.invoke(**invoke_payload)
+            boto_session = boto3.session.Session(
+                region_name=self._aws_region_name,
+                profile_name=self._aws_profile_name,
+                aws_access_key_id=self._aws_access_key_id,
+                aws_secret_access_key=self._aws_secret_access_key,
+                aws_session_token=self._aws_session_token,
+            )
+            client = cast(
+                AwsServiceClient,
+                boto_session.client(service_name=self._aws_service_name, **self._client_parameters),
+            )
 
-            # Convert lambda response Payload from StreamingBody to
-            # python dict
-            lambda_response_payload = json.loads(lambda_response['Payload'].read().decode())
-
-            # Replacing the StreamingBody with the python dict
-            lambda_response['Payload'] = lambda_response_payload
-
-            return lambda_response
+            return client
 
         except botocore.exceptions.ClientError as ex:
-            raise exceptions.LambdaError(str(ex.response)) from None
+            raise self._aws_service_exception_type(str(ex.response))
 
         except Exception as ex:
-            raise exceptions.LambdaError(str(ex)) from None
+            raise self._aws_service_exception_type(str(ex))
+
+    def invalidate_client_cache(self) -> None:
+        """
+        Clears the cached client, if caching is enabled.
+
+        This method allows manually invalidating the cached client,
+        forcing a new client instance to be created on the next access.
+        Useful if AWS credentials have changed or if there's a need to
+        connect to a different region within the same instance
+        lifecycle.
+
+        :return: None.
+        :raises CarlogttLibraryError: (or one of its subclasses supplied
+            via *exception_type*) if caching is not enabled for this
+            instance.
+        """
+
+        if not self._cache:
+            raise self._aws_service_exception_type(
+                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
+            )
+
+        self._cache['client'] = None

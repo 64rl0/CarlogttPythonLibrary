@@ -109,6 +109,7 @@ def _patch_boto3(monkeypatch):
     import boto3.session
 
     monkeypatch.setattr(boto3.session, "Session", _FakeBotoSession, raising=True)
+
     yield
 
 

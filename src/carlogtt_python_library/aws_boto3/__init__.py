@@ -33,6 +33,7 @@ This module contains the package imports for the current package.
 
 # Local Folder (Relative) Imports
 from .aws_lambda import *
+from .aws_service_base import *
 from .cloud_front import *
 from .ec2 import *
 from .kms import *

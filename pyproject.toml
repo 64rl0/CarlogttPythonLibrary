@@ -23,6 +23,7 @@ dependencies = [
     "types-redis",
     "types-psycopg2",
     "boto3-stubs",
+    "mypy-boto3",
     "mypy-boto3-cloudfront",
     "mypy-boto3-dynamodb",
     "mypy-boto3-ec2",

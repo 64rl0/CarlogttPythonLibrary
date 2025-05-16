@@ -36,7 +36,6 @@ simplify common tasks in Python.
 
 # Standard Library Imports
 import logging as _logging
-import sys as _sys
 import warnings as _warnings
 
 # Local Folder (Relative) Imports
@@ -175,5 +174,12 @@ class _CompatibilityProxy:
         )
 
 
-# Inject the compatibility proxy at module-level
-_sys.modules[__name__].__getattr__ = _CompatibilityProxy().__getattr__  # type: ignore
+def __getattr__(name: str):
+    """
+    Injects the compatibility proxy at module-level.
+    """
+
+    compatability_proxy = _CompatibilityProxy()
+    response = getattr(compatability_proxy, name)
+
+    return response

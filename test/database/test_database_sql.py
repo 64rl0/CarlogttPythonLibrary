@@ -54,34 +54,13 @@ import pytest
 #
 
 
-# ----------------------------------------------------------------------
-# 1.  Global autouse fixture – monkey-patch heavy deps
-# ----------------------------------------------------------------------
 @pytest.fixture(autouse=True)
 def _patch_external(monkeypatch):
     """
-    • utils.retry → no-op decorator / context-manager
     • mysql.connector.connect → FakeMySQLConnection
     • psycopg2.connect        → FakePGConnection  (only if psycopg2 present)
     • Make FakeMySQLCursor satisfy isinstance(..., MySQLCursorDict)
     """
-
-    # ----------------- utils.retry  -----------------------------------
-    class _NoRetry:
-        def __call__(self, fn):  # decorator
-            return fn
-
-        def __enter__(self):  # ctx-manager
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.utils.retry",
-        lambda *a, **kw: _NoRetry(),
-        raising=True,
-    )
 
     # ----------------- MySQL fakes  -----------------------------------
     import mysql.connector
@@ -194,10 +173,10 @@ def _drain(gen):
 # 4. Tests – ABC enforcement
 # ----------------------------------------------------------------------
 def test_database_is_abstract():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import Database
 
     with pytest.raises(TypeError):
-        _ = mylib.Database()  # type: ignore[abstract]  (expected to fail)
+        _ = Database()  # type: ignore[abstract]  (expected to fail)
 
 
 # ----------------------------------------------------------------------
@@ -205,9 +184,9 @@ def test_database_is_abstract():
 # ----------------------------------------------------------------------
 @pytest.fixture
 def mysql():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import MySQL
 
-    return mylib.MySQL(
+    return MySQL(
         host="h",
         user="u",
         password="p",
@@ -249,9 +228,9 @@ def test_mysql_error_raises(mysql):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def sqlite(tmp_path):
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import SQLite
 
-    return mylib.SQLite(sqlite_db_path=":memory:", filename="tmp.db")
+    return SQLite(sqlite_db_path=":memory:", filename="tmp.db")
 
 
 def test_sqlite_send_fetch(sqlite):
@@ -282,9 +261,9 @@ def test_sqlite_fetch_one(sqlite):
 @pytest.mark.skipif("psycopg2" not in globals() or psycopg2 is None, reason="psycopg2 missing")
 @pytest.fixture
 def postgres():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import PostgreSQL
 
-    return mylib.PostgreSQL(
+    return PostgreSQL(
         host="h",
         user="u",
         password="p",
@@ -318,45 +297,20 @@ def test_postgres_error_raises(postgres):
         postgres.send_to_db("FAIL NOW")
 
 
-# ----------------------------------------------------------------------
-# Monkey-patches applied automatically to every test
-# ----------------------------------------------------------------------
-@pytest.fixture(autouse=True)
-def _patch_decorators_retry(monkeypatch):
-    """
-    Replace decorators.retry with a do-nothing decorator/context-manager.
-    """
-
-    class _NoopRetry:
-        def __call__(self, fn):  # decorator form
-            return fn
-
-        def __enter__(self):  # context-manager form
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.retry",
-        lambda *a, **kw: _NoopRetry(),
-        raising=True,
-    )
-
-
 def test_database_abstract_methods():
     """Ensure Database abstract methods remain enforced."""
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import Database
 
     with pytest.raises(TypeError):
-        _ = mylib.Database()
+        _ = Database()
 
 
 def test_mysql_coverage():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import MySQL
+    from carlogtt_library.exceptions import MySQLError
 
     # Create a MySQL instance with dummy credentials
-    mysql_db = mylib.MySQL(
+    mysql_db = MySQL(
         host="fake_host",
         user="fake_user",
         password="fake_pass",
@@ -367,49 +321,50 @@ def test_mysql_coverage():
     # Call db_connection property
     try:
         _ = mysql_db.db_connection
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     # Call open_db_connection
     try:
         mysql_db.open_db_connection()
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     # Call close_db_connection
     try:
         mysql_db.close_db_connection()
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     # Call send_to_db with dummy SQL
     try:
         mysql_db.send_to_db("FAKE SQL", ("fake_value",))
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     # Call fetch_from_db (once with fetch_one=False, once with fetch_one=True)
     try:
         list(mysql_db.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=False))
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     try:
         list(mysql_db.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=True))
-    except (mylib.MySQLError, AssertionError):
+    except (MySQLError, AssertionError):
         pass
 
     # Mock MySQL connection error to test exception handling
-    with patch("mysql.connector.connect", side_effect=mylib.MySQLError("Connection failed")):
-        with pytest.raises(mylib.MySQLError):
+    with patch("mysql.connector.connect", side_effect=MySQLError("Connection failed")):
+        with pytest.raises(MySQLError):
             mysql_db.open_db_connection()
 
 
 def test_sqlite_coverage():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import SQLite
+    from carlogtt_library.exceptions import SQLiteError
 
     # Create a SQLite instance pointing to an in-memory DB
-    sqlite_db = mylib.SQLite(":memory:", "fake_sqlite_db")
+    sqlite_db = SQLite(":memory:", "fake_sqlite_db")
 
     # Call db_connection property
     _ = sqlite_db.db_connection
@@ -437,15 +392,16 @@ def test_sqlite_coverage():
     assert result == []
 
     # Mock SQLite connection error to test exception handling
-    with patch("sqlite3.connect", side_effect=mylib.SQLiteError("Connection failed")):
-        with pytest.raises(mylib.SQLiteError):
+    with patch("sqlite3.connect", side_effect=SQLiteError("Connection failed")):
+        with pytest.raises(SQLiteError):
             sqlite_db.open_db_connection()
 
 
 def test_postgresql_coverage():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.database_sql import PostgreSQL
+    from carlogtt_library.exceptions import PostgresError
 
-    pg = mylib.PostgreSQL(
+    pg = PostgreSQL(
         host="fake_host",
         user="XXXXXXXXX",
         password="XXXX_pass",
@@ -456,36 +412,36 @@ def test_postgresql_coverage():
     # Call db_connection property
     try:
         _ = pg.db_connection
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass
 
     # Call open_db_connection
     try:
         pg.open_db_connection()
         assert isinstance(pg._db_connection, psycopg2.extensions.connection)
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass
 
     # Call close_db_connection
     try:
         pg.close_db_connection()
         assert pg._db_connection is None
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass
 
     # Call send_to_db with dummy SQL
     try:
         pg.send_to_db("FAKE SQL", ("fake_value",))
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass
 
     # Call fetch_from_db (once with fetch_one=False, once with fetch_one=True)
     try:
         list(pg.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=False))
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass
 
     try:
         list(pg.fetch_from_db("FAKE SQL", ("fake_value",), fetch_one=True))
-    except (mylib.PostgresError, AssertionError):
+    except (PostgresError, AssertionError):
         pass

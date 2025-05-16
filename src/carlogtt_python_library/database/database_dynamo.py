@@ -37,17 +37,16 @@ import logging
 import numbers
 import time
 from collections.abc import Generator, Iterable, Mapping, MutableMapping, Sequence
-from typing import Any, Literal, Optional, TypedDict, Union
+from typing import Any, Optional, TypedDict, Union
 
 # Third Party Library Imports
-import boto3
 import botocore.config
 import botocore.exceptions
 import mypy_boto3_dynamodb
 from mypy_boto3_dynamodb import type_defs
 
 # Local Folder (Relative) Imports
-from .. import exceptions, utils
+from .. import aws_boto3, exceptions, utils
 
 # END IMPORTS
 # ======================================================================
@@ -127,7 +126,7 @@ PartitionKeyItem = dict[str, PartitionKeyTypeDef]
 Item = dict[str, type_defs.AttributeValueTypeDef]
 
 
-class DynamoDB:
+class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
     """
     The DynamoDB class provides a simplified interface for interacting
     with Amazon DynamoDB services within a Python application.
@@ -174,83 +173,18 @@ class DynamoDB:
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
-        self._aws_region_name = aws_region_name
-        self._aws_profile_name = aws_profile_name
-        self._aws_access_key_id = aws_access_key_id
-        self._aws_secret_access_key = aws_secret_access_key
-        self._aws_session_token = aws_session_token
-        self._caching = caching
-        self._cache: dict[str, Any] = dict()
-        self._aws_service_name: Literal['dynamodb'] = "dynamodb"
-        self._client_parameters = client_parameters if client_parameters else dict()
+        super().__init__(
+            aws_region_name=aws_region_name,
+            aws_profile_name=aws_profile_name,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            caching=caching,
+            client_parameters=client_parameters,
+            aws_service_name="dynamodb",
+            exception_type=exceptions.DynamoDBError,
+        )
         self._serializer = DynamoDbSerializer()
-
-    @property
-    def _client(self) -> DynamoDBClient:
-        """
-        Returns a DynamoDB client.
-        Caches the client if caching is enabled.
-
-        :return: The DynamoDBClient.
-        """
-
-        if self._caching:
-            if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_client()
-            return self._cache['client']
-
-        else:
-            return self._get_boto_client()
-
-    def _get_boto_client(self) -> DynamoDBClient:
-        """
-        Create a low-level DynamoDB client.
-
-        :return: The DynamoDBClient.
-        :raise DynamoDBError: If operation fails.
-        """
-
-        try:
-            boto_session = boto3.session.Session(
-                region_name=self._aws_region_name,
-                profile_name=self._aws_profile_name,
-                aws_access_key_id=self._aws_access_key_id,
-                aws_secret_access_key=self._aws_secret_access_key,
-                aws_session_token=self._aws_session_token,
-            )
-            client = boto_session.client(
-                service_name=self._aws_service_name, **self._client_parameters
-            )
-
-            return client
-
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.DynamoDBError(str(ex.response))
-
-        except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex))
-
-    def invalidate_client_cache(self) -> None:
-        """
-        Clears the cached client, if caching is enabled.
-
-        This method allows manually invalidating the cached client,
-        forcing a new client instance to be created on the next access.
-        Useful if AWS credentials have changed or if there's a need to
-        connect to a different region within the same instance
-        lifecycle.
-
-        :return: None.
-        :raise DynamoDBError: Raises an error if caching is not enabled
-               for this instance.
-        """
-
-        if not self._cache:
-            raise exceptions.DynamoDBError(
-                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
-            )
-
-        self._cache['client'] = None
 
     @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def get_tables(self) -> list[str]:
@@ -351,7 +285,6 @@ class DynamoDB:
 
         return running_total
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def get_item(
         self, table: str, partition_key_key: str, partition_key_value: PartitionKeyValue
     ) -> Optional[dict[str, AttributeValueDeserialized]]:
@@ -371,7 +304,10 @@ class DynamoDB:
         partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
 
         try:
-            dynamodb_response = self._client.get_item(TableName=table, Key=partition_key)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                dynamodb_response = retryer(
+                    self._client.get_item, TableName=table, Key=partition_key
+                )
 
         except botocore.exceptions.ClientError as ex:
             raise exceptions.DynamoDBError(str(ex.response)) from None
@@ -475,7 +411,6 @@ class DynamoDB:
 
         return item_put
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def update_item(
         self,
         table: str,
@@ -525,9 +460,6 @@ class DynamoDB:
         }
 
         # Serialize partition key
-        # We cant mutate the original dictionary because of the
-        # retry decorator will need to run through it again in case
-        # of failure
         partition_key_key, partition_key_value = next(iter(partition_key.items()))
         partition_key_serialized = self._serializer.serialize_p_key(
             partition_key_key, partition_key_value
@@ -583,7 +515,8 @@ class DynamoDB:
         module_logger.debug(dynamodb_update_item_args)
 
         try:
-            dynamodb_response = self._client.update_item(**dynamodb_update_item_args)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
@@ -617,7 +550,6 @@ class DynamoDB:
 
         return updated_item_deserialized
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def upsert_item(
         self,
         table: str,
@@ -660,9 +592,6 @@ class DynamoDB:
         }
 
         # Serialize partition key
-        # We cant mutate the original dictionary because of the
-        # retry decorator will need to run through it again in case
-        # of failure
         partition_key_key, partition_key_value = next(iter(partition_key.items()))
         partition_key_serialized = self._serializer.serialize_p_key(
             partition_key_key, partition_key_value
@@ -711,7 +640,8 @@ class DynamoDB:
         module_logger.debug(dynamodb_update_item_args)
 
         try:
-            dynamodb_response = self._client.update_item(**dynamodb_update_item_args)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
@@ -745,7 +675,6 @@ class DynamoDB:
 
         return updated_item_deserialized
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def delete_item(
         self,
         table: str,
@@ -790,7 +719,10 @@ class DynamoDB:
             }
 
             try:
-                dynamodb_response = self._client.delete_item(**dynamodb_delete_item_args)
+                with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                    dynamodb_response = retryer(
+                        self._client.delete_item, **dynamodb_delete_item_args
+                    )
 
             except botocore.exceptions.ClientError as ex:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
@@ -813,7 +745,6 @@ class DynamoDB:
 
         return response
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def delete_item_att(
         self,
         table: str,
@@ -847,7 +778,8 @@ class DynamoDB:
         }
 
         try:
-            dynamodb_response = self._client.update_item(**dynamodb_update_item_args)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
@@ -868,7 +800,6 @@ class DynamoDB:
 
         return new_item_deserialized
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def atomic_writes(
         self,
         put: Optional[Iterable[dict[str, AttributeValue]]] = None,
@@ -969,6 +900,73 @@ class DynamoDB:
             f"Atomic Writes in Table initial request - Put: {put}, Update: {update}, Delete:"
             f" {delete}, ConditionCheck: {condition_check}"
         )
+
+        transact_items, response = self._atomic_writes_put(
+            put=put,
+            transact_items=transact_items,
+            response=response,
+        )
+
+        transact_items, response = self._atomic_writes_update(
+            update=update,
+            transact_items=transact_items,
+            response=response,
+        )
+
+        transact_items, response = self._atomic_writes_upsert(
+            upsert=upsert,
+            transact_items=transact_items,
+            response=response,
+        )
+
+        transact_items, response = self._atomic_writes_delete(
+            delete=delete,
+            transact_items=transact_items,
+            response=response,
+        )
+
+        transact_items, response = self._atomic_writes_condition_check(
+            condition_check=condition_check,
+            transact_items=transact_items,
+            response=response,
+        )
+
+        module_logger.debug(f"Atomic Writes in Table serialized request - {transact_items}")
+
+        # Make the DynamoDB atomic api call
+        try:
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                retryer(self._client.transact_write_items, TransactItems=transact_items, **kwargs)
+
+        except botocore.exceptions.ClientError as ex:
+            if "ConditionalCheckFailed" in str(ex):
+                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
+
+            else:
+                raise exceptions.DynamoDBError(str(ex.response)) from None
+
+        except Exception as ex:
+            raise exceptions.DynamoDBError(str(ex)) from None
+
+        return response
+
+    def _atomic_writes_put(
+        self,
+        put: Iterable[dict[str, AttributeValue]],
+        transact_items: list[type_defs.TransactWriteItemTypeDef],
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ) -> tuple[
+        list[type_defs.TransactWriteItemTypeDef],
+        dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ]:
+        """
+        A helper method to prepare the atomic writes for put items.
+
+        :param put: A list of put items.
+        :param transact_items:
+        :param response:
+        :return:
+        """
 
         # Normalize each put item in the list for DynamoDB
         # transactional call
@@ -1077,6 +1075,17 @@ class DynamoDB:
                 updated_item[p_key_k] = p_key_v
                 response['Update'].append(updated_item)
 
+        return transact_items, response
+
+    def _atomic_writes_update(
+        self,
+        update: Iterable[dict[str, AttributeValue]],
+        transact_items: list[type_defs.TransactWriteItemTypeDef],
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ) -> tuple[
+        list[type_defs.TransactWriteItemTypeDef],
+        dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ]:
         # Normalize each update item in the list for DynamoDB
         # transactional call
         for el in update:
@@ -1084,9 +1093,6 @@ class DynamoDB:
             assert isinstance(el['Items'], Mapping)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            # We cant mutate the original dictionary because of the
-            # retry decorator will need to run through it again in case
-            # of failure
             partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
             assert isinstance(partition_key_value, (str, bytes, int, float))
 
@@ -1155,6 +1161,17 @@ class DynamoDB:
             updated_item[p_key_k] = p_key_v
             response['Update'].append(updated_item)
 
+        return transact_items, response
+
+    def _atomic_writes_upsert(
+        self,
+        upsert: Iterable[dict[str, AttributeValue]],
+        transact_items: list[type_defs.TransactWriteItemTypeDef],
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ) -> tuple[
+        list[type_defs.TransactWriteItemTypeDef],
+        dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ]:
         # Normalize each upsert item in the list for DynamoDB
         # transactional call
         for el in upsert:
@@ -1162,9 +1179,6 @@ class DynamoDB:
             assert isinstance(el['Items'], Mapping)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            # We cant mutate the original dictionary because of the
-            # retry decorator will need to run through it again in case
-            # of failure
             partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
             assert isinstance(partition_key_value, (str, bytes, int, float))
 
@@ -1227,15 +1241,23 @@ class DynamoDB:
             upsert_item[p_key_k] = p_key_v
             response['Upsert'].append(upsert_item)
 
+        return transact_items, response
+
+    def _atomic_writes_delete(
+        self,
+        delete: Iterable[dict[str, AttributeValue]],
+        transact_items: list[type_defs.TransactWriteItemTypeDef],
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ) -> tuple[
+        list[type_defs.TransactWriteItemTypeDef],
+        dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ]:
         # Normalize each delete item in the list for DynamoDB
         # transactional call
         for el in delete:
             assert isinstance(el['TableName'], str)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            # We cant mutate the original dictionary because of the
-            # retry decorator will need to run through it again in case
-            # of failure
             partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
             assert isinstance(partition_key_value, (str, bytes, int, float))
 
@@ -1250,15 +1272,23 @@ class DynamoDB:
             # Append the 'delete' item to the return list
             response['Delete'].append({partition_key_key: partition_key_value})
 
+        return transact_items, response
+
+    def _atomic_writes_condition_check(
+        self,
+        condition_check: Iterable[dict[str, AttributeValue]],
+        transact_items: list[type_defs.TransactWriteItemTypeDef],
+        response: dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ) -> tuple[
+        list[type_defs.TransactWriteItemTypeDef],
+        dict[str, list[dict[str, AttributeValueDeserialized]]],
+    ]:
         # Normalize each conditional check item in the list for DynamoDB
         # transactional call
         for el in condition_check:
             assert isinstance(el['TableName'], str)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            # We cant mutate the original dictionary because of the
-            # retry decorator will need to run through it again in case
-            # of failure
             partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
             assert isinstance(partition_key_value, (str, bytes, int, float))
 
@@ -1278,23 +1308,7 @@ class DynamoDB:
             # Append the 'condition_check' item to the return list
             response['ConditionCheck'].append({partition_key_key: partition_key_value})
 
-        module_logger.debug(f"Atomic Writes in Table serialized request - {transact_items}")
-
-        # Make the DynamoDB atomic api call
-        try:
-            self._client.transact_write_items(TransactItems=transact_items, **kwargs)
-
-        except botocore.exceptions.ClientError as ex:
-            if "ConditionalCheckFailed" in str(ex):
-                raise exceptions.DynamoDBConflictError(str(ex.response)) from None
-
-            else:
-                raise exceptions.DynamoDBError(str(ex.response)) from None
-
-        except Exception as ex:
-            raise exceptions.DynamoDBError(str(ex)) from None
-
-        return response
+        return transact_items, response
 
     @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def put_atomic_counter(
@@ -1374,7 +1388,6 @@ class DynamoDB:
                 last_modified_timestamp=time.time_ns(),
             )
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def _put_single_item(
         self,
         table: str,
@@ -1410,7 +1423,8 @@ class DynamoDB:
         }
 
         try:
-            self._client.put_item(**dynamodb_put_item_args)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                retryer(self._client.put_item, **dynamodb_put_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
@@ -1526,7 +1540,6 @@ class DynamoDB:
 
         return el_update_serialized
 
-    @utils.retry(exception_to_check=exceptions.DynamoDBError, delay_secs=1)
     def _get_pk_type(self, table: str) -> Union[type[bytes], type[str], type[float]]:
         """
         Scan the table and return the type of the PartitionKeyItem Key.
@@ -1541,7 +1554,8 @@ class DynamoDB:
         partition_key_key_type = ""
 
         try:
-            dynamodb_response = self._client.describe_table(TableName=table)
+            with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
+                dynamodb_response = retryer(self._client.describe_table, TableName=table)
 
         except botocore.exceptions.ClientError as ex:
             raise exceptions.DynamoDBError(str(ex.response))

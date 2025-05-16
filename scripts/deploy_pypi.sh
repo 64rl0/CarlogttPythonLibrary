@@ -83,8 +83,8 @@ declare -r project_root_dir_abs
 make format
 
 # Activate local venv
-source "${project_root_dir_abs}/build_venv/bin/activate"
-echo -e "\n\n${bold_green}${green_check_mark} venv ${venv_name} activated:${end}"
+. "${project_root_dir_abs}/build_venv/bin/activate"
+echo -e "\n\n${bold_green}${green_check_mark} venv build_venv activated:${end}"
 echo -e "OS Version: $(uname)"
 echo -e "Kernel Version: $(uname -r)"
 echo -e "venv: $VIRTUAL_ENV"

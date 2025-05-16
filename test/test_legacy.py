@@ -71,6 +71,7 @@ class _WarnCatcher:
 # ----------------------------------------------------------------------
 def test_cli_style_attr_returns_constant_and_warns():
     import carlogtt_library as mylib
+    from carlogtt_library.utils.cli_utils import CLIStyle
 
     # Pick one of the legacy names that maps to CLIStyle
     legacy_name = "cli_red"
@@ -86,7 +87,7 @@ def test_cli_style_attr_returns_constant_and_warns():
     assert legacy_name in str(rec[0].message)
 
     # Returned value is *exactly* the constant on CLIStyle
-    assert value is getattr(mylib.CLIStyle, expected_attr)
+    assert value is getattr(CLIStyle, expected_attr)
 
 
 def test_other_deprecated_name_warns_and_raises():

@@ -55,9 +55,6 @@ import redis.client
 #
 
 
-# ----------------------------------------------------------------------
-# Lightweight in-memory substitute for redis.Redis ----------------------
-# ----------------------------------------------------------------------
 class _FakeRedis:
     def __init__(self, **_):
         self._store: dict[str, str] = {}
@@ -85,61 +82,23 @@ class _FakeRedis:
         return [k for k in self._store if fnmatch.fnmatch(k, match)]
 
 
-# ----------------------------------------------------------------------
-# Global monkey-patches applied to every test ---------------------------
-# ----------------------------------------------------------------------
 @pytest.fixture(autouse=True)
-def _patch_redis_and_retry(monkeypatch):
+def _patch_redis(monkeypatch):
     """
     * Replace redis.Redis and redis.client.Redis with _FakeRedis.
-    * Turn utils.retry into a no-op decorator and context-manager.
     """
 
     monkeypatch.setattr(redis, "Redis", _FakeRedis, raising=True)
     monkeypatch.setattr(redis.client, "Redis", _FakeRedis, raising=True)
 
-    # --------------------------------------------------------------------
-    # utils.retry  –  no-op decorator **and** context-manager
-    # --------------------------------------------------------------------
-    class _NoopRetry:
-        """Acts as decorator *and* context-manager, does absolutely nothing."""
-
-        # --- decorator ---------------------------------------------------
-        def __call__(self, fn):
-            return fn  # just hand the function back unchanged
-
-        # --- context-manager --------------------------------------------
-        def __enter__(self):
-            # when used in a with-statement we must return a *callable*
-            # that proxies straight through to the wrapped function
-            return lambda func, *a, **kw: func(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            # never swallow exceptions
-            return False
-
-    def _patched_retry(*_args, **_kwargs):
-        """
-        Keeps the original call signature (accepts the same args/kwargs),
-        but always returns an instance of the multi-purpose helper above.
-        """
-        return _NoopRetry()
-
-    import carlogtt_library.utils as utils_mod
-
-    monkeypatch.setattr(utils_mod, "retry", _patched_retry, raising=True)
-
     yield
 
 
-# ----------------------------------------------------------------------
-# Fixtures for the system under test -----------------------------------
-# ----------------------------------------------------------------------
 @pytest.fixture
 def manager():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
 
-    return mylib.RedisCacheManager(
+    return RedisCacheManager(
         host="fake-host",
         ssl=False,  # irrelevant for fake backend
         category_keys=["users", "sessions"],
@@ -228,32 +187,23 @@ def test_clear_single_and_all(manager):
     assert manager.keys_count() == 0
 
 
-# ----------------------------------------------------------------------
-# Error paths -----------------------------------------------------------
-# ----------------------------------------------------------------------
 def test_unknown_category_raises(manager):
-    import carlogtt_library as mylib
+    from carlogtt_library.exceptions import RedisCacheManagerError
 
-    with pytest.raises(mylib.RedisCacheManagerError):
+    with pytest.raises(RedisCacheManagerError):
         manager.set("invalid", "k", 1)
 
 
-# --------------------------------------------------------------------------------------
-# Helper to build a fresh manager for each test
-# --------------------------------------------------------------------------------------
 def _make_manager():
-    import carlogtt_library as mylib
+    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
 
-    return mylib.RedisCacheManager(
+    return RedisCacheManager(
         host="fake",
         ssl=False,
         category_keys=["cat"],  # one valid category for positive-case calls
     )
 
 
-# --------------------------------------------------------------------------------------
-# 1) Unknown-category raises on *all* public methods that take one
-# --------------------------------------------------------------------------------------
 @pytest.mark.parametrize(
     "method, kwargs",
     [
@@ -269,10 +219,10 @@ def _make_manager():
     ],
 )
 def test_unknown_category_raises(method, kwargs):
-    import carlogtt_library as mylib
+    from carlogtt_library.exceptions import RedisCacheManagerError
 
     m = _make_manager()
-    with pytest.raises(mylib.RedisCacheManagerError):
+    with pytest.raises(RedisCacheManagerError):
         getattr(m, method)("bad_category", **kwargs)
 
         if method == "get_keys":
@@ -281,10 +231,6 @@ def test_unknown_category_raises(method, kwargs):
                 continue
 
 
-# --------------------------------------------------------------------------------------
-# 2) Underlying redis failure surfaces as RedisCacheManagerError
-#    – we monkey-patch the specific redis call used by each wrapper
-# --------------------------------------------------------------------------------------
 @pytest.mark.parametrize(
     "method, redis_attr, kwargs",
     [
@@ -296,7 +242,7 @@ def test_unknown_category_raises(method, kwargs):
     ],
 )
 def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs):
-    import carlogtt_library as mylib
+    from carlogtt_library.exceptions import RedisCacheManagerError
 
     m = _make_manager()
 
@@ -304,7 +250,7 @@ def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs)
     failing = lambda *a, **kw: (_ for _ in ()).throw(Exception("boom"))
     monkeypatch.setattr(m._redis_client, redis_attr, failing, raising=True)
 
-    with pytest.raises(mylib.RedisCacheManagerError):
+    with pytest.raises(RedisCacheManagerError):
         getattr(m, method)("cat", **kwargs)
 
         if method == "get_keys":
@@ -313,11 +259,9 @@ def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs)
                 continue
 
 
-# --------------------------------------------------------------------------------------
-# 3) Connection (ping) failure when client is first created
-# --------------------------------------------------------------------------------------
 def test_initial_ping_failure(monkeypatch):
-    import carlogtt_library as mylib
+    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
+    from carlogtt_library.exceptions import RedisCacheManagerError
 
     class _BadRedis(_FakeRedis):
         def ping(self):
@@ -327,7 +271,7 @@ def test_initial_ping_failure(monkeypatch):
     monkeypatch.setattr(redis, "Redis", _BadRedis, raising=True)
     monkeypatch.setattr(redis.client, "Redis", _BadRedis, raising=True)
 
-    mgr = mylib.RedisCacheManager(host="fake", ssl=False, category_keys=["cat"])
+    mgr = RedisCacheManager(host="fake", ssl=False, category_keys=["cat"])
 
-    with pytest.raises(mylib.RedisCacheManagerError):
+    with pytest.raises(RedisCacheManagerError):
         mgr.has("cat", "k")  # triggers lazy client creation / ping

@@ -33,16 +33,16 @@ This module ...
 
 # Standard Library Imports
 import logging
-from typing import Any, Literal, Optional, Union
+from typing import Any, Optional, Union
 
 # Third Party Library Imports
-import boto3
 import botocore.exceptions
 import mypy_boto3_s3
 from mypy_boto3_s3 import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
+from . import aws_service_base
 
 # END IMPORTS
 # ======================================================================
@@ -60,7 +60,7 @@ module_logger = logging.getLogger(__name__)
 S3Client = mypy_boto3_s3.client.S3Client
 
 
-class S3:
+class S3(aws_service_base.AwsServiceBase[S3Client]):
     """
     The S3 class provides a simplified interface for interacting with
     Amazon S3 services within a Python application.
@@ -107,82 +107,17 @@ class S3:
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
-        self._aws_region_name = aws_region_name
-        self._aws_profile_name = aws_profile_name
-        self._aws_access_key_id = aws_access_key_id
-        self._aws_secret_access_key = aws_secret_access_key
-        self._aws_session_token = aws_session_token
-        self._caching = caching
-        self._cache: dict[str, Any] = dict()
-        self._aws_service_name: Literal['s3'] = "s3"
-        self._client_parameters = client_parameters if client_parameters else dict()
-
-    @property
-    def _client(self) -> S3Client:
-        """
-        Returns a S3 client.
-        Caches the client if caching is enabled.
-
-        :return: The S3BClient.
-        """
-
-        if self._caching:
-            if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_client()
-            return self._cache['client']
-
-        else:
-            return self._get_boto_client()
-
-    def _get_boto_client(self) -> S3Client:
-        """
-        Create a low-level S3 client.
-
-        :return: The S3Client.
-        :raise S3Error: If operation fails.
-        """
-
-        try:
-            boto_session = boto3.session.Session(
-                region_name=self._aws_region_name,
-                profile_name=self._aws_profile_name,
-                aws_access_key_id=self._aws_access_key_id,
-                aws_secret_access_key=self._aws_secret_access_key,
-                aws_session_token=self._aws_session_token,
-            )
-            client = boto_session.client(
-                service_name=self._aws_service_name, **self._client_parameters
-            )
-
-            return client
-
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.S3Error(str(ex.response))
-
-        except Exception as ex:
-            raise exceptions.S3Error(str(ex))
-
-    def invalidate_client_cache(self) -> None:
-        """
-        Clears the cached client, if caching is enabled.
-
-        This method allows manually invalidating the cached client,
-        forcing a new client instance to be created on the next access.
-        Useful if AWS credentials have changed or if there's a need to
-        connect to a different region within the same instance
-        lifecycle.
-
-        :return: None.
-        :raise S3Error: Raises an error if caching is not enabled
-               for this instance.
-        """
-
-        if not self._cache:
-            raise exceptions.S3Error(
-                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
-            )
-
-        self._cache['client'] = None
+        super().__init__(
+            aws_region_name=aws_region_name,
+            aws_profile_name=aws_profile_name,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            caching=caching,
+            client_parameters=client_parameters,
+            aws_service_name="s3",
+            exception_type=exceptions.S3Error,
+        )
 
     def list_files(self, bucket: str, folder_path: str = "", **kwargs) -> list[str]:
         """

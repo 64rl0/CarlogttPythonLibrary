@@ -55,35 +55,6 @@ import requests
 #
 
 
-# ----------------------------------------------------------------------
-# Monkey-patches applied automatically to every test
-# ----------------------------------------------------------------------
-@pytest.fixture(autouse=True)
-def _patch_decorators_retry(monkeypatch):
-    """
-    Replace decorators.retry with a do-nothing decorator/context-manager.
-    """
-
-    class _NoopRetry:
-        def __call__(self, fn):  # decorator form
-            return fn
-
-        def __enter__(self):  # context-manager form
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.utils.retry",
-        lambda *a, **kw: _NoopRetry(),
-        raising=True,
-    )
-
-
-# ----------------------------------------------------------------------
-# Fixtures
-# ----------------------------------------------------------------------
 @pytest.fixture
 def dummy_boto_session():
     """A minimal stub that looks like a boto3.Session."""
@@ -175,7 +146,7 @@ def test_request_serializes_data_and_returns(monkeypatch, session):
 
 
 def test_request_raises_on_http_error(monkeypatch, session):
-    import carlogtt_library as mylib
+    from carlogtt_library.exceptions import AwsSigV4SessionError
 
     monkeypatch.setattr(
         requests.Session,
@@ -184,18 +155,22 @@ def test_request_raises_on_http_error(monkeypatch, session):
         raising=True,
     )
 
-    with pytest.raises(mylib.AwsSigV4SessionError):
+    with pytest.raises(AwsSigV4SessionError):
         session.request("GET", "https://example.com")
 
 
 def test_request_rpcv0_detects_embedded_error(monkeypatch, dummy_boto_session):
-    import carlogtt_library as mylib
+    from carlogtt_library.exceptions import AwsSigV4SessionError
+    from carlogtt_library.utils.aws_sig_v4_requests import (
+        AwsSigV4Protocol,
+        AwsSigV4Session,
+    )
 
-    ses = mylib.AwsSigV4Session(
+    ses = AwsSigV4Session(
         region_name="eu-west-1",
         service_name="execute-api",
         boto_session=dummy_boto_session,
-        protocol=mylib.AwsSigV4Protocol.RPCv0,
+        protocol=AwsSigV4Protocol.RPCv0,
     )
 
     # fake Coral error payload (status 200 but __type contains 'Exception')
@@ -213,5 +188,5 @@ def test_request_rpcv0_detects_embedded_error(monkeypatch, dummy_boto_session):
         raising=True,
     )
 
-    with pytest.raises(mylib.AwsSigV4SessionError):
+    with pytest.raises(AwsSigV4SessionError):
         ses.request("POST", "https://example.com", data={})

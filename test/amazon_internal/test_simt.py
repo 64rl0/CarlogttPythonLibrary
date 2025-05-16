@@ -54,20 +54,18 @@ import pytest
 #
 
 
-# ----------------------------------------------------------------------
-# 1.  Global monkey-patches applied to every test
-# ----------------------------------------------------------------------
 @pytest.fixture(autouse=True)
-def _patch_boto_and_retry(monkeypatch):
-    """Replace boto3 Session + utils.retry with local fakes."""
+def _patch_tickety(monkeypatch):
+    """
+    Replace boto3 Session + utils.retry with local fakes.
+    """
 
-    # ---------- fake Tickety client -----------------------------------
+    # fake Tickety client
     class _FakeTickety:
         def __init__(self):
             self._pages = 0
             self.updated_payload: Optional[dict[str, Any]] = None
 
-        # list_tickets paginates: first call returns nextToken, second doesn't
         def list_tickets(self, **_kw):
             self._pages += 1
             if self._pages == 1:
@@ -80,7 +78,6 @@ def _patch_boto_and_retry(monkeypatch):
                 "nextToken": "",
             }
 
-        # ----------------- ticket operations --------------------------
         def get_ticket(self, **_kw):
             ticket_id = _kw["ticketId"]
             if ticket_id == "missing_field":
@@ -104,7 +101,7 @@ def _patch_boto_and_retry(monkeypatch):
                 return {}  # missing id
             return {"id": "sim-123"}
 
-    # ---------- fake boto3 Session -----------------------------------
+    # fake boto3 Session
     class _FakeBotoSession:
         def __init__(self, **_):
             self._client = _FakeTickety()
@@ -116,48 +113,21 @@ def _patch_boto_and_retry(monkeypatch):
 
     monkeypatch.setattr(boto3.session, "Session", _FakeBotoSession, raising=True)
 
-    # ---------- utils.retry  (decorator & ctx-mgr) --------------------
-    class _NoopRetry:
-        def __call__(self, fn):  # decorator
-            return fn
-
-        def __enter__(self):  # context-manager
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.utils.retry",
-        lambda *a, **kw: _NoopRetry(),
-        raising=True,
-    )
-
     yield
 
 
-# ----------------------------------------------------------------------
-# 2.  Fixtures – instances ready for tests
-# ----------------------------------------------------------------------
 @pytest.fixture
-def simt_cached():
-    from carlogtt_library.amazon_internal.simt import SimT
-
-    return SimT("eu-west-1", caching=True)
-
-
-@pytest.fixture
-def simt_fresh():
+def simt_instance():
     from carlogtt_library.amazon_internal.simt import SimT
 
     return SimT("eu-west-1", caching=False)
 
 
 @pytest.fixture
-def simt_instance():
-    import carlogtt_library as mylib
+def simt_instance_cached():
+    from carlogtt_library.amazon_internal.simt import SimT
 
-    return mylib.SimT('eu-west-1')
+    return SimT("eu-west-1", caching=True)
 
 
 @pytest.fixture
@@ -165,69 +135,66 @@ def mock_client():
     return MagicMock()
 
 
-# ----------------------------------------------------------------------
-# 3.  Tests
-# ----------------------------------------------------------------------
-def test_client_caching_and_invalidate(simt_cached):
-    first = simt_cached._client
-    assert first is simt_cached._client  # cached
+def test_client_caching_and_invalidate(simt_instance_cached):
+    first = simt_instance_cached._client
+    assert first is simt_instance_cached._client
 
-    simt_cached.invalidate_client_cache()
-    assert first is not simt_cached._client  # new instance after invalidation
+    simt_instance_cached.invalidate_client_cache()
+    assert first is not simt_instance_cached._client
 
 
-def test_get_tickets_paginates(simt_cached):
-    ids = [t["id"] for t in simt_cached.get_tickets({"foo": "bar"})]
+def test_get_tickets_paginates(simt_instance_cached):
+    ids = [t["id"] for t in simt_instance_cached.get_tickets({"foo": "bar"})]
     assert ids == ["t1", "t2", "t3"]
 
 
-def test_get_ticket_details_success(simt_fresh):
-    ticket = simt_fresh.get_ticket_details("t1")
+def test_get_ticket_details_success(simt_instance):
+    ticket = simt_instance.get_ticket_details("t1")
     assert ticket["id"] == "t1"
 
 
-def test_get_ticket_details_missing_field_raises(simt_fresh):
+def test_get_ticket_details_missing_field_raises(simt_instance):
     from carlogtt_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
-        simt_fresh.get_ticket_details("missing_field")
+        simt_instance.get_ticket_details("missing_field")
 
 
-def test_update_ticket_success(simt_cached):
+def test_update_ticket_success(simt_instance_cached):
     payload = {"state": "CLOSED"}
-    simt_cached.update_ticket("t1", payload)
-    assert simt_cached._client.updated_payload == payload
+    simt_instance_cached.update_ticket("t1", payload)
+    assert simt_instance_cached._client.updated_payload == payload
 
 
-def test_update_ticket_bad_status_raises(simt_cached):
+def test_update_ticket_bad_status_raises(simt_instance_cached):
     from carlogtt_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
-        simt_cached.update_ticket("bad", {})
+        simt_instance_cached.update_ticket("bad", {})
 
 
-def test_create_comment_success(simt_cached):
-    cid = simt_cached.create_ticket_comment("t1", "hello")
+def test_create_comment_success(simt_instance_cached):
+    cid = simt_instance_cached.create_ticket_comment("t1", "hello")
     assert cid == "c-123"
 
 
-def test_create_comment_missing_key_raises(simt_cached):
+def test_create_comment_missing_key_raises(simt_instance_cached):
     from carlogtt_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
-        simt_cached.create_ticket_comment("fail", "oops")
+        simt_instance_cached.create_ticket_comment("fail", "oops")
 
 
-def test_create_ticket_success(simt_fresh):
-    tid = simt_fresh.create_ticket({"summary": "Test"})
+def test_create_ticket_success(simt_instance):
+    tid = simt_instance.create_ticket({"summary": "Test"})
     assert tid == "sim-123"
 
 
-def test_create_ticket_missing_id_raises(simt_fresh):
+def test_create_ticket_missing_id_raises(simt_instance):
     from carlogtt_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
-        simt_fresh.create_ticket({"no_summary": "bad"})
+        simt_instance.create_ticket({"no_summary": "bad"})
 
 
 def test_simticket_handler_deprecation():

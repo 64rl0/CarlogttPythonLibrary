@@ -4,13 +4,10 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# scripts/formatter.sh
-# Created 4/5/24 - 1:36 PM UK Time (London) by carlogtt
+# scripts/release.sh
+# Created 5/16/25 - 10:34 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
-
-# Command used in the external tool is:
-# --login -c "./scripts/formatter.sh"
 
 # Basic Foreground Colors
 declare -r black=$'\033[30m'
@@ -57,6 +54,7 @@ declare -r end_dim=$'\033[22m'
 declare -r end_italic_underline=$'\033[23m'
 declare -r end_invert=$'\033[27m'
 declare -r end_hidden=$'\033[28m'
+declare -r clear_line=$'\033[2K'
 
 # Emoji
 declare -r green_check_mark="\xE2\x9C\x85"
@@ -82,4 +80,4 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
-icarus builder forge --format
+icarus builder forge --all

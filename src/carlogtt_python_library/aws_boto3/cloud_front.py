@@ -34,16 +34,16 @@ This module ...
 # Standard Library Imports
 import logging
 import time
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 # Third Party Library Imports
-import boto3
 import botocore.exceptions
 import mypy_boto3_cloudfront
 from mypy_boto3_cloudfront import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
+from . import aws_service_base
 
 # END IMPORTS
 # ======================================================================
@@ -61,7 +61,7 @@ module_logger = logging.getLogger(__name__)
 CloudFrontClient = mypy_boto3_cloudfront.client.CloudFrontClient
 
 
-class CloudFront:
+class CloudFront(aws_service_base.AwsServiceBase[CloudFrontClient]):
     """
     The CloudFront class provides a simplified interface for interacting
     with Amazon CloudFront services within a Python application.
@@ -108,82 +108,17 @@ class CloudFront:
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
-        self._aws_region_name = aws_region_name
-        self._aws_profile_name = aws_profile_name
-        self._aws_access_key_id = aws_access_key_id
-        self._aws_secret_access_key = aws_secret_access_key
-        self._aws_session_token = aws_session_token
-        self._caching = caching
-        self._cache: dict[str, Any] = dict()
-        self._aws_service_name: Literal['cloudfront'] = "cloudfront"
-        self._client_parameters = client_parameters if client_parameters else dict()
-
-    @property
-    def _client(self) -> CloudFrontClient:
-        """
-        Returns a CloudFront client.
-        Caches the client if caching is enabled.
-
-        :return: The CloudFrontClient.
-        """
-
-        if self._caching:
-            if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_client()
-            return self._cache['client']
-
-        else:
-            return self._get_boto_client()
-
-    def _get_boto_client(self) -> CloudFrontClient:
-        """
-        Create a low-level CloudFront client.
-
-        :return: The CloudFrontClient.
-        :raise CloudFrontError: If operation fails.
-        """
-
-        try:
-            boto_session = boto3.session.Session(
-                region_name=self._aws_region_name,
-                profile_name=self._aws_profile_name,
-                aws_access_key_id=self._aws_access_key_id,
-                aws_secret_access_key=self._aws_secret_access_key,
-                aws_session_token=self._aws_session_token,
-            )
-            client = boto_session.client(
-                service_name=self._aws_service_name, **self._client_parameters
-            )
-
-            return client
-
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.CloudFrontError(str(ex.response))
-
-        except Exception as ex:
-            raise exceptions.CloudFrontError(str(ex))
-
-    def invalidate_client_cache(self) -> None:
-        """
-        Clears the cached client, if caching is enabled.
-
-        This method allows manually invalidating the cached client,
-        forcing a new client instance to be created on the next access.
-        Useful if AWS credentials have changed or if there's a need to
-        connect to a different region within the same instance
-        lifecycle.
-
-        :return: None.
-        :raise CloudFrontError: Raises an error if caching is not
-               enabled for this instance.
-        """
-
-        if not self._cache:
-            raise exceptions.CloudFrontError(
-                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
-            )
-
-        self._cache['client'] = None
+        super().__init__(
+            aws_region_name=aws_region_name,
+            aws_profile_name=aws_profile_name,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            caching=caching,
+            client_parameters=client_parameters,
+            aws_service_name="cloudfront",
+            exception_type=exceptions.CloudFrontError,
+        )
 
     def invalidate_distribution(
         self, distribution: str, path: str = "/*", **kwargs

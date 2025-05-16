@@ -59,23 +59,6 @@ import pytest
 def _patch_deps(monkeypatch):
     """Replace external deps with light fakes for every test."""
 
-    # ---- utils.retry: no-op decorator & ctx-manager ------------------
-    class _NoRetry:
-        def __call__(self, fn):  # decorator form
-            return fn
-
-        def __enter__(self):  # ctx-mgr form
-            return lambda fn, *a, **kw: fn(*a, **kw)
-
-        def __exit__(self, exc_type, exc, tb):
-            return False
-
-    monkeypatch.setattr(
-        "carlogtt_library.utils.retry",
-        lambda *a, **kw: _NoRetry(),
-        raising=True,
-    )
-
     # ---- Fake SigV4 Session used by Pipelines._get_pipelines_client --
     class _FakeResponse:
         def __init__(self, payload: Optional[dict[str, Any]] = None):
@@ -169,7 +152,7 @@ def test_get_pipeline_structure_missing_args_raises(pipelines_fresh):
     from carlogtt_library.exceptions import PipelinesError
 
     with pytest.raises(PipelinesError):
-        pipelines_fresh.get_pipeline_structure()  # neither name nor id
+        pipelines_fresh.get_pipeline_structure()
 
 
 def test_get_pipeline_structure_both_args_raises(pipelines_fresh):

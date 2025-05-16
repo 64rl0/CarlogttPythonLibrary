@@ -34,16 +34,16 @@ This module ...
 # Standard Library Imports
 import json
 import logging
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 # Third Party Library Imports
-import boto3
 import botocore.exceptions
 import mypy_boto3_secretsmanager
 from mypy_boto3_secretsmanager import type_defs
 
 # Local Folder (Relative) Imports
 from .. import exceptions
+from . import aws_service_base
 
 # END IMPORTS
 # ======================================================================
@@ -61,7 +61,7 @@ module_logger = logging.getLogger(__name__)
 SecretsManagerClient = mypy_boto3_secretsmanager.client.SecretsManagerClient
 
 
-class SecretsManager:
+class SecretsManager(aws_service_base.AwsServiceBase[SecretsManagerClient]):
     """
     The SecretsManager class provides a simplified interface for
     interacting with Amazon SecretsManager services within a Python
@@ -109,82 +109,17 @@ class SecretsManager:
         caching: bool = False,
         client_parameters: Optional[dict[str, Any]] = None,
     ) -> None:
-        self._aws_region_name = aws_region_name
-        self._aws_profile_name = aws_profile_name
-        self._aws_access_key_id = aws_access_key_id
-        self._aws_secret_access_key = aws_secret_access_key
-        self._aws_session_token = aws_session_token
-        self._caching = caching
-        self._cache: dict[str, Any] = dict()
-        self._aws_service_name: Literal['secretsmanager'] = "secretsmanager"
-        self._client_parameters = client_parameters if client_parameters else dict()
-
-    @property
-    def _client(self) -> SecretsManagerClient:
-        """
-        Returns a SecretsManger client.
-        Caches the client if caching is enabled.
-
-        :return: The SecretsManagerClient.
-        """
-
-        if self._caching:
-            if self._cache.get('client') is None:
-                self._cache['client'] = self._get_boto_client()
-            return self._cache['client']
-
-        else:
-            return self._get_boto_client()
-
-    def _get_boto_client(self) -> SecretsManagerClient:
-        """
-        Create a low-level SecretsManager client.
-
-        :return: The SecretsManagerClient.
-        :raise SecretsManagerError: If operation fails.
-        """
-
-        try:
-            boto_session = boto3.session.Session(
-                region_name=self._aws_region_name,
-                profile_name=self._aws_profile_name,
-                aws_access_key_id=self._aws_access_key_id,
-                aws_secret_access_key=self._aws_secret_access_key,
-                aws_session_token=self._aws_session_token,
-            )
-            client = boto_session.client(
-                service_name=self._aws_service_name, **self._client_parameters
-            )
-
-            return client
-
-        except botocore.exceptions.ClientError as ex:
-            raise exceptions.SecretsManagerError(str(ex.response))
-
-        except Exception as ex:
-            raise exceptions.SecretsManagerError(str(ex))
-
-    def invalidate_client_cache(self) -> None:
-        """
-        Clears the cached client, if caching is enabled.
-
-        This method allows manually invalidating the cached client,
-        forcing a new client instance to be created on the next access.
-        Useful if AWS credentials have changed or if there's a need to
-        connect to a different region within the same instance
-        lifecycle.
-
-        :return: None.
-        :raise SecretsManagerError: Raises an error if caching is not
-               enabled for this instance.
-        """
-
-        if not self._cache:
-            raise exceptions.SecretsManagerError(
-                f"Session caching is not enabled for this instance of {self.__class__.__qualname__}"
-            )
-
-        self._cache['client'] = None
+        super().__init__(
+            aws_region_name=aws_region_name,
+            aws_profile_name=aws_profile_name,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            aws_session_token=aws_session_token,
+            caching=caching,
+            client_parameters=client_parameters,
+            aws_service_name="secretsmanager",
+            exception_type=exceptions.SecretsManagerError,
+        )
 
     def get_all_secrets(self) -> list[type_defs.SecretListEntryTypeDef]:
         """
