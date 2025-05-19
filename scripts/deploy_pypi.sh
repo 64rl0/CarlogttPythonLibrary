@@ -80,7 +80,7 @@ project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
 # Format package
-make format
+icarus builder forge --format
 
 # Activate local venv
 . "${project_root_dir_abs}/build_venv/bin/activate"
