@@ -1,5 +1,4 @@
-# My Library (installing local version)
-./
+# My Library
 
 # Runtime dependencies
 
@@ -9,6 +8,9 @@ twine
 
 # Test dependencies
 pytest
+
+# Documentation dependencies
+sphinx
 
 # Development dependencies
 black
