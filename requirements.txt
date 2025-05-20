@@ -1,1 +1,18 @@
-./[dev]
+# My Library (installing local version)
+./
+
+# Runtime dependencies
+
+# Pypy dependencies
+build
+twine
+
+# Test dependencies
+pytest
+
+# Development dependencies
+black
+isort
+mypy
+flake8
+pep8-naming

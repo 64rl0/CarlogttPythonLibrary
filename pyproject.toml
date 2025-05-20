@@ -42,16 +42,6 @@ Homepage = "https://github.com/64rl0/CarlogttPythonLibrary.git"
 postgres = [
     "psycopg2",
 ]
-dev = [
-    "black",
-    "build",
-    "flake8",
-    "isort",
-    "mypy",
-    "pep8-naming",
-    "pytest",
-    "twine",
-]
 
 
 [tool.black]
