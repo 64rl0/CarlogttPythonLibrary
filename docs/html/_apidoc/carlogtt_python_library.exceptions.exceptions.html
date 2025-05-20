@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>carlogtt_python_library.exceptions.exceptions module &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
+    <script src="../_static/documentation_options.js?v=30015795"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="carlogtt_python_library.logger package" href="carlogtt_python_library.logger.html" />
+    <link rel="prev" title="carlogtt_python_library.exceptions package" href="carlogtt_python_library.exceptions.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-carlogtt_python_library.exceptions.exceptions">
+<span id="carlogtt-python-library-exceptions-exceptions-module"></span><h1>carlogtt_python_library.exceptions.exceptions module<a class="headerlink" href="#module-carlogtt_python_library.exceptions.exceptions" title="Link to this heading">¶</a></h1>
+<p>This module provides a collection of custom exception classes that can
+be used to handle specific error scenarios in a more precise and
+controlled manner. These exceptions are tailored to the needs of the
+library and can be raised when certain exceptional conditions occur
+during the program’s execution.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.AwsSigV4SessionError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">AwsSigV4SessionError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#AwsSigV4SessionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.AwsSigV4SessionError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle AwsSigV4Session errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.BindleError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">BindleError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#BindleError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.BindleError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Bindle errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">CarlogttLibraryError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#CarlogttLibraryError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Custom exception class for CarlogttLibrary, providing enhanced
+functionality for error handling and reporting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#CarlogttLibraryError.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the exception to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary with ‘exception’ as a key and the string
+representation of the exception as its value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#CarlogttLibraryError.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_json" title="Link to this definition">¶</a></dt>
+<dd><p>Converts the exception to a JSON string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A JSON string representation of the exception, making
+it suitable for logging or transmitting as part of an
+API response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.CloudFrontError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">CloudFrontError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#CloudFrontError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.CloudFrontError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle CloudFront errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.CryptographyError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">CryptographyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#CryptographyError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.CryptographyError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Cryptography errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.DatabaseError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">DatabaseError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#DatabaseError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Database errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.DynamoDBConflictError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">DynamoDBConflictError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#DynamoDBConflictError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.DynamoDBConflictError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DynamoDBError" title="carlogtt_python_library.exceptions.exceptions.DynamoDBError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DynamoDBError</span></code></a></p>
+<p>This is the base exception class to handle DynamoDB Conflict errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.DynamoDBError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">DynamoDBError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#DynamoDBError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.DynamoDBError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError" title="carlogtt_python_library.exceptions.exceptions.DatabaseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></p>
+<p>This is the base exception class to handle DynamoDB errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.EC2Error">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">EC2Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#EC2Error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.EC2Error" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle EC2 errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.KMSError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">KMSError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#KMSError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.KMSError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle KMS errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.LambdaError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">LambdaError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#LambdaError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.LambdaError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Lambda errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.LoggerError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">LoggerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#LoggerError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.LoggerError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Logger errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.MiradorError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">MiradorError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#MiradorError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.MiradorError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Mirador errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.MySQLError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">MySQLError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#MySQLError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.MySQLError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError" title="carlogtt_python_library.exceptions.exceptions.DatabaseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></p>
+<p>This is the base exception class to handle MySQL errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.PipelinesError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">PipelinesError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#PipelinesError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.PipelinesError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle Pipelines errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.PostgresError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">PostgresError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#PostgresError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.PostgresError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError" title="carlogtt_python_library.exceptions.exceptions.DatabaseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></p>
+<p>This is the base exception class to handle PostgreSQL errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.RedisCacheManagerError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">RedisCacheManagerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#RedisCacheManagerError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.RedisCacheManagerError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle RedisCacheManager
+errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.S3Error">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">S3Error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#S3Error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.S3Error" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle S3 errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.SQLiteError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">SQLiteError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#SQLiteError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.SQLiteError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError" title="carlogtt_python_library.exceptions.exceptions.DatabaseError"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></p>
+<p>This is the base exception class to handle SQLite errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.SecretsManagerError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">SecretsManagerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#SecretsManagerError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.SecretsManagerError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle SecretsManager errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.SimTError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimTError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#SimTError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.SimTError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError" title="carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="xref py py-class docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a></p>
+<p>This is the base exception class to handle SimTicket errors.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="carlogtt_python_library.exceptions.exceptions.SimTHandlerError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.exceptions.exceptions.</span></span><span class="sig-name descname"><span class="pre">SimTHandlerError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/exceptions/exceptions.html#SimTHandlerError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.exceptions.exceptions.SimTHandlerError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.SimTError" title="carlogtt_python_library.exceptions.exceptions.SimTError"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimTError</span></code></a></p>
+<p>DEPRECATED: Use SimTError instead.
+This subclass only exists for backward compatibility.</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="carlogtt_python_library.exceptions.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.exceptions.exceptions module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.AwsSigV4SessionError"><code class="docutils literal notranslate"><span class="pre">AwsSigV4SessionError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.BindleError"><code class="docutils literal notranslate"><span class="pre">BindleError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError"><code class="docutils literal notranslate"><span class="pre">CarlogttLibraryError</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_dict"><code class="docutils literal notranslate"><span class="pre">CarlogttLibraryError.to_dict()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_json"><code class="docutils literal notranslate"><span class="pre">CarlogttLibraryError.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CloudFrontError"><code class="docutils literal notranslate"><span class="pre">CloudFrontError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.CryptographyError"><code class="docutils literal notranslate"><span class="pre">CryptographyError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DatabaseError"><code class="docutils literal notranslate"><span class="pre">DatabaseError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DynamoDBConflictError"><code class="docutils literal notranslate"><span class="pre">DynamoDBConflictError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.DynamoDBError"><code class="docutils literal notranslate"><span class="pre">DynamoDBError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.EC2Error"><code class="docutils literal notranslate"><span class="pre">EC2Error</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.KMSError"><code class="docutils literal notranslate"><span class="pre">KMSError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.LambdaError"><code class="docutils literal notranslate"><span class="pre">LambdaError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.LoggerError"><code class="docutils literal notranslate"><span class="pre">LoggerError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.MiradorError"><code class="docutils literal notranslate"><span class="pre">MiradorError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.MySQLError"><code class="docutils literal notranslate"><span class="pre">MySQLError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.PipelinesError"><code class="docutils literal notranslate"><span class="pre">PipelinesError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.PostgresError"><code class="docutils literal notranslate"><span class="pre">PostgresError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.RedisCacheManagerError"><code class="docutils literal notranslate"><span class="pre">RedisCacheManagerError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.S3Error"><code class="docutils literal notranslate"><span class="pre">S3Error</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.SQLiteError"><code class="docutils literal notranslate"><span class="pre">SQLiteError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.SecretsManagerError"><code class="docutils literal notranslate"><span class="pre">SecretsManagerError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.SimTError"><code class="docutils literal notranslate"><span class="pre">SimTError</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.exceptions.exceptions.SimTHandlerError"><code class="docutils literal notranslate"><span class="pre">SimTHandlerError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="carlogtt_python_library.html">carlogtt_python_library package</a><ul>
+  <li><a href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a><ul>
+      <li>Previous: <a href="carlogtt_python_library.exceptions.html" title="previous chapter">carlogtt_python_library.exceptions package</a></li>
+      <li>Next: <a href="carlogtt_python_library.logger.html" title="next chapter">carlogtt_python_library.logger package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_apidoc/carlogtt_python_library.exceptions.exceptions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

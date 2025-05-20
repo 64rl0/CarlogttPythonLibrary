@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>carlogtt_python_library.utils.decorators module &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
+    <script src="../_static/documentation_options.js?v=30015795"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="carlogtt_python_library.utils.encryption module" href="carlogtt_python_library.utils.encryption.html" />
+    <link rel="prev" title="carlogtt_python_library.utils.context_managers module" href="carlogtt_python_library.utils.context_managers.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-carlogtt_python_library.utils.decorators">
+<span id="carlogtt-python-library-utils-decorators-module"></span><h1>carlogtt_python_library.utils.decorators module<a class="headerlink" href="#module-carlogtt_python_library.utils.decorators" title="Link to this heading">¶</a></h1>
+<p>This module contains useful decorators that can be used in the
+application.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.BenchmarkResolution">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.decorators.</span></span><span class="sig-name descname"><span class="pre">BenchmarkResolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/decorators.html#BenchmarkResolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Defines time resolution units and their corresponding duration in
+seconds.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.BenchmarkResolution.DAYS">
+<span class="sig-name descname"><span class="pre">DAYS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('days',</span> <span class="pre">86400)</span></em><a class="headerlink" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.DAYS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.BenchmarkResolution.HOURS">
+<span class="sig-name descname"><span class="pre">HOURS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('hours',</span> <span class="pre">3600)</span></em><a class="headerlink" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.HOURS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.BenchmarkResolution.MINUTES">
+<span class="sig-name descname"><span class="pre">MINUTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('minutes',</span> <span class="pre">60)</span></em><a class="headerlink" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.MINUTES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.BenchmarkResolution.SECONDS">
+<span class="sig-name descname"><span class="pre">SECONDS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('seconds',</span> <span class="pre">1)</span></em><a class="headerlink" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.SECONDS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.benchmark_execution">
+<span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.decorators.</span></span><span class="sig-name descname"><span class="pre">benchmark_execution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~logging.Logger</span> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.decorators</span> <span class="pre">(WARNING)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~carlogtt_python_library.utils.decorators.BenchmarkResolution</span> <span class="pre">=</span> <span class="pre">BenchmarkResolution.SECONDS</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/decorators.html#benchmark_execution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.decorators.benchmark_execution" title="Link to this definition">¶</a></dt>
+<dd><p>Measure and log the execution time of the decorated function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger</strong> – The logging.Logger instance to be used for logging
+the execution time of the decorated function.
+If not explicitly provided, the function uses Python’s standard
+logging module as a default logger.</p></li>
+<li><p><strong>resolution</strong> – The time unit for reporting execution time.
+Can be either:
+- A string from {“sec”, “min”, “hour”, “day”}, or
+- An instance of BenchmarkResolution
+(e.g. BenchmarkResolution.SECONDS).
+Defaults to BenchmarkResolution.SECONDS.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.log_execution">
+<span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.decorators.</span></span><span class="sig-name descname"><span class="pre">log_execution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~logging.Logger</span> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.decorators</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/decorators.html#log_execution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.decorators.log_execution" title="Link to this definition">¶</a></dt>
+<dd><p>Log the start and completion of the decorated function using the
+provided logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger</strong> – The logging.Logger instance to be used for logging
+the execution time of the decorated function.
+If not explicitly provided, the function uses
+Python’s standard logging module as a default logger.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.decorators.retry">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.decorators.</span></span><span class="sig-name descname"><span class="pre">retry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">exception_to_check:</span> <span class="pre">type[Exception]</span> <span class="pre">|</span> <span class="pre">~collections.abc.Iterable[type[Exception]],</span> <span class="pre">tries:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">4,</span> <span class="pre">delay_secs:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">3,</span> <span class="pre">delay_multiplier:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2,</span> <span class="pre">logger:</span> <span class="pre">~logging.Logger</span> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.decorators</span> <span class="pre">(WARNING)&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/decorators.html#retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.decorators.retry" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Retry helper that works both as a decorator and as a context
+manager, using an exponential backoff multiplier.</p>
+<p class="rubric">Examples</p>
+<p>Decorator usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@retry</span><span class="p">((</span><span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">ConnectionError</span><span class="p">),</span> <span class="n">tries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Context-manager usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">retry</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">as</span> <span class="n">retryer</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">retryer</span><span class="p">(</span><span class="n">load_csv</span><span class="p">,</span> <span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+    <span class="n">retryer</span><span class="p">(</span><span class="n">save_report</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;out.pdf&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>exception_to_check</strong> – the exception to check. may be a tuple
+of exceptions to check</p></li>
+<li><p><strong>tries</strong> – number of times to try (not retry) before giving up</p></li>
+<li><p><strong>delay_secs</strong> – initial delay between retries in seconds</p></li>
+<li><p><strong>delay_multiplier</strong> – delay multiplier e.g. value of 2 will
+double the delay each retry</p></li>
+<li><p><strong>logger</strong> – The logging.Logger instance to be used for logging
+the execution time of the decorated function.
+If not explicitly provided, the function uses Python’s standard
+logging module as a default logger.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="carlogtt_python_library.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.aws_sig_v4_requests.html">carlogtt_python_library.utils.aws_sig_v4_requests module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.cli_utils.html">carlogtt_python_library.utils.cli_utils module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.context_managers.html">carlogtt_python_library.utils.context_managers module</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.utils.decorators module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution"><code class="docutils literal notranslate"><span class="pre">BenchmarkResolution</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.DAYS"><code class="docutils literal notranslate"><span class="pre">BenchmarkResolution.DAYS</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.HOURS"><code class="docutils literal notranslate"><span class="pre">BenchmarkResolution.HOURS</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.MINUTES"><code class="docutils literal notranslate"><span class="pre">BenchmarkResolution.MINUTES</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.BenchmarkResolution.SECONDS"><code class="docutils literal notranslate"><span class="pre">BenchmarkResolution.SECONDS</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.benchmark_execution"><code class="docutils literal notranslate"><span class="pre">benchmark_execution()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.log_execution"><code class="docutils literal notranslate"><span class="pre">log_execution()</span></code></a></li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.decorators.retry"><code class="docutils literal notranslate"><span class="pre">retry</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.encryption.html">carlogtt_python_library.utils.encryption module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.miscs.html">carlogtt_python_library.utils.miscs module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.string_tools.html">carlogtt_python_library.utils.string_tools module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.user_input.html">carlogtt_python_library.utils.user_input module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.utils.validators.html">carlogtt_python_library.utils.validators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="carlogtt_python_library.html">carlogtt_python_library package</a><ul>
+  <li><a href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a><ul>
+      <li>Previous: <a href="carlogtt_python_library.utils.context_managers.html" title="previous chapter">carlogtt_python_library.utils.context_managers module</a></li>
+      <li>Next: <a href="carlogtt_python_library.utils.encryption.html" title="next chapter">carlogtt_python_library.utils.encryption module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_apidoc/carlogtt_python_library.utils.decorators.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>carlogtt_python_library.amazon_internal.pipelines module &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
+    <script src="../_static/documentation_options.js?v=30015795"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="carlogtt_python_library.amazon_internal.simt module" href="carlogtt_python_library.amazon_internal.simt.html" />
+    <link rel="prev" title="carlogtt_python_library.amazon_internal.phone_tool module" href="carlogtt_python_library.amazon_internal.phone_tool.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-carlogtt_python_library.amazon_internal.pipelines">
+<span id="carlogtt-python-library-amazon-internal-pipelines-module"></span><h1>carlogtt_python_library.amazon_internal.pipelines module<a class="headerlink" href="#module-carlogtt_python_library.amazon_internal.pipelines" title="Link to this heading">¶</a></h1>
+<p>This module …</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.Pipelines">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.pipelines.</span></span><span class="sig-name descname"><span class="pre">Pipelines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aws_region_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caching</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/pipelines.html#Pipelines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A handler class for the PipelinesAPI.</p>
+<p>It includes an option to cache the client session to minimize
+the number of AWS API call.</p>
+<p>Internal Amazon API
+<a class="reference external" href="https://us-west-2.prod.pipelines-api.builder-tools.aws.dev/model/index.html">https://us-west-2.prod.pipelines-api.builder-tools.aws.dev/model/index.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aws_region_name</strong> – The name of the AWS region where the
+service is to be used. This parameter is required to
+configure the AWS client.</p></li>
+<li><p><strong>aws_profile_name</strong> – The name of the AWS profile to use for
+credentials. This is useful if you have multiple profiles
+configured in your AWS credentials file.
+Default is None, which means the default profile or
+environment variables will be used if not provided.</p></li>
+<li><p><strong>aws_access_key_id</strong> – The AWS access key ID for
+programmatically accessing AWS services. This parameter
+is optional and only needed if not using a profile from
+the AWS credentials file.</p></li>
+<li><p><strong>aws_secret_access_key</strong> – The AWS secret access key
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>aws_session_token</strong> – The AWS temporary session token
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>caching</strong> – Determines whether to enable caching for the
+client session. If set to True, the client session will
+be cached to improve performance and reduce the number
+of API calls. Default is False.</p></li>
+<li><p><strong>client_parameters</strong> – A key-value pair object of parameters that
+will be passed to the low-level service client.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipeline_structure">
+<span class="sig-name descname"><span class="pre">get_pipeline_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/pipelines.html#Pipelines.get_pipeline_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipeline_structure" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the structure of a pipeline based on it’s name or ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pipeline_name</strong> – The name of the pipeline.</p></li>
+<li><p><strong>pipeline_id</strong> – The id of the pipeline.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The pipeline structure.</p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PipelinesError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipelines_containing_target">
+<span class="sig-name descname"><span class="pre">get_pipelines_containing_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType" title="carlogtt_python_library.amazon_internal.pipelines.TargetType"><span class="pre">TargetType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_primary_pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/pipelines.html#Pipelines.get_pipelines_containing_target"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipelines_containing_target" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of pipeline names which contain the provided
+target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_name</strong> – The name of the target.</p></li>
+<li><p><strong>target_type</strong> – The type of the target.</p></li>
+<li><p><strong>in_primary_pipeline</strong> – Whether the target is in the primary
+pipeline.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of pipelines containing the target.</p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PipelinesError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.Pipelines.invalidate_client_cache">
+<span class="sig-name descname"><span class="pre">invalidate_client_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/pipelines.html#Pipelines.invalidate_client_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.invalidate_client_cache" title="Link to this definition">¶</a></dt>
+<dd><p>Clears the cached client, if caching is enabled.</p>
+<p>This method allows manually invalidating the cached client,
+forcing a new client instance to be created on the next access.
+Useful if AWS credentials have changed or if there’s a need to
+connect to a different region within the same instance
+lifecycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.PipelinesError" title="carlogtt_python_library.exceptions.exceptions.PipelinesError"><strong>PipelinesError</strong></a> – Raises an error if caching is not enabled
+for this instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.pipelines.</span></span><span class="sig-name descname"><span class="pre">TargetType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/pipelines.html#TargetType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Enum class for the different types of targets that can be used in
+the PipelinesAPI.</p>
+<p>Targets represent instances in underlying systems, like packages,
+code deploy apps, etc.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.BATS">
+<span class="sig-name descname"><span class="pre">BATS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BATS'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.BATS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.CD">
+<span class="sig-name descname"><span class="pre">CD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CD'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.CD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.CF">
+<span class="sig-name descname"><span class="pre">CF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CF'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.CF" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.DG">
+<span class="sig-name descname"><span class="pre">DG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DG'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.DG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.ENV">
+<span class="sig-name descname"><span class="pre">ENV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ENV'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.ENV" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.GEN">
+<span class="sig-name descname"><span class="pre">GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GEN'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.GEN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.OS">
+<span class="sig-name descname"><span class="pre">OS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'OS'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.OS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.PKG">
+<span class="sig-name descname"><span class="pre">PKG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PKG'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.PKG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.pipelines.TargetType.VS">
+<span class="sig-name descname"><span class="pre">VS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'VS'</span></em><a class="headerlink" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.VS" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.apollo.html">carlogtt_python_library.amazon_internal.apollo module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.bindle.html">carlogtt_python_library.amazon_internal.bindle module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.midway.html">carlogtt_python_library.amazon_internal.midway module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.midway_selenium.html">carlogtt_python_library.amazon_internal.midway_selenium module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.mirador.html">carlogtt_python_library.amazon_internal.mirador module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.phone_tool.html">carlogtt_python_library.amazon_internal.phone_tool module</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.amazon_internal.pipelines module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines"><code class="docutils literal notranslate"><span class="pre">Pipelines</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipeline_structure"><code class="docutils literal notranslate"><span class="pre">Pipelines.get_pipeline_structure()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.get_pipelines_containing_target"><code class="docutils literal notranslate"><span class="pre">Pipelines.get_pipelines_containing_target()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.Pipelines.invalidate_client_cache"><code class="docutils literal notranslate"><span class="pre">Pipelines.invalidate_client_cache()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType"><code class="docutils literal notranslate"><span class="pre">TargetType</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.BATS"><code class="docutils literal notranslate"><span class="pre">TargetType.BATS</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.CD"><code class="docutils literal notranslate"><span class="pre">TargetType.CD</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.CF"><code class="docutils literal notranslate"><span class="pre">TargetType.CF</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.DG"><code class="docutils literal notranslate"><span class="pre">TargetType.DG</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.ENV"><code class="docutils literal notranslate"><span class="pre">TargetType.ENV</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.GEN"><code class="docutils literal notranslate"><span class="pre">TargetType.GEN</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.OS"><code class="docutils literal notranslate"><span class="pre">TargetType.OS</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.PKG"><code class="docutils literal notranslate"><span class="pre">TargetType.PKG</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.pipelines.TargetType.VS"><code class="docutils literal notranslate"><span class="pre">TargetType.VS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.simt.html">carlogtt_python_library.amazon_internal.simt module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.tiny_url.html">carlogtt_python_library.amazon_internal.tiny_url module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="carlogtt_python_library.html">carlogtt_python_library package</a><ul>
+  <li><a href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a><ul>
+      <li>Previous: <a href="carlogtt_python_library.amazon_internal.phone_tool.html" title="previous chapter">carlogtt_python_library.amazon_internal.phone_tool module</a></li>
+      <li>Next: <a href="carlogtt_python_library.amazon_internal.simt.html" title="next chapter">carlogtt_python_library.amazon_internal.simt module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_apidoc/carlogtt_python_library.amazon_internal.pipelines.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

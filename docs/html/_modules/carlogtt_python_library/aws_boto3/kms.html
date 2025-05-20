@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>carlogtt_python_library.aws_boto3.kms &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=772fa434" />
+    <script src="../../../_static/documentation_options.js?v=30015795"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for carlogtt_python_library.aws_boto3.kms</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_library/aws_boto3/kms.py</span>
+<span class="c1"># Created 4/10/24 - 7:48 AM UK Time (London) by carlogtt</span>
+<span class="c1"># Copyright (c) Amazon.com Inc. All Rights Reserved.</span>
+<span class="c1"># AMAZON.COM CONFIDENTIAL</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module ...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made code or quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="c1"># Third Party Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mypy_boto3_kms</span>
+
+<span class="c1"># Local Folder (Relative) Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">aws_service_base</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;KMS&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="n">KMSClient</span> <span class="o">=</span> <span class="n">mypy_boto3_kms</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">KMSClient</span>
+
+
+<div class="viewcode-block" id="KMS">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.kms.html#carlogtt_python_library.aws_boto3.kms.KMS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KMS</span><span class="p">(</span><span class="n">aws_service_base</span><span class="o">.</span><span class="n">AwsServiceBase</span><span class="p">[</span><span class="n">KMSClient</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The KMS class provides a simplified interface for interacting with</span>
+<span class="sd">    Amazon Key Management Service (KMS) services within a</span>
+<span class="sd">    Python application.</span>
+
+<span class="sd">    It includes an option to cache the client session to minimize</span>
+<span class="sd">    the number of AWS API call.</span>
+
+<span class="sd">    :param aws_region_name: The name of the AWS region where the</span>
+<span class="sd">           service is to be used. This parameter is required to</span>
+<span class="sd">           configure the AWS client.</span>
+<span class="sd">    :param aws_profile_name: The name of the AWS profile to use for</span>
+<span class="sd">           credentials. This is useful if you have multiple profiles</span>
+<span class="sd">           configured in your AWS credentials file.</span>
+<span class="sd">           Default is None, which means the default profile or</span>
+<span class="sd">           environment variables will be used if not provided.</span>
+<span class="sd">    :param aws_access_key_id: The AWS access key ID for</span>
+<span class="sd">           programmatically accessing AWS services. This parameter</span>
+<span class="sd">           is optional and only needed if not using a profile from</span>
+<span class="sd">           the AWS credentials file.</span>
+<span class="sd">    :param aws_secret_access_key: The AWS secret access key</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param aws_session_token: The AWS temporary session token</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param caching: Determines whether to enable caching for the</span>
+<span class="sd">           client session. If set to True, the client session will</span>
+<span class="sd">           be cached to improve performance and reduce the number</span>
+<span class="sd">           of API calls. Default is False.</span>
+<span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
+<span class="sd">           will be passed to the low-level service client.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">aws_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">aws_profile_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_access_key_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_secret_access_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">client_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">aws_region_name</span><span class="o">=</span><span class="n">aws_region_name</span><span class="p">,</span>
+            <span class="n">aws_profile_name</span><span class="o">=</span><span class="n">aws_profile_name</span><span class="p">,</span>
+            <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">aws_access_key_id</span><span class="p">,</span>
+            <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">aws_secret_access_key</span><span class="p">,</span>
+            <span class="n">aws_session_token</span><span class="o">=</span><span class="n">aws_session_token</span><span class="p">,</span>
+            <span class="n">caching</span><span class="o">=</span><span class="n">caching</span><span class="p">,</span>
+            <span class="n">client_parameters</span><span class="o">=</span><span class="n">client_parameters</span><span class="p">,</span>
+            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">&quot;kms&quot;</span><span class="p">,</span>
+            <span class="n">exception_type</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">KMSError</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

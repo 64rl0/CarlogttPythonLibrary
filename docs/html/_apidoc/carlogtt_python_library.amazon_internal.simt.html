@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>carlogtt_python_library.amazon_internal.simt module &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
+    <script src="../_static/documentation_options.js?v=30015795"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="carlogtt_python_library.amazon_internal.tiny_url module" href="carlogtt_python_library.amazon_internal.tiny_url.html" />
+    <link rel="prev" title="carlogtt_python_library.amazon_internal.pipelines module" href="carlogtt_python_library.amazon_internal.pipelines.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-carlogtt_python_library.amazon_internal.simt">
+<span id="carlogtt-python-library-amazon-internal-simt-module"></span><h1>carlogtt_python_library.amazon_internal.simt module<a class="headerlink" href="#module-carlogtt_python_library.amazon_internal.simt" title="Link to this heading">¶</a></h1>
+<p>This module …</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.simt.</span></span><span class="sig-name descname"><span class="pre">SimT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aws_region_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caching</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_account_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticketing_system_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A handler class for the TicketyPythonSdk.</p>
+<p>It includes an option to cache the client session to minimize
+the number of AWS API call.</p>
+<p>Internal Amazon API
+<a class="reference external" href="https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicketingSystemAccessGrant">https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicketingSystemAccessGrant</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aws_region_name</strong> – The name of the AWS region where the
+service is to be used. This parameter is required to
+configure the AWS client.</p></li>
+<li><p><strong>aws_account_id</strong> – The AWS Account ID name for the target
+ticketing system. Use “default” unless you are targeting
+an integ environment.
+<a class="reference external" href="https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F">https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F</a></p></li>
+<li><p><strong>ticketing_system_name</strong> – The Ticketing System for the
+target ticketing system. Use “default” unless you are
+targeting an integ environment.
+<a class="reference external" href="https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F">https://w.amazon.com/bin/view/IssueManagement/SIMTicketing/TicketyAPI/FAQ/#HCanIuseTicketyAPItoaccessintegdata3F</a></p></li>
+<li><p><strong>aws_profile_name</strong> – The name of the AWS profile to use for
+credentials. This is useful if you have multiple profiles
+configured in your AWS credentials file.
+Default is None, which means the default profile or
+environment variables will be used if not provided.</p></li>
+<li><p><strong>aws_access_key_id</strong> – The AWS access key ID for
+programmatically accessing AWS services. This parameter
+is optional and only needed if not using a profile from
+the AWS credentials file.</p></li>
+<li><p><strong>aws_secret_access_key</strong> – The AWS secret access key
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>aws_session_token</strong> – The AWS temporary session token
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>caching</strong> – Determines whether to enable caching for the
+client session. If set to True, the client session will
+be cached to improve performance and reduce the number
+of API calls. Default is False.</p></li>
+<li><p><strong>client_parameters</strong> – A key-value pair object of parameters that
+will be passed to the low-level service client.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.create_ticket">
+<span class="sig-name descname"><span class="pre">create_ticket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticket_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.create_ticket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.create_ticket" title="Link to this definition">¶</a></dt>
+<dd><p>Create a ticket in the ticketing system and return the
+ticket ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ticket_data</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ticket ID.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.create_ticket_comment">
+<span class="sig-name descname"><span class="pre">create_ticket_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticket_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thread_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'CORRESPONDENCE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'text/amz-markdown-sim'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.create_ticket_comment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.create_ticket_comment" title="Link to this definition">¶</a></dt>
+<dd><p>Updates a ticket in the ticketing system.</p>
+<p>Internal Amazon API:
+<a class="reference external" href="https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket">https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticket_id</strong> – The ticket ID.</p></li>
+<li><p><strong>thread_name</strong> – Must be one of these 3:
+“CORRESPONDENCE” “WORKLOG” “ANNOUNCEMENTS”.
+Auto default to “CORRESPONDENCE”.</p></li>
+<li><p><strong>comment</strong> – The comment to post.
+Between 3 and 60_000 characters.</p></li>
+<li><p><strong>content_type</strong> – Must be one of these 2:
+“text/amz-markdown-sim” “text/plain”.
+Auto default to “text/amz-markdown-sim”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The SIM-T commentId as a string.</p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SimTError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.get_ticket_details">
+<span class="sig-name descname"><span class="pre">get_ticket_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticket_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.get_ticket_details"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.get_ticket_details" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves a ticket from the ticketing system.</p>
+<p>Internal Amazon API:
+<a class="reference external" href="https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/GetTicket">https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/GetTicket</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ticket_id</strong> – The ticket ID.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SimTError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.get_tickets">
+<span class="sig-name descname"><span class="pre">get_tickets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.get_tickets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.get_tickets" title="Link to this definition">¶</a></dt>
+<dd><p>Returns an iterable of ticketIds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filters</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns an iterable of ticketIds.</p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SimTError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.invalidate_client_cache">
+<span class="sig-name descname"><span class="pre">invalidate_client_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.invalidate_client_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.invalidate_client_cache" title="Link to this definition">¶</a></dt>
+<dd><p>Clears the cached client, if caching is enabled.</p>
+<p>This method allows manually invalidating the cached client,
+forcing a new client instance to be created on the next access.
+Useful if AWS credentials have changed or if there’s a need to
+connect to a different region within the same instance
+lifecycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.SimTError" title="carlogtt_python_library.exceptions.exceptions.SimTError"><strong>SimTError</strong></a> – Raises an error if caching is not enabled
+for this instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimT.update_ticket">
+<span class="sig-name descname"><span class="pre">update_ticket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticket_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimT.update_ticket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimT.update_ticket" title="Link to this definition">¶</a></dt>
+<dd><p>Updates a ticket in the ticketing system.</p>
+<p>Internal Amazon API:
+<a class="reference external" href="https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket">https://prod.artifactbrowser.brazil.aws.dev/api/v1/packages/TicketyServiceModel/versions/1.0.41444.0/platforms/AL2_aarch64/flavors/DEV.STD.PTHREAD/brazil-documentation/redoc/index.html#operation/UpdateTicket</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticket_id</strong> – The ticket ID.</p></li>
+<li><p><strong>payload</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Raise<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SimTError if function call fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.simt.SimTicketHandler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.simt.</span></span><span class="sig-name descname"><span class="pre">SimTicketHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/simt.html#SimTicketHandler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.simt.SimTicketHandler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT" title="carlogtt_python_library.amazon_internal.simt.SimT"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimT</span></code></a></p>
+<p>DEPRECATED: Please use SimT instead.
+This subclass only exists for backward compatibility.</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.apollo.html">carlogtt_python_library.amazon_internal.apollo module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.bindle.html">carlogtt_python_library.amazon_internal.bindle module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.midway.html">carlogtt_python_library.amazon_internal.midway module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.midway_selenium.html">carlogtt_python_library.amazon_internal.midway_selenium module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.mirador.html">carlogtt_python_library.amazon_internal.mirador module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.phone_tool.html">carlogtt_python_library.amazon_internal.phone_tool module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.pipelines.html">carlogtt_python_library.amazon_internal.pipelines module</a></li>
+<li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.amazon_internal.simt module</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT"><code class="docutils literal notranslate"><span class="pre">SimT</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.create_ticket"><code class="docutils literal notranslate"><span class="pre">SimT.create_ticket()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.create_ticket_comment"><code class="docutils literal notranslate"><span class="pre">SimT.create_ticket_comment()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.get_ticket_details"><code class="docutils literal notranslate"><span class="pre">SimT.get_ticket_details()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.get_tickets"><code class="docutils literal notranslate"><span class="pre">SimT.get_tickets()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.invalidate_client_cache"><code class="docutils literal notranslate"><span class="pre">SimT.invalidate_client_cache()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimT.update_ticket"><code class="docutils literal notranslate"><span class="pre">SimT.update_ticket()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.amazon_internal.simt.SimTicketHandler"><code class="docutils literal notranslate"><span class="pre">SimTicketHandler</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.amazon_internal.tiny_url.html">carlogtt_python_library.amazon_internal.tiny_url module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">src</a><ul>
+  <li><a href="carlogtt_python_library.html">carlogtt_python_library package</a><ul>
+  <li><a href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a><ul>
+      <li>Previous: <a href="carlogtt_python_library.amazon_internal.pipelines.html" title="previous chapter">carlogtt_python_library.amazon_internal.pipelines module</a></li>
+      <li>Next: <a href="carlogtt_python_library.amazon_internal.tiny_url.html" title="next chapter">carlogtt_python_library.amazon_internal.tiny_url module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_apidoc/carlogtt_python_library.amazon_internal.simt.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

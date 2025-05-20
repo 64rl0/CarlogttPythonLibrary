@@ -2,15 +2,15 @@
 
 # Runtime dependencies
 
-# Pypy dependencies
-build
-twine
-
 # Test dependencies
 pytest
 
 # Documentation dependencies
 sphinx
+
+# Build dependencies
+build
+twine
 
 # Development dependencies
 black

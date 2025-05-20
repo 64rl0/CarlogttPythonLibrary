@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>carlogtt_python_library.utils.user_input &#8212; CarlogttPythonLibrary r. documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=9d6d948b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=772fa434" />
+    <script src="../../../_static/documentation_options.js?v=30015795"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for carlogtt_python_library.utils.user_input</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_library/utils/user_input.py</span>
+<span class="c1"># Created 7/20/23 - 3:12 PM UK Time (London) by carlogtt</span>
+<span class="c1"># Copyright (c) Amazon.com Inc. All Rights Reserved.</span>
+<span class="c1"># AMAZON.COM CONFIDENTIAL</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module ...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made or code quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;UserPrompter&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="c1">#</span>
+
+
+<div class="viewcode-block" id="UserPrompter">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserPrompter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A collection of CLI prompt utilities to get and validate user input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="UserPrompter.get_user_input_and_validate_int">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter.get_user_input_and_validate_int">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_user_input_and_validate_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Enter a number: &quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Request the user for an int</span>
+<span class="sd">        question = &quot;question as a str&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">input_value</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is not an int&quot;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is an int&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UserPrompter.get_user_input_confirmation_y_n">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter.get_user_input_confirmation_y_n">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_user_input_confirmation_y_n</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Continue: (y/n): &quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">false</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Request the user for a confirmation to continue</span>
+<span class="sd">        question = &quot;question as a str&quot;</span>
+<span class="sd">        true = &quot;character to be used as continue&quot;</span>
+<span class="sd">        false = &quot;character to be used to stop&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">input_value</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">true</span><span class="o">.</span><span class="n">isalpha</span><span class="p">()</span> <span class="ow">and</span> <span class="n">false</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">true</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">false</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="n">true</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">false</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="n">true</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">false</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="n">true</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">false</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="n">true</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">true</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="n">true</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">elif</span> <span class="n">false</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">false</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">elif</span> <span class="n">false</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">True</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span> <span class="ow">or</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">false</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">input_value</span> <span class="o">==</span> <span class="n">true</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">CarlogttPythonLibrary</a></h1>
+
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Carlo Gatti.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
