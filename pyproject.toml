@@ -51,8 +51,8 @@ postgres = [
 # How many characters per line to allow. The default is 88.
 line-length = 100
 
-# Black  normalize ' to "
-# Setting to 1 so that  strings are left unchanged instead.
+# Black normalize ' to ". Setting to 1 so that strings are left
+# unchanged instead.
 skip-string-normalization = 1
 
 # Enable potentially disruptive style changes that may be added to
@@ -106,8 +106,8 @@ split_on_trailing_comma = true
 # switching.
 float_to_top = true
 
-# If True isort will apply import headings to indended imports the same
-# way it does unindented ones.
+# If enabled, isort will apply import headings to indended imports the
+# same way it does unindented ones.
 indented_import_headings = false
 
 # Force all imports to be sorted alphabetically within a section.
@@ -124,7 +124,7 @@ src_paths = ['src/*']
 # Force isort to recognize a module as part of Python's internal future
 # compatibility libraries. WARNING: this overrides the behavior of
 # future handling and therefore can result in code that can't execute.
-known_future_library = ['__future__', 'config']
+known_future_library = ['__future__']
 
 # Extra modules to be included in the list of ones in Python's standard
 # library.
@@ -168,3 +168,12 @@ ignore_missing_imports = true
 
 # Warns about unneeded '# type: ignore' comments.
 warn_unused_ignores = false
+
+
+[tool.pytest.ini_options]
+addopts = "-vvv --color=yes --durations=5 "
+testpaths = [
+    "test",
+    "tests",
+    "integration",
+]
