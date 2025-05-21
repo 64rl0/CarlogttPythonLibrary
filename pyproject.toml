@@ -171,7 +171,7 @@ warn_unused_ignores = false
 
 
 [tool.pytest.ini_options]
-addopts = "-vvv --color=yes --durations=5 "
+addopts = "-vvv --color=yes --durations=5"
 testpaths = [
     "test",
     "tests",

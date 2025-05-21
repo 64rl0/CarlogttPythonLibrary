@@ -383,9 +383,12 @@ DynamoDB, the attribute will be as a condition to match.</p></li>
 <dd><p>Upsert-like operation.</p>
 <ol class="arabic simple">
 <li><p>Tries to update an existing item (strict update).</p></li>
+<li><dl class="simple">
+<dt>If that update fails because the item does not exist, it</dt><dd><p>puts a brand-new item.</p>
+</dd>
+</dl>
+</li>
 </ol>
-<p>2. If that update fails because the item does not exist, it
-puts a brand-new item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
