@@ -562,7 +562,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         1. Tries to update an existing item (strict update).
         2. If that update fails because the item does not exist, it
-        puts a brand-new item.
+            puts a brand-new item.
 
         :param table: DynamoDB table name.
         :param partition_key: DynamoDB partition key as dict of
