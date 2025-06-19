@@ -5,6 +5,8 @@
 # Test dependencies
 pytest
 
+# Type checking depencencies
+
 # Documentation dependencies
 sphinx
 
