@@ -42,15 +42,13 @@
 <span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
 <span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
 
-<span class="c1"># src/carlogtt_library/utils/encryption.py</span>
+<span class="c1"># src/carlogtt_python_library/utils/encryption.py</span>
 <span class="c1"># Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt</span>
 <span class="c1"># Copyright (c) Amazon.com Inc. All Rights Reserved.</span>
 <span class="c1"># AMAZON.COM CONFIDENTIAL</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module provides functions and utilities for password encryption.</span>
-<span class="sd">It offers encryption algorithms and techniques specifically designed for</span>
-<span class="sd">securely storing and handling passwords.</span>
+<span class="sd">Utilities for authenticated encryption and password hashing.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1"># ======================================================================</span>
@@ -72,14 +70,15 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="c1"># Third Party Library Imports</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cryptography.fernet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers.aead</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers.algorithms</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.ciphers.modes</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cryptography.hazmat.primitives.hashes</span>
@@ -108,6 +107,13 @@
 
 <span class="c1"># Type aliases</span>
 <span class="c1">#</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ScryptParamsType</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span>
 
 
 <div class="viewcode-block" id="KeyType">
@@ -157,12 +163,19 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.EncryptionAlgorithm">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EncryptionAlgorithm</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Defines supported encryption algorithms and their corresponding</span>
-<span class="sd">    security levels.</span>
+<span class="sd">    Defines supported encryption algorithms anf their envelope prefixes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">AES_128</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
-    <span class="n">AES_256</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span></div>
+    <span class="n">AES_128</span> <span class="o">=</span> <span class="s2">&quot;v1:fernet:&quot;</span>
+    <span class="n">AES_256</span> <span class="o">=</span> <span class="s2">&quot;v1:cbc:&quot;</span>
+    <span class="n">AES_GCM</span> <span class="o">=</span> <span class="s2">&quot;v2:gcm:&quot;</span>
+
+<div class="viewcode-block" id="EncryptionAlgorithm.all_alg_prefixes">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_alg_prefixes</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">alg</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">alg</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">)</span></div>
+</div>
 
 
 
@@ -200,7 +213,7 @@
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CryptographyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid key type: </span><span class="si">{</span><span class="n">key_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Create a random bytes</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="n">key_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rand_bytes</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">key_type</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c1"># Return the key based on the output format</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -258,117 +271,162 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.hash_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">hash_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Hashes a given string using the Scrypt Key Derivation Function</span>
-<span class="sd">        and encrypts the result for secure storage.</span>
-<span class="sd">        The function embeds the salt used for hashing within the</span>
-<span class="sd">        encrypted hash, ensuring that each piece of data is uniquely</span>
-<span class="sd">        salted and securely stored.</span>
+<span class="sd">        DEPRECATED — use `hash_string_v2()`.</span>
+<span class="sd">        Note: the key parameter is ignored in this deprecated API.</span>
 
-<span class="sd">        :param raw_string: The raw string to be hashed and encrypted.</span>
+<span class="sd">        Hashes a given string using the Scrypt Key Derivation Function</span>
+
+<span class="sd">        :param raw_string: The raw string to be hashed.</span>
 <span class="sd">               Typically, this would be a password or any other</span>
 <span class="sd">               sensitive information requiring secure handling.</span>
-<span class="sd">        :param key: The secret key used for encrypting the hashed</span>
+<span class="sd">        :param key: The secret key used for hashing the hashed</span>
 <span class="sd">               string. This key should be generated and managed using</span>
 <span class="sd">               secure cryptographic practices and must be a 32-byte key</span>
 <span class="sd">               for AES-256.</span>
-<span class="sd">        :return: The encrypted hash of the input string.</span>
-<span class="sd">                 This output includes both the Scrypt-derived</span>
-<span class="sd">                 hash and the salt, encrypted for additional security.</span>
-<span class="sd">                 The resulting binary data is suitable for secure</span>
-<span class="sd">                 storage in a database or file system, where it can</span>
-<span class="sd">                 later be decrypted and verified against a user-provided</span>
-<span class="sd">                 string.</span>
+<span class="sd">        :return: The hash of the input string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Encode raw_password to bytes</span>
-        <span class="n">b_raw_string</span> <span class="o">=</span> <span class="n">raw_string</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[DEPRECATED] &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_string</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; is deprecated in Class&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. Use the new method &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_string_v2</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&#39;&quot;</span>
+            <span class="s2">&quot; instead.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">module_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="c1"># Generate a random salt for the password encryption</span>
-        <span class="n">salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_key</span><span class="p">(</span><span class="n">KeyType</span><span class="o">.</span><span class="n">AES128</span><span class="p">,</span> <span class="n">KeyOutputType</span><span class="o">.</span><span class="n">BYTES</span><span class="p">)</span>
-        <span class="c1"># Encode the salt to url-safe byte array</span>
-        <span class="n">salt_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">salt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_string_v2</span><span class="p">(</span><span class="n">raw_string</span><span class="o">=</span><span class="n">raw_string</span><span class="p">)</span></div>
 
-        <span class="c1"># Derive key using Scrypt</span>
-        <span class="n">b_hashed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derive_key_scrypt</span><span class="p">(</span><span class="n">salt</span><span class="p">,</span> <span class="n">b_raw_string</span><span class="p">)</span>
 
-        <span class="c1"># Encode derived_key to url-safe byte array</span>
-        <span class="n">b_hashed_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">b_hashed</span><span class="p">)</span>
+<div class="viewcode-block" id="Cryptography.hash_string_v2">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.hash_string_v2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hash_string_v2</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">raw_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scrypt_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ScryptParamsType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Hash a given string with scrypt and return a PHC-style string:</span>
 
-        <span class="c1"># Embed salt into hashed string joining them together with</span>
-        <span class="c1"># byte &quot;&amp;&quot;</span>
-        <span class="n">b_hashed_salt</span> <span class="o">=</span> <span class="n">b_hashed_base64</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="n">salt_base64</span>
+<span class="sd">        scrypt$ln=&lt;n2exp&gt;,r=&lt;r&gt;,p=&lt;p&gt;$&lt;salt_b64&gt;$&lt;hash_b64&gt;</span>
 
-        <span class="c1"># It&#39;s now time to encrypt it for additional security as at this</span>
-        <span class="c1"># stage the string is simply urlsafe_b64encoded therefore would</span>
-        <span class="c1"># be pretty straight forward for someone to decode it with</span>
-        <span class="c1"># urlsafe_b64decode and find the special &quot;&amp;&quot; which separates the</span>
-        <span class="c1"># hashed_string and the salt</span>
+<span class="sd">        A new 16-byte random salt is generated per given string.</span>
 
-        <span class="c1"># Decode to pass to encrypt function</span>
-        <span class="n">s_hashed_salt</span> <span class="o">=</span> <span class="n">b_hashed_salt</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="sd">        :param raw_string: The raw string to be hashed.</span>
+<span class="sd">               Typically, this would be a password or any other</span>
+<span class="sd">               sensitive information requiring secure handling.</span>
+<span class="sd">        :param scrypt_params: The scrypt parameters to be used for</span>
+<span class="sd">               hashing. If not provided, secure defaults are used.</span>
+<span class="sd">        :return: The hash of the input string PHC-style scrypt string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Encrypt</span>
-        <span class="n">ciphertext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_string</span><span class="p">(</span><span class="n">s_hashed_salt</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scrypt_params</span><span class="p">:</span>
+            <span class="n">scrypt_params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="o">**</span><span class="mi">17</span><span class="p">,</span>
+                <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                <span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="p">}</span>
 
-        <span class="k">return</span> <span class="n">ciphertext</span></div>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;scrypt &#39;n&#39; must be a power of two &gt; 1&quot;</span><span class="p">)</span>
+
+        <span class="c1"># since n is power of two</span>
+        <span class="n">ln</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rand_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">kdf</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">kdf</span><span class="o">.</span><span class="n">scrypt</span><span class="o">.</span><span class="n">Scrypt</span><span class="p">(</span>
+            <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span>
+            <span class="n">length</span><span class="o">=</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">],</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">],</span>
+            <span class="n">r</span><span class="o">=</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">],</span>
+            <span class="n">p</span><span class="o">=</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Derive the key</span>
+        <span class="n">dk</span> <span class="o">=</span> <span class="n">kdf</span><span class="o">.</span><span class="n">derive</span><span class="p">(</span><span class="n">raw_string</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scrypt key derived successfully&quot;</span><span class="p">)</span>
+
+        <span class="n">hash_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;scrypt$ln=</span><span class="si">{</span><span class="n">ln</span><span class="si">}</span><span class="s2">,r=</span><span class="si">{</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">,p=</span><span class="si">{</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">$</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_b64u_encode</span><span class="p">(</span><span class="n">salt</span><span class="p">)</span><span class="si">}</span><span class="s2">$</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_b64u_encode</span><span class="p">(</span><span class="n">dk</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa</span>
+
+        <span class="k">return</span> <span class="n">hash_string</span></div>
 
 
 <div class="viewcode-block" id="Cryptography.validate_hash_match">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_hash_match</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">raw_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">hashed_to_match</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_hash_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_to_match</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validates whether a provided raw string matches the encrypted</span>
-<span class="sd">        and hashed string stored. This function is designed to work in</span>
-<span class="sd">        conjunction with hash_string function, reversing its hashing and</span>
-<span class="sd">        encryption process to verify user input against stored values</span>
-<span class="sd">        securely.</span>
+<span class="sd">        DEPRECATED — use `validate_hash_match_v2()`.</span>
+<span class="sd">        Note: the key parameter is ignored in this deprecated API.</span>
+
+<span class="sd">        Validates whether a provided raw string matches the hashed</span>
+<span class="sd">        string stored.</span>
 
 <span class="sd">        :param raw_string: The plaintext string provided by the user,</span>
 <span class="sd">               typically a password or sensitive information that needs</span>
 <span class="sd">               validation against a stored, hashed version.</span>
-<span class="sd">        :param hashed_to_match: The encrypted and hashed data that the</span>
-<span class="sd">               raw_string is compared against. This should have been</span>
-<span class="sd">               previously generated by the hash_string function.</span>
-<span class="sd">        :param key: The secret key used for decrypting the hashed</span>
-<span class="sd">               string. It must be the same key used for</span>
-<span class="sd">               encrypting the string initially with the `hash_string`</span>
-<span class="sd">               function.</span>
+<span class="sd">        :param hashed_to_match: The hashed data that the</span>
+<span class="sd">               raw_string is compared against.</span>
+<span class="sd">        :param key: The secret key used for hashing the hashed</span>
+<span class="sd">               string.</span>
 <span class="sd">        :return: True if the raw_string, when hashed and processed,</span>
 <span class="sd">                 matches the hashed_string_to_match; False otherwise.</span>
-<span class="sd">                 The function also returns False in the case of</span>
-<span class="sd">                 decryption or verification failures.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[DEPRECATED] &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">validate_hash_match</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; is deprecated in Class&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. Use the new method&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">validate_hash_match_v2</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&#39; instead.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">module_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_hash_match_v2</span><span class="p">(</span><span class="n">raw_string</span><span class="o">=</span><span class="n">raw_string</span><span class="p">,</span> <span class="n">hashed_to_match</span><span class="o">=</span><span class="n">hashed_to_match</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Cryptography.validate_hash_match_v2">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match_v2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_hash_match_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed_to_match</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify a provided raw string against a PHC-style scrypt string</span>
+<span class="sd">        in constant time.</span>
+
+<span class="sd">        :param raw_string: The plaintext string provided by the user,</span>
+<span class="sd">               typically a password or sensitive information that needs</span>
+<span class="sd">               validation against a stored, hashed version.</span>
+<span class="sd">        :param hashed_to_match: The hashed data that the</span>
+<span class="sd">               raw_string is compared against.</span>
+<span class="sd">        :return: True if the raw_string, when hashed and processed,</span>
+<span class="sd">                 matches the hashed_string_to_match; False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_string</span> <span class="ow">and</span> <span class="n">hashed_to_match</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># Decrypt</span>
-            <span class="n">s_hashed_salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decrypt_string</span><span class="p">(</span><span class="n">hashed_to_match</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">)</span>
+            <span class="n">scheme</span><span class="p">,</span> <span class="n">param_str</span><span class="p">,</span> <span class="n">salt_b64</span><span class="p">,</span> <span class="n">dk_b64</span> <span class="o">=</span> <span class="n">hashed_to_match</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
-            <span class="c1"># Encode</span>
-            <span class="n">b_hashed_salt</span> <span class="o">=</span> <span class="n">s_hashed_salt</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">scheme</span> <span class="o">!=</span> <span class="s2">&quot;scrypt&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="c1"># Split</span>
-            <span class="c1"># b_hashed_string_url_safe_clean and salt_url_safe_clean</span>
-            <span class="n">b_hashed_base64</span><span class="p">,</span> <span class="n">salt_base64</span> <span class="o">=</span> <span class="n">b_hashed_salt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span><span class="p">)</span>
+            <span class="n">scrypt_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">kv</span> <span class="ow">in</span> <span class="n">param_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s2">&quot;ln&quot;</span><span class="p">])</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">scrypt_params</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span>
 
-            <span class="c1"># Retrieve original salt and original b_hashed_string by</span>
-            <span class="c1"># decoding urlsafe_b64decode</span>
-            <span class="n">b_hashed</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">b_hashed_base64</span><span class="p">)</span>
-            <span class="n">salt</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">salt_base64</span><span class="p">)</span>
+            <span class="n">salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_decode</span><span class="p">(</span><span class="n">salt_b64</span><span class="p">)</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_decode</span><span class="p">(</span><span class="n">dk_b64</span><span class="p">)</span>
 
-            <span class="c1"># Now we are ready to compare with the string to validate,</span>
-            <span class="c1"># we need to convert the raw string to bytes</span>
-            <span class="n">b_raw_string</span> <span class="o">=</span> <span class="n">raw_string</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected</span><span class="p">)</span>
 
-            <span class="c1"># Verify derived key using Scrypt</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_verify_derived_key_scrypt</span><span class="p">(</span><span class="n">salt</span><span class="p">,</span> <span class="n">b_raw_string</span><span class="p">,</span> <span class="n">b_hashed</span><span class="p">)</span>
+            <span class="n">kdf</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">kdf</span><span class="o">.</span><span class="n">scrypt</span><span class="o">.</span><span class="n">Scrypt</span><span class="p">(</span>
+                <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Attempt to verify the derived key</span>
+            <span class="n">kdf</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">raw_string</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">expected</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scrypt key verified successfully&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">True</span>
 
@@ -495,36 +553,45 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">plaintext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
-        <span class="n">algorithm</span><span class="p">:</span> <span class="n">EncryptionAlgorithm</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">,</span>
+        <span class="n">algorithm</span><span class="p">:</span> <span class="n">EncryptionAlgorithm</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="p">,</span>
+        <span class="n">associated_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Encrypts a string using the specified symmetric encryption</span>
-<span class="sd">        algorithm.</span>
+<span class="sd">        Encrypts plaintext using the selected algorithm and returns a</span>
+<span class="sd">        versioned, Base64-url-safe string.</span>
 
-<span class="sd">        This function provides a unified interface to encrypt strings</span>
-<span class="sd">        using different encryption algorithms specified by the</span>
-<span class="sd">        &#39;algorithm&#39; parameter. It delegates the encryption process to</span>
-<span class="sd">        the appropriate internal function based on the chosen algorithm.</span>
+<span class="sd">        Envelope prefixes:</span>
+<span class="sd">          - v2:gcm:...    → AES-256-GCM (default)</span>
+<span class="sd">          - v1:cbc:...    → AES-256-CBC + HMAC-SHA256 (legacy)</span>
+<span class="sd">          - v1:fernet:... → Fernet (legacy)</span>
+
+<span class="sd">        - AES_GCM: expects a 32-byte key (AES-256-GCM). Optional AAD.</span>
+<span class="sd">        - AES_256 (CBC+HMAC): expects a 32-byte key; integrity via HMAC.</span>
+<span class="sd">        - AES_128 (Fernet): expects a 44-byte urlsafe base64-encoded</span>
+<span class="sd">          key.</span>
 
 <span class="sd">        :param plaintext: The plaintext string to be encrypted.</span>
 <span class="sd">        :param key: The secret key used for encryption. The format and</span>
 <span class="sd">               length depend on the algorithm being used.</span>
-<span class="sd">               For AES-128, must be a URL-safe base64-encoded 32-byte</span>
-<span class="sd">               key. For AES-256, must be a 32-byte key.</span>
 <span class="sd">        :param algorithm: An instance of the</span>
-<span class="sd">               EncryptionEncryptionAlgorithm enum indicating the</span>
+<span class="sd">               EncryptionAlgorithm enum indicating the</span>
 <span class="sd">               encryption algorithm to use.</span>
-<span class="sd">               Default EncryptionAlgorithm.AES_256</span>
+<span class="sd">               Default EncryptionAlgorithm.AES_GCM</span>
+<span class="sd">        :param associated_data: Additional authenticated data (AAD) to</span>
+<span class="sd">               be authenticated but not encrypted. It must be provided</span>
+<span class="sd">               as a byte string if used.</span>
 <span class="sd">        :return: The encrypted string, encoded with Base64 to ensure the</span>
-<span class="sd">                 encrypted data is text-safe. With padding removed for</span>
-<span class="sd">                 storage efficiency.</span>
+<span class="sd">                 encrypted data is text-safe.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_aes128</span><span class="p">(</span><span class="n">plaintext</span><span class="o">=</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">fernet_key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_aes_gcm</span><span class="p">(</span><span class="n">plaintext</span><span class="o">=</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="o">=</span><span class="n">associated_data</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_aes256</span><span class="p">(</span><span class="n">plaintext</span><span class="o">=</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_aes128</span><span class="p">(</span><span class="n">plaintext</span><span class="o">=</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">fernet_key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;algorthm must be one of the following </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">EncryptionAlgorithm</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
@@ -536,34 +603,53 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
-        <span class="n">algorithm</span><span class="p">:</span> <span class="n">EncryptionAlgorithm</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">,</span>
+        <span class="n">algorithm</span><span class="p">:</span> <span class="n">EncryptionAlgorithm</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="p">,</span>
+        <span class="n">associated_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Decrypts a string previously encrypted by the `encrypt_string`</span>
-<span class="sd">        function using the specified symmetric encryption algorithm.</span>
+<span class="sd">        function.</span>
 
-<span class="sd">        This function provides a unified interface to decrypt strings</span>
-<span class="sd">        using different encryption algorithms specified by the</span>
-<span class="sd">        &#39;algorithm&#39; parameter. It delegates the decryption process to</span>
-<span class="sd">        the appropriate internal function based on the chosen algorithm.</span>
+<span class="sd">        If a version prefix is present, auto-detect the algorithm:</span>
+<span class="sd">          - v2:gcm:...    → AES-GCM</span>
+<span class="sd">          - v1:cbc:...    → AES-CBC + HMAC (legacy)</span>
+<span class="sd">          - v1:fernet:... → Fernet (legacy)</span>
+<span class="sd">        Otherwise, fall back to the provided `algorithm`.</span>
 
 <span class="sd">        :param ciphertext: The encrypted string to be decrypted.</span>
-<span class="sd">               It is expected to be Base64 encoded and without padding.</span>
+<span class="sd">               It is expected to be Base64 encoded.</span>
 <span class="sd">        :param key: The secret key used for decryption. Must match the</span>
 <span class="sd">               key used for encryption and be appropriate for the</span>
 <span class="sd">               specified algorithm.</span>
 <span class="sd">        :param algorithm: An instance of the EncryptionAlgorithm enum</span>
 <span class="sd">               indicating the encryption algorithm to use.</span>
-<span class="sd">               Default EncryptionAlgorithm.AES_256</span>
+<span class="sd">               Default EncryptionAlgorithm.AES_GCM</span>
+<span class="sd">        :param associated_data: Additional authenticated data (AAD) to</span>
+<span class="sd">               be authenticated but not encrypted. It must be provided</span>
+<span class="sd">               as a byte string if used.</span>
 <span class="sd">        :return: The decrypted plaintext string. Returns an empty string</span>
 <span class="sd">                 and logs a warning if decryption fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="p">:</span>
+        <span class="c1"># Try auto-detect alg first then fall back to user provided alg</span>
+        <span class="k">if</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes_gcm</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="o">=</span><span class="n">associated_data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes256</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes128</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">fernet_key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="c1"># manual selection</span>
+        <span class="k">if</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes_gcm</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">aad</span><span class="o">=</span><span class="n">associated_data</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes256</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">algorithm</span> <span class="ow">is</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decrypt_aes128</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">fernet_key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;algorthm must be one of the following </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">EncryptionAlgorithm</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
@@ -622,17 +708,22 @@
 <div class="viewcode-block" id="Cryptography.create_token">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.create_token">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_token</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">validity_secs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">Sequence</span> <span class="o">=</span> <span class="p">()</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">validity_secs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">now_epoch</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+        <span class="n">population</span><span class="p">:</span> <span class="n">Sequence</span> <span class="o">=</span> <span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a secure token and its expiry time. The token is</span>
 <span class="sd">        encrypted with a given key to produce a cipher token.</span>
 
-<span class="sd">        :param length: Length of the random token</span>
-<span class="sd">               maximum is 62 characters.</span>
+<span class="sd">        :param length: Length of the random token.</span>
 <span class="sd">        :param validity_secs: Time in seconds until the token expires.</span>
 <span class="sd">        :param key: The secret key used for encryption.</span>
 <span class="sd">               Must be a 32-byte key for AES-256.</span>
+<span class="sd">        :param now_epoch: Current time in seconds since the epoch.</span>
 <span class="sd">        :param population: Lets you define a different set of characters</span>
 <span class="sd">               that the token can be composed of.</span>
 <span class="sd">               Default letters and digits</span>
@@ -641,24 +732,21 @@
 <span class="sd">                 keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">62</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;length cannot be greater than 62&quot;</span><span class="p">)</span>
+        <span class="n">alphabet</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
+        <span class="n">population</span> <span class="o">=</span> <span class="n">population</span> <span class="ow">or</span> <span class="n">alphabet</span>
 
-        <span class="n">population</span> <span class="o">=</span> <span class="n">population</span> <span class="ow">or</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span>
-
-        <span class="n">random_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
-        <span class="n">random_string_hashed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_string</span><span class="p">(</span><span class="n">random_string</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">random_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">population</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="n">random_string_hashed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_string_v2</span><span class="p">(</span><span class="n">raw_string</span><span class="o">=</span><span class="n">random_string</span><span class="p">)</span>
         <span class="n">random_string_hashed_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">random_string_hashed</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
-        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time_ns</span><span class="p">()</span>
-        <span class="n">expires</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="n">validity_secs</span> <span class="o">*</span> <span class="mi">1_000_000_000</span>
+        <span class="n">expires</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">now_epoch</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">validity_secs</span><span class="p">)</span>
         <span class="n">expires_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">expires</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
         <span class="n">combined</span> <span class="o">=</span> <span class="n">random_string_hashed_base64</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="n">expires_base64</span>
 
-        <span class="n">combined_encrypted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_string</span><span class="p">(</span><span class="n">combined</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">key</span><span class="p">)</span>
+        <span class="n">combined_encrypted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_string</span><span class="p">(</span><span class="n">plaintext</span><span class="o">=</span><span class="n">combined</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">random_string</span><span class="p">,</span>
             <span class="s1">&#39;expiry&#39;</span><span class="p">:</span> <span class="n">expires</span><span class="p">,</span>
             <span class="s1">&#39;ciphertoken&#39;</span><span class="p">:</span> <span class="n">combined_encrypted</span><span class="p">,</span>
@@ -670,8 +758,8 @@
 <div class="viewcode-block" id="Cryptography.verify_token">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.encryption.html#carlogtt_python_library.utils.encryption.Cryptography.verify_token">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">verify_token</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ciphertoken</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ciphertoken</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">now_epoch</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verifies the validity of the given token by decrypting the</span>
 <span class="sd">        cipher token using the provided key, and checks if it&#39;s expired</span>
@@ -681,6 +769,7 @@
 <span class="sd">        :param token: The original token to be validated.</span>
 <span class="sd">        :param ciphertoken: The encrypted string containing the token</span>
 <span class="sd">               and expiry.</span>
+<span class="sd">        :param now_epoch: Current time in seconds since the epoch.</span>
 <span class="sd">        :param key: The secret key used for encryption.</span>
 <span class="sd">               Must be a 32-byte key for AES-256.</span>
 <span class="sd">        :return: A dictionary with the keys &#39;token_valid&#39;, &#39;token&#39;,</span>
@@ -689,20 +778,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Initializing code validity response and override if True</span>
-        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">response</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;token_valid&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-            <span class="s1">&#39;expiry&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;expiry&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="n">combined</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decrypt_string</span><span class="p">(</span><span class="n">ciphertoken</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">combined</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decrypt_string</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertoken</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">random_string_hashed_base64</span><span class="p">,</span> <span class="n">expiry_base64</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span><span class="p">)</span>
             <span class="n">random_string_hashed</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">random_string_hashed_base64</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
-            <span class="n">expiry</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">expiry_base64</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-            <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time_ns</span><span class="p">()</span>
+            <span class="n">expiry</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">expiry_base64</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
 
             <span class="n">response</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">expiry</span><span class="o">=</span><span class="n">expiry</span><span class="p">)</span>
 
@@ -710,8 +798,10 @@
             <span class="n">response</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">response_info</span><span class="o">=</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">response</span>
 
-        <span class="k">if</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">expiry</span><span class="p">:</span>
-            <span class="n">confirmation_code_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_hash_match</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">random_string_hashed</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">now_epoch</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">expiry</span><span class="p">:</span>
+            <span class="n">confirmation_code_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_hash_match_v2</span><span class="p">(</span>
+                <span class="n">raw_string</span><span class="o">=</span><span class="n">token</span><span class="p">,</span> <span class="n">hashed_to_match</span><span class="o">=</span><span class="n">random_string_hashed</span>
+            <span class="p">)</span>
             <span class="n">response</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">token_valid</span><span class="o">=</span><span class="n">confirmation_code_valid</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">response</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">response_info</span><span class="o">=</span><span class="s2">&quot;Token expired&quot;</span><span class="p">)</span>
@@ -724,37 +814,36 @@
 <span class="sd">        Encrypts a string using Fernet symmetric encryption.</span>
 
 <span class="sd">        This function encrypts a given string with Fernet, encoding the</span>
-<span class="sd">        input to bytes, then encrypting. It removes the padding (&quot;=&quot;) at</span>
-<span class="sd">        the end of the encrypted byte array to minimize storage.</span>
+<span class="sd">        input to bytes, then encrypting.</span>
 
 <span class="sd">        :param plaintext: The plaintext string to be encrypted.</span>
 <span class="sd">        :param fernet_key: The secret key used for encryption. Must be a</span>
 <span class="sd">               URL-safe base64-encoded 32-byte key.</span>
 <span class="sd">        :return: The encrypted string, encoded with Base64 to ensure the</span>
-<span class="sd">                 encrypted data is text-safe. With padding removed for</span>
-<span class="sd">                 storage efficiency.</span>
+<span class="sd">                 encrypted data is text-safe.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Ensure the Fernet key length is valid</span>
         <span class="c1"># For a bytes_length of 32, the length of the Base64-encoded</span>
         <span class="c1"># string without stripping padding would be 44 characters.</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fernet_key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">44</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fernet key must be a URL-safe base64-encoded 32-byte key.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">fernet_key</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="mi">44</span><span class="p">,</span>
+            <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;Fernet key must be a URL-safe base64-encoded and 32-byte key&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="n">cipher_suite</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">fernet</span><span class="o">.</span><span class="n">Fernet</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">fernet_key</span><span class="p">)</span>
 
         <span class="n">b_string_to_encrypt</span> <span class="o">=</span> <span class="n">plaintext</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
         <span class="n">b_encrypted</span> <span class="o">=</span> <span class="n">cipher_suite</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">b_string_to_encrypt</span><span class="p">)</span>
 
-        <span class="c1"># Strip last two &quot;==&quot; at the end as Fernet always return a 64</span>
-        <span class="c1"># bytes array which ends with two &quot;==&quot;</span>
-        <span class="n">b_encrypted_clean</span> <span class="o">=</span> <span class="n">b_encrypted</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="n">s_encrypted_clean</span> <span class="o">=</span> <span class="n">b_encrypted</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
-        <span class="n">s_encrypted_clean</span> <span class="o">=</span> <span class="n">b_encrypted_clean</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="c1"># Add alg info prefix</span>
+        <span class="n">alg_prefix</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_128</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">s_encrypted_clean_with_alg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alg_prefix</span><span class="si">}{</span><span class="n">s_encrypted_clean</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="k">return</span> <span class="n">s_encrypted_clean</span>
+        <span class="k">return</span> <span class="n">s_encrypted_clean_with_alg</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_decrypt_aes128</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fernet_key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -765,7 +854,6 @@
 <span class="sd">        warning, and returns an empty string to indicate failure.</span>
 
 <span class="sd">        :param ciphertext: The encrypted string to be decrypted.</span>
-<span class="sd">               Padding will be re-added internally for decryption.</span>
 <span class="sd">        :param fernet_key: The secret key used for decryption.</span>
 <span class="sd">               Must match the key used for encryption.</span>
 <span class="sd">        :return: The decrypted plaintext string. Returns an empty string</span>
@@ -775,15 +863,13 @@
         <span class="c1"># Ensure the Fernet key length is valid</span>
         <span class="c1"># For a bytes_length of 32, the length of the Base64-encoded</span>
         <span class="c1"># string without stripping padding would be 44 characters.</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fernet_key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">44</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Fernet key must be a URL-safe base64-encoded 32-byte key.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">fernet_key</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="mi">44</span><span class="p">,</span>
+            <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;Fernet key must be a URL-safe base64-encoded and 32-byte key&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="c1"># Correct the Base64 padding if necessary</span>
-        <span class="n">missing_padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span>
-        <span class="k">if</span> <span class="n">missing_padding</span><span class="p">:</span>
-            <span class="n">ciphertext</span> <span class="o">+=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="n">missing_padding</span><span class="p">)</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_encrypted_ciphertext</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">)</span>
 
         <span class="n">cipher_suite</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">fernet</span><span class="o">.</span><span class="n">Fernet</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">fernet_key</span><span class="p">)</span>
 
@@ -814,15 +900,11 @@
 <span class="sd">        :param key: The secret key used for encryption.</span>
 <span class="sd">               Must be a 32-byte key for AES-256.</span>
 <span class="sd">        :return: The encrypted string, encoded with Base64 to ensure the</span>
-<span class="sd">                 encrypted data is text-safe. With padding removed for</span>
-<span class="sd">                 storage efficiency.</span>
+<span class="sd">                 encrypted data is text-safe.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Ensure the AES key length is valid for AES-256</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">32</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;AES key must be 32 bytes long for AES-256.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;AES-256 must be 32-byte key&quot;</span><span class="p">)</span>
 
         <span class="c1"># Generate a random salt used to randomizes the KDF’s output</span>
         <span class="c1"># Used to derive 2 keys, one for encryption and one for signing</span>
@@ -865,11 +947,11 @@
         <span class="n">b_ciphertext_signed_salt</span> <span class="o">=</span> <span class="n">b_ciphertext_signed_base64</span> <span class="o">+</span> <span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span> <span class="o">+</span> <span class="n">salt_base64</span>
 
         <span class="c1"># Encode base64 to remove the &amp;</span>
-        <span class="n">b_ciphertext_signed_salt_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">b_ciphertext_signed_salt</span><span class="p">)</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_encode</span><span class="p">(</span><span class="n">b_ciphertext_signed_salt</span><span class="p">)</span>
 
-        <span class="c1"># Decode Base64 and strip the &quot;=&quot; padding at the end if not a</span>
-        <span class="c1"># multiple of 4</span>
-        <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">b_ciphertext_signed_salt_base64</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="c1"># Add alg info prefix</span>
+        <span class="n">alg_prefix</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_256</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alg_prefix</span><span class="si">}{</span><span class="n">ciphertext</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">ciphertext</span>
 
@@ -886,7 +968,6 @@
 <span class="sd">        authenticity issue.</span>
 
 <span class="sd">        :param ciphertext: The encrypted string to be decrypted.</span>
-<span class="sd">               Padding will be re-added internally for decryption.</span>
 <span class="sd">        :param key: The secret key used for encryption.</span>
 <span class="sd">               Must be a 32-byte key for AES-256.</span>
 <span class="sd">        :return: The decrypted plaintext string. Returns an empty string</span>
@@ -894,20 +975,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Ensure the AES key length is valid for AES-256</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">32</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;AES key must be 32 bytes long for AES-256.&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;AES-256 must be 32-byte key&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Correct the Base64 padding if necessary</span>
-        <span class="n">missing_padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span>
-        <span class="k">if</span> <span class="n">missing_padding</span><span class="p">:</span>
-            <span class="n">ciphertext</span> <span class="o">+=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="n">missing_padding</span><span class="p">)</span>
-
-        <span class="n">b_ciphertext_signed_salt_base64</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_encrypted_ciphertext</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">)</span>
 
         <span class="c1"># Decode base64 to reveal the &amp;</span>
-        <span class="n">b_ciphertext_signed_salt</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">b_ciphertext_signed_salt_base64</span><span class="p">)</span>
+        <span class="n">b_ciphertext_signed_salt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_decode</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
 
         <span class="c1"># Split the data and salt at the &amp;</span>
         <span class="n">b_ciphertext_signed_base64</span><span class="p">,</span> <span class="n">salt_base64</span> <span class="o">=</span> <span class="n">b_ciphertext_signed_salt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&amp;&quot;</span><span class="p">)</span>
@@ -953,6 +1026,72 @@
         <span class="n">plaintext</span> <span class="o">=</span> <span class="n">b_plaintext</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">plaintext</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_encrypt_aes_gcm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">aad</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encrypts a string using AES-GCM symmetric encryption.</span>
+
+<span class="sd">        :param plaintext: The plaintext string to be encrypted.</span>
+<span class="sd">        :param key: The secret key used for encryption. Must be a</span>
+<span class="sd">               32-byte key.</span>
+<span class="sd">        :param aad: Additional authenticated data (AAD) to be</span>
+<span class="sd">               authenticated but not encrypted. It must be provided</span>
+<span class="sd">               as a byte string if used.</span>
+<span class="sd">        :return: The encrypted string, encoded with Base64 to ensure the</span>
+<span class="sd">                 encrypted data is text-safe.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Ensure the AES key length is valid for AES-GCM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;AES-GCM must be 32-byte key&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 96-bit recommended</span>
+        <span class="n">nonce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rand_bytes</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">aead</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">ciphers</span><span class="o">.</span><span class="n">aead</span><span class="o">.</span><span class="n">AESGCM</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="n">ct</span> <span class="o">=</span> <span class="n">aead</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">nonce</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">plaintext</span><span class="o">.</span><span class="n">encode</span><span class="p">(),</span> <span class="n">associated_data</span><span class="o">=</span><span class="n">aad</span><span class="p">)</span>
+
+        <span class="c1"># Envelope: nonce || ct (ct already includes tag)</span>
+        <span class="n">blob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_encode</span><span class="p">(</span><span class="n">nonce</span> <span class="o">+</span> <span class="n">ct</span><span class="p">)</span>
+
+        <span class="c1"># Add alg info prefix</span>
+        <span class="n">alg_prefix</span> <span class="o">=</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">AES_GCM</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">encrypted</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">alg_prefix</span><span class="si">}{</span><span class="n">blob</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">encrypted</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decrypt_aes_gcm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">aad</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decrypts a string that was encrypted using AES-GCM symmetric</span>
+<span class="sd">        encryption.</span>
+
+<span class="sd">        :param ciphertext: The encrypted string to be decrypted.</span>
+<span class="sd">        :param key: The secret key used for encryption. Must be a</span>
+<span class="sd">               32-byte key.</span>
+<span class="sd">        :param aad: Additional authenticated data (AAD) that was</span>
+<span class="sd">               authenticated but not encrypted. It must be provided</span>
+<span class="sd">               as a byte string if used.</span>
+<span class="sd">        :return: The decrypted plaintext string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Ensure the AES key length is valid for AES-GCM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_len</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">exc_msg</span><span class="o">=</span><span class="s2">&quot;AES-GCM must be 32-byte key&quot;</span><span class="p">)</span>
+
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_encrypted_ciphertext</span><span class="p">(</span><span class="n">ciphertext</span><span class="o">=</span><span class="n">ciphertext</span><span class="p">)</span>
+
+        <span class="n">blob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b64u_decode</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+
+        <span class="n">nonce</span><span class="p">,</span> <span class="n">ct</span> <span class="o">=</span> <span class="n">blob</span><span class="p">[:</span><span class="mi">12</span><span class="p">],</span> <span class="n">blob</span><span class="p">[</span><span class="mi">12</span><span class="p">:]</span>
+        <span class="n">aead</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">ciphers</span><span class="o">.</span><span class="n">aead</span><span class="o">.</span><span class="n">AESGCM</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">aead</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">nonce</span><span class="o">=</span><span class="n">nonce</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">ct</span><span class="p">,</span> <span class="n">associated_data</span><span class="o">=</span><span class="n">aad</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GCM decryption failed (bad tag/AAD/nonce): </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">decrypted</span> <span class="o">=</span> <span class="n">pt</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">decrypted</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_derive_key_hkdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">salt</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">key_material</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1001,74 +1140,87 @@
 
         <span class="k">return</span> <span class="n">aes_key</span><span class="p">,</span> <span class="n">hash_key</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_derive_key_scrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">salt</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">key_material</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_encrypted_ciphertext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Derives a cryptographic key from a given key material using the</span>
-<span class="sd">        Scrypt KDF.</span>
+<span class="sd">        Extracts the encrypted ciphertext from the input string.</span>
 
-<span class="sd">        Scrypt is designed to be resistant against hardware-assisted</span>
-<span class="sd">        attacks by allowing tunable memory and CPU cost parameters.</span>
-<span class="sd">        It is particularly suitable for password storage and protection.</span>
-
-<span class="sd">        :param salt: A byte string used to salt the key derivation to</span>
-<span class="sd">               prevent rainbow table attacks. The salt should be unique</span>
-<span class="sd">               for each credential to be protected but does not need to</span>
-<span class="sd">               be kept secret.</span>
-<span class="sd">        :param key_material: The input key material from which to derive</span>
-<span class="sd">               the key.</span>
-<span class="sd">        :return: The derived cryptographic key.</span>
+<span class="sd">        :param ciphertext: The input string containing the encrypted</span>
+<span class="sd">               ciphertext and other information.</span>
+<span class="sd">        :return: The encrypted ciphertext as a string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Scrypt configuration</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># The desired length of the derived key in bytes</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">14</span>  <span class="c1"># CPU/Memory cost parameter. It must be larger than 1 and be a power of 2</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># Block size parameter</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Parallelization parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting encrypted ciphertext&quot;</span><span class="p">)</span>
 
-        <span class="n">scrypt</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">kdf</span><span class="o">.</span><span class="n">scrypt</span><span class="o">.</span><span class="n">Scrypt</span><span class="p">(</span>
-            <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span>
-        <span class="p">)</span>
+        <span class="c1"># Remove alg info prefix</span>
+        <span class="c1"># Using if for older stored values</span>
+        <span class="k">for</span> <span class="n">alg</span> <span class="ow">in</span> <span class="n">EncryptionAlgorithm</span><span class="o">.</span><span class="n">all_alg_prefixes</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ciphertext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">alg</span><span class="p">):</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alg</span><span class="p">)</span>
+                <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[</span><span class="n">start</span><span class="p">:]</span>
+                <span class="k">break</span>
 
-        <span class="c1"># Derive the key</span>
-        <span class="n">key_derived</span> <span class="o">=</span> <span class="n">scrypt</span><span class="o">.</span><span class="n">derive</span><span class="p">(</span><span class="n">key_material</span><span class="p">)</span>
+        <span class="c1"># Correct the Base64 padding if necessary</span>
+        <span class="n">missing_padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span>
+        <span class="k">if</span> <span class="n">missing_padding</span><span class="p">:</span>
+            <span class="n">ciphertext</span> <span class="o">+=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> <span class="n">missing_padding</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scrypt key derived successfully&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ciphertext</span>
 
-        <span class="k">return</span> <span class="n">key_derived</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_derived_key_scrypt</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">salt</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">key_material</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">expected_key</span><span class="p">:</span> <span class="nb">bytes</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_b64u_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Verifies a derived key against an expected key using the Scrypt</span>
-<span class="sd">        KDF.</span>
+<span class="sd">        Encodes a byte string to a Base64 URL-safe string.</span>
 
-<span class="sd">        :param salt: A byte string used to salt the key derivation to</span>
-<span class="sd">               prevent rainbow table attacks. The salt should be unique</span>
-<span class="sd">               for each credential to be protected but does not need to</span>
-<span class="sd">               be kept secret.</span>
-<span class="sd">        :param key_material: The original key material used for key</span>
-<span class="sd">               derivation.</span>
-<span class="sd">        :param expected_key: The expected derived key to verify against.</span>
-<span class="sd">        :raise: Exception is raised when the derived key does not match</span>
-<span class="sd">                the expected key.</span>
+<span class="sd">        :param b: The byte string to be encoded.</span>
+<span class="sd">        :return: The Base64 URL-safe encoded string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1"># Re-configure Scrypt with the same parameters used for deriving</span>
-        <span class="c1"># the key</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># The desired length of the derived key in bytes</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">14</span>  <span class="c1"># CPU/Memory cost parameter. It must be larger than 1 and be a power of 2</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># Block size parameter</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Parallelization parameter</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
-        <span class="n">scrypt</span> <span class="o">=</span> <span class="n">cryptography</span><span class="o">.</span><span class="n">hazmat</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">kdf</span><span class="o">.</span><span class="n">scrypt</span><span class="o">.</span><span class="n">Scrypt</span><span class="p">(</span>
-            <span class="n">salt</span><span class="o">=</span><span class="n">salt</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">encoded</span>
 
-        <span class="c1"># Attempt to verify the derived key</span>
-        <span class="n">scrypt</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">key_material</span><span class="p">,</span> <span class="n">expected_key</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_b64u_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decodes a Base64 URL-safe encoded string to a byte string.</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Scrypt key verified successfully&quot;</span><span class="p">)</span></div>
+<span class="sd">        :param s: The Base64 URL-safe encoded string to be decoded.</span>
+<span class="sd">        :return: The decoded byte string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">decoded</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">decoded</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rand_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates cryptographically secure random bytes.</span>
+
+<span class="sd">        :param n: The number of random bytes to generate.</span>
+<span class="sd">        :return: A byte string containing the generated random bytes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> random bytes&quot;</span><span class="p">)</span>
+
+        <span class="n">b</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">b</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">exc_msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ensures that a byte string is of a specific length.</span>
+
+<span class="sd">        :param key: The byte string to be checked.</span>
+<span class="sd">        :param n: The expected length of the byte string.</span>
+<span class="sd">        :param exc_msg: The exception message to be raised if the</span>
+<span class="sd">               length check fails.</span>
+<span class="sd">        :raise: ValueError is raised if the byte string&#39;s length does</span>
+<span class="sd">                not match the expected length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ensuring key length is </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc_msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">exc_msg</span><span class="p">)</span></div>
 
 </pre></div>
 

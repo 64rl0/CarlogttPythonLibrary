@@ -54,20 +54,20 @@ import pytest
 
 @pytest.fixture
 def aws_lambda_instance():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     return mylib.Lambda(aws_region_name="us-east-1", caching=True)
 
 
 @pytest.fixture
 def mock_boto3():
-    with mock.patch("carlogtt_library.aws_boto3.aws_service_base.boto3") as mock_boto3:
+    with mock.patch("carlogtt_python_library.aws_boto3.aws_service_base.boto3") as mock_boto3:
         yield mock_boto3
 
 
 @pytest.fixture
 def mock_client():
-    with mock.patch("carlogtt_library.aws_boto3.aws_lambda.Lambda._client") as mock_client:
+    with mock.patch("carlogtt_python_library.aws_boto3.aws_lambda.Lambda._client") as mock_client:
         yield mock_client
 
 
@@ -90,7 +90,7 @@ def test_invalidate_client_cache(aws_lambda_instance):
 
 
 def test_invalidate_client_cache_without_caching():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     instance = mylib.Lambda(aws_region_name="us-east-1", caching=False)
     with pytest.raises(Exception) as excinfo:

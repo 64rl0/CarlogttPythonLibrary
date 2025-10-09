@@ -37,7 +37,6 @@ import sqlite3
 from unittest.mock import patch
 
 # Third Party Library Imports
-import psycopg2.extensions
 import pytest
 
 # END IMPORTS
@@ -120,6 +119,7 @@ def _patch_external(monkeypatch):
     # ----------------- Postgres fakes ---------------------------------
     try:
         import psycopg2
+        import psycopg2.extensions
 
         class _FakePGCursor:
             def __init__(self):
@@ -173,7 +173,7 @@ def _drain(gen):
 # 4. Tests – ABC enforcement
 # ----------------------------------------------------------------------
 def test_database_is_abstract():
-    from carlogtt_library.database.database_sql import Database
+    from carlogtt_python_library.database.database_sql import Database
 
     with pytest.raises(TypeError):
         _ = Database()  # type: ignore[abstract]  (expected to fail)
@@ -184,7 +184,7 @@ def test_database_is_abstract():
 # ----------------------------------------------------------------------
 @pytest.fixture
 def mysql():
-    from carlogtt_library.database.database_sql import MySQL
+    from carlogtt_python_library.database.database_sql import MySQL
 
     return MySQL(
         host="h",
@@ -228,7 +228,7 @@ def test_mysql_error_raises(mysql):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def sqlite(tmp_path):
-    from carlogtt_library.database.database_sql import SQLite
+    from carlogtt_python_library.database.database_sql import SQLite
 
     return SQLite(sqlite_db_path=":memory:", filename="tmp.db")
 
@@ -261,7 +261,7 @@ def test_sqlite_fetch_one(sqlite):
 @pytest.mark.skipif("psycopg2" not in globals() or psycopg2 is None, reason="psycopg2 missing")
 @pytest.fixture
 def postgres():
-    from carlogtt_library.database.database_sql import PostgreSQL
+    from carlogtt_python_library.database.database_sql import PostgreSQL
 
     return PostgreSQL(
         host="h",
@@ -299,15 +299,15 @@ def test_postgres_error_raises(postgres):
 
 def test_database_abstract_methods():
     """Ensure Database abstract methods remain enforced."""
-    from carlogtt_library.database.database_sql import Database
+    from carlogtt_python_library.database.database_sql import Database
 
     with pytest.raises(TypeError):
         _ = Database()
 
 
 def test_mysql_coverage():
-    from carlogtt_library.database.database_sql import MySQL
-    from carlogtt_library.exceptions import MySQLError
+    from carlogtt_python_library.database.database_sql import MySQL
+    from carlogtt_python_library.exceptions import MySQLError
 
     # Create a MySQL instance with dummy credentials
     mysql_db = MySQL(
@@ -360,8 +360,8 @@ def test_mysql_coverage():
 
 
 def test_sqlite_coverage():
-    from carlogtt_library.database.database_sql import SQLite
-    from carlogtt_library.exceptions import SQLiteError
+    from carlogtt_python_library.database.database_sql import SQLite
+    from carlogtt_python_library.exceptions import SQLiteError
 
     # Create a SQLite instance pointing to an in-memory DB
     sqlite_db = SQLite(":memory:", "fake_sqlite_db")
@@ -397,9 +397,10 @@ def test_sqlite_coverage():
             sqlite_db.open_db_connection()
 
 
+@pytest.mark.skipif("psycopg2" not in globals() or psycopg2 is None, reason="psycopg2 missing")
 def test_postgresql_coverage():
-    from carlogtt_library.database.database_sql import PostgreSQL
-    from carlogtt_library.exceptions import PostgresError
+    from carlogtt_python_library.database.database_sql import PostgreSQL
+    from carlogtt_python_library.exceptions import PostgresError
 
     pg = PostgreSQL(
         host="fake_host",

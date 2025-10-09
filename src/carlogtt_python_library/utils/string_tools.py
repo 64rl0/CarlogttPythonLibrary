@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/utils/string_tools.py
+# src/carlogtt_python_library/utils/string_tools.py
 # Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL

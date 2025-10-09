@@ -70,8 +70,8 @@ class _WarnCatcher:
 # Tests ----------------------------------------------------------------
 # ----------------------------------------------------------------------
 def test_cli_style_attr_returns_constant_and_warns():
-    import carlogtt_library as mylib
-    from carlogtt_library.utils.cli_utils import CLIStyle
+    import carlogtt_python_library as mylib
+    from carlogtt_python_library.utils.cli_utils import CLIStyle
 
     # Pick one of the legacy names that maps to CLIStyle
     legacy_name = "cli_red"
@@ -91,7 +91,7 @@ def test_cli_style_attr_returns_constant_and_warns():
 
 
 def test_other_deprecated_name_warns_and_raises():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     # This name is mapped to StringUtils, but proxy should raise AttributeError
     legacy_name = "get_random_string"
@@ -106,7 +106,7 @@ def test_other_deprecated_name_warns_and_raises():
 
 
 def test_unknown_attribute_no_warning_and_attribute_error():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     unknown = "definitely_not_exported"
 

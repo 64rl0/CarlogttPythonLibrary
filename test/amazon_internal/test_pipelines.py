@@ -81,7 +81,7 @@ def _patch_deps(monkeypatch):
             # craft echo response
             return _FakeResponse({"ok": True, "echo": data})
 
-    monkeypatch.setattr("carlogtt_library.utils.AwsSigV4Session", _FakeSigV4, raising=True)
+    monkeypatch.setattr("carlogtt_python_library.utils.AwsSigV4Session", _FakeSigV4, raising=True)
 
     # ---- Fake boto3 session (never hits AWS) ------------------------
     class _FakeBotoSession:
@@ -103,14 +103,14 @@ def _patch_deps(monkeypatch):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def pipelines_cached():
-    from carlogtt_library.amazon_internal.pipelines import Pipelines
+    from carlogtt_python_library.amazon_internal.pipelines import Pipelines
 
     return Pipelines("eu-west-1", caching=True)
 
 
 @pytest.fixture
 def pipelines_fresh():
-    from carlogtt_library.amazon_internal.pipelines import Pipelines
+    from carlogtt_python_library.amazon_internal.pipelines import Pipelines
 
     return Pipelines("eu-west-1", caching=False)
 
@@ -127,7 +127,7 @@ def test_client_cache_and_invalidate(pipelines_cached):
 
 
 def test_send_api_request_echo(pipelines_fresh):
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     # private helper exercised indirectly via public method
     res = pipelines_fresh.get_pipelines_containing_target(
@@ -149,21 +149,21 @@ def test_get_pipeline_structure_by_id(pipelines_fresh):
 
 
 def test_get_pipeline_structure_missing_args_raises(pipelines_fresh):
-    from carlogtt_library.exceptions import PipelinesError
+    from carlogtt_python_library.exceptions import PipelinesError
 
     with pytest.raises(PipelinesError):
         pipelines_fresh.get_pipeline_structure()
 
 
 def test_get_pipeline_structure_both_args_raises(pipelines_fresh):
-    from carlogtt_library.exceptions import PipelinesError
+    from carlogtt_python_library.exceptions import PipelinesError
 
     with pytest.raises(PipelinesError):
         pipelines_fresh.get_pipeline_structure(pipeline_name="X", pipeline_id="Y")
 
 
 def test_get_pipelines_containing_target(pipelines_cached):
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     res = pipelines_cached.get_pipelines_containing_target(
         target_name="demo",

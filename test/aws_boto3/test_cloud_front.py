@@ -40,8 +40,8 @@ import botocore.exceptions
 import pytest
 
 # My Library Imports
-from carlogtt_library import exceptions as lib_exc
-from carlogtt_library.aws_boto3.cloud_front import CloudFront
+from carlogtt_python_library import exceptions as lib_exc
+from carlogtt_python_library.aws_boto3.cloud_front import CloudFront
 
 # END IMPORTS
 # ======================================================================

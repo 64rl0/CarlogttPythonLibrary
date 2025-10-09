@@ -71,18 +71,170 @@ def pytest_sessionstart(session):
     It patches the retry decorator to disable retries during tests.
     """
 
-    import carlogtt_library
+    try:
+        # try import Py-Pi library first
+        # https://pypi.org/project/carlogtt-python-library/
+        import carlogtt_python_library
 
-    carlogtt_library.retry = _NoopRetry
-    carlogtt_library.utils.retry = _NoopRetry
-    carlogtt_library.utils.decorators.retry = _NoopRetry
+        carlogtt_python_library.retry = _NoopRetry
+        carlogtt_python_library.utils.retry = _NoopRetry
+        carlogtt_python_library.utils.decorators.retry = _NoopRetry
 
-    to_reload = [
-        'carlogtt_library.amazon_internal.simt',
-        'carlogtt_library.database.database_dynamo',
-        'carlogtt_library.database.database_sql',
-        'carlogtt_library.database.redis_cache_manager',
-        'carlogtt_library.utils.aws_sig_v4_requests',
-    ]
-    for name in to_reload:
-        importlib.reload(sys.modules[name])
+        to_reload = [
+            'carlogtt_python_library.database.database_dynamo',
+            'carlogtt_python_library.database.database_sql',
+            'carlogtt_python_library.database.redis_cache_manager',
+            'carlogtt_python_library.utils.aws_sig_v4_requests',
+        ]
+        for name in to_reload:
+            importlib.reload(sys.modules[name])
+
+    except (ImportError, ModuleNotFoundError):
+        # now try to alias to Amazon Brazil package
+        import carlogtt_library
+
+        carlogtt_library.retry = _NoopRetry
+        carlogtt_library.utils.retry = _NoopRetry
+        carlogtt_library.utils.decorators.retry = _NoopRetry
+
+        to_reload = [
+            'carlogtt_library.amazon_internal.simt',
+            'carlogtt_library.database.database_dynamo',
+            'carlogtt_library.database.database_sql',
+            'carlogtt_library.database.redis_cache_manager',
+            'carlogtt_library.utils.aws_sig_v4_requests',
+        ]
+        for name in to_reload:
+            importlib.reload(sys.modules[name])
+
+        # Alias to Amazon Brazil package and  remap all the pytest
+        # imports to the Brazil package
+        sys.modules["carlogtt_python_library"] = importlib.import_module("carlogtt_library")
+
+        # Ensure common subpackages resolve for patch targets
+        for sub in (
+            "amazon_internal",
+            "amazon_internal.apollo",
+            "amazon_internal.bindle",
+            "amazon_internal.midway",
+            "amazon_internal.midway_selenium",
+            "amazon_internal.mirador",
+            "amazon_internal.phone_tool",
+            "amazon_internal.pipelines",
+            "amazon_internal.simt",
+            "amazon_internal.tiny_url",
+            "aws_boto3",
+            "aws_boto3.aws_lambda",
+            "aws_boto3.aws_service_base",
+            "aws_boto3.cloud_front",
+            "aws_boto3.ec2",
+            "aws_boto3.kms",
+            "aws_boto3.s3",
+            "aws_boto3.secrets_manager",
+            "database",
+            "database.database_dynamo",
+            "database.database_sql",
+            "database.database_utils",
+            "database.redis_cache_manager",
+            "exceptions",
+            "exceptions.exceptions",
+            "logger",
+            "logger.app_logger",
+            "utils",
+            "utils.aws_sig_v4_requests",
+            "utils.cli_utils",
+            "utils.context_managers",
+            "utils.decorators",
+            "utils.encryption",
+            "utils.miscs",
+            "utils.string_tools",
+            "utils.user_input",
+            "utils.validators",
+        ):
+            sys.modules[f"carlogtt_python_library.{sub}"] = importlib.import_module(
+                f"carlogtt_library.{sub}"
+            )
+
+    try:
+        import carlogtt_library
+
+        carlogtt_library.retry = _NoopRetry
+        carlogtt_library.utils.retry = _NoopRetry
+        carlogtt_library.utils.decorators.retry = _NoopRetry
+
+        to_reload = [
+            'carlogtt_library.amazon_internal.simt',
+            'carlogtt_library.database.database_dynamo',
+            'carlogtt_library.database.database_sql',
+            'carlogtt_library.database.redis_cache_manager',
+            'carlogtt_library.utils.aws_sig_v4_requests',
+        ]
+        for name in to_reload:
+            importlib.reload(sys.modules[name])
+
+    except (ImportError, ModuleNotFoundError):
+        import carlogtt_python_library
+
+        carlogtt_python_library.retry = _NoopRetry
+        carlogtt_python_library.utils.retry = _NoopRetry
+        carlogtt_python_library.utils.decorators.retry = _NoopRetry
+
+        to_reload = [
+            'carlogtt_python_library.amazon_internal.simt',
+            'carlogtt_python_library.database.database_dynamo',
+            'carlogtt_python_library.database.database_sql',
+            'carlogtt_python_library.database.redis_cache_manager',
+            'carlogtt_python_library.utils.aws_sig_v4_requests',
+        ]
+        for name in to_reload:
+            importlib.reload(sys.modules[name])
+
+        # Alias to Amazon Brazil package
+        sys.modules["carlogtt_library"] = importlib.import_module("carlogtt_python_library")
+
+        # Ensure common subpackages resolve for patch targets
+        for sub in (
+            "amazon_internal",
+            "amazon_internal.apollo",
+            "amazon_internal.bindle",
+            "amazon_internal.midway",
+            "amazon_internal.midway_selenium",
+            "amazon_internal.mirador",
+            "amazon_internal.phone_tool",
+            "amazon_internal.pipelines",
+            "amazon_internal.simt",
+            "amazon_internal.tiny_url",
+            "aws_boto3",
+            "aws_boto3.aws_lambda",
+            "aws_boto3.aws_service_base",
+            "aws_boto3.cloud_front",
+            "aws_boto3.ec2",
+            "aws_boto3.kms",
+            "aws_boto3.s3",
+            "aws_boto3.secrets_manager",
+            "database",
+            "database.database_dynamo",
+            "database.database_sql",
+            "database.database_utils",
+            "database.redis_cache_manager",
+            "exceptions",
+            "exceptions.exceptions",
+            "logger",
+            "logger.app_logger",
+            "utils",
+            "utils.aws_sig_v4_requests",
+            "utils.cli_utils",
+            "utils.context_managers",
+            "utils.decorators",
+            "utils.encryption",
+            "utils.miscs",
+            "utils.string_tools",
+            "utils.user_input",
+            "utils.validators",
+        ):
+            try:
+                sys.modules[f"carlogtt_library.{sub}"] = importlib.import_module(
+                    f"carlogtt_python_library.{sub}"
+                )
+            except (ImportError, ModuleNotFoundError):
+                pass

@@ -35,9 +35,7 @@
             
   <section id="module-carlogtt_python_library.utils.encryption">
 <span id="carlogtt-python-library-utils-encryption-module"></span><h1>carlogtt_python_library.utils.encryption module<a class="headerlink" href="#module-carlogtt_python_library.utils.encryption" title="Link to this heading">¶</a></h1>
-<p>This module provides functions and utilities for password encryption.
-It offers encryption algorithms and techniques specifically designed for
-securely storing and handling passwords.</p>
+<p>Utilities for authenticated encryption and password hashing.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">Cryptography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~logging.Logger</span> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.encryption</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography" title="Link to this definition">¶</a></dt>
@@ -74,17 +72,17 @@ length.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.create_token">
-<span class="sig-name descname"><span class="pre">create_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity_secs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.create_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.create_token" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validity_secs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.create_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.create_token" title="Link to this definition">¶</a></dt>
 <dd><p>Generates a secure token and its expiry time. The token is
 encrypted with a given key to produce a cipher token.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>length</strong> – Length of the random token
-maximum is 62 characters.</p></li>
+<li><p><strong>length</strong> – Length of the random token.</p></li>
 <li><p><strong>validity_secs</strong> – Time in seconds until the token expires.</p></li>
 <li><p><strong>key</strong> – The secret key used for encryption.
 Must be a 32-byte key for AES-256.</p></li>
+<li><p><strong>now_epoch</strong> – Current time in seconds since the epoch.</p></li>
 <li><p><strong>population</strong> – Lets you define a different set of characters
 that the token can be composed of.
 Default letters and digits</p></li>
@@ -102,24 +100,32 @@ keys.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.decrypt_string">
-<span class="sig-name descname"><span class="pre">decrypt_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="carlogtt_python_library.utils.encryption.EncryptionAlgorithm"><span class="pre">EncryptionAlgorithm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EncryptionAlgorithm.AES_256</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.decrypt_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.decrypt_string" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">decrypt_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="carlogtt_python_library.utils.encryption.EncryptionAlgorithm"><span class="pre">EncryptionAlgorithm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EncryptionAlgorithm.AES_GCM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">associated_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.decrypt_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.decrypt_string" title="Link to this definition">¶</a></dt>
 <dd><p>Decrypts a string previously encrypted by the <cite>encrypt_string</cite>
-function using the specified symmetric encryption algorithm.</p>
-<p>This function provides a unified interface to decrypt strings
-using different encryption algorithms specified by the
-‘algorithm’ parameter. It delegates the decryption process to
-the appropriate internal function based on the chosen algorithm.</p>
+function.</p>
+<dl class="simple">
+<dt>If a version prefix is present, auto-detect the algorithm:</dt><dd><ul class="simple">
+<li><p>v2:gcm:…    → AES-GCM</p></li>
+<li><p>v1:cbc:…    → AES-CBC + HMAC (legacy)</p></li>
+<li><p>v1:fernet:… → Fernet (legacy)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Otherwise, fall back to the provided <cite>algorithm</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ciphertext</strong> – The encrypted string to be decrypted.
-It is expected to be Base64 encoded and without padding.</p></li>
+It is expected to be Base64 encoded.</p></li>
 <li><p><strong>key</strong> – The secret key used for decryption. Must match the
 key used for encryption and be appropriate for the
 specified algorithm.</p></li>
 <li><p><strong>algorithm</strong> – An instance of the EncryptionAlgorithm enum
 indicating the encryption algorithm to use.
-Default EncryptionAlgorithm.AES_256</p></li>
+Default EncryptionAlgorithm.AES_GCM</p></li>
+<li><p><strong>associated_data</strong> – Additional authenticated data (AAD) to
+be authenticated but not encrypted. It must be provided
+as a byte string if used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -149,31 +155,41 @@ expected to include the bytes literal prefix b’’.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.encrypt_string">
-<span class="sig-name descname"><span class="pre">encrypt_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plaintext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="carlogtt_python_library.utils.encryption.EncryptionAlgorithm"><span class="pre">EncryptionAlgorithm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EncryptionAlgorithm.AES_256</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.encrypt_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.encrypt_string" title="Link to this definition">¶</a></dt>
-<dd><p>Encrypts a string using the specified symmetric encryption
-algorithm.</p>
-<p>This function provides a unified interface to encrypt strings
-using different encryption algorithms specified by the
-‘algorithm’ parameter. It delegates the encryption process to
-the appropriate internal function based on the chosen algorithm.</p>
+<span class="sig-name descname"><span class="pre">encrypt_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plaintext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="carlogtt_python_library.utils.encryption.EncryptionAlgorithm"><span class="pre">EncryptionAlgorithm</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EncryptionAlgorithm.AES_GCM</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">associated_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.encrypt_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.encrypt_string" title="Link to this definition">¶</a></dt>
+<dd><p>Encrypts plaintext using the selected algorithm and returns a
+versioned, Base64-url-safe string.</p>
+<dl class="simple">
+<dt>Envelope prefixes:</dt><dd><ul class="simple">
+<li><p>v2:gcm:…    → AES-256-GCM (default)</p></li>
+<li><p>v1:cbc:…    → AES-256-CBC + HMAC-SHA256 (legacy)</p></li>
+<li><p>v1:fernet:… → Fernet (legacy)</p></li>
+</ul>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>AES_GCM: expects a 32-byte key (AES-256-GCM). Optional AAD.</p></li>
+<li><p>AES_256 (CBC+HMAC): expects a 32-byte key; integrity via HMAC.</p></li>
+<li><p>AES_128 (Fernet): expects a 44-byte urlsafe base64-encoded
+key.</p></li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>plaintext</strong> – The plaintext string to be encrypted.</p></li>
 <li><p><strong>key</strong> – The secret key used for encryption. The format and
-length depend on the algorithm being used.
-For AES-128, must be a URL-safe base64-encoded 32-byte
-key. For AES-256, must be a 32-byte key.</p></li>
+length depend on the algorithm being used.</p></li>
 <li><p><strong>algorithm</strong> – An instance of the
-EncryptionEncryptionAlgorithm enum indicating the
+EncryptionAlgorithm enum indicating the
 encryption algorithm to use.
-Default EncryptionAlgorithm.AES_256</p></li>
+Default EncryptionAlgorithm.AES_GCM</p></li>
+<li><p><strong>associated_data</strong> – Additional authenticated data (AAD) to
+be authenticated but not encrypted. It must be provided
+as a byte string if used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The encrypted string, encoded with Base64 to ensure the
-encrypted data is text-safe. With padding removed for
-storage efficiency.</p>
+encrypted data is text-safe.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -181,31 +197,45 @@ storage efficiency.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.hash_string">
 <span class="sig-name descname"><span class="pre">hash_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.hash_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.hash_string" title="Link to this definition">¶</a></dt>
-<dd><p>Hashes a given string using the Scrypt Key Derivation Function
-and encrypts the result for secure storage.
-The function embeds the salt used for hashing within the
-encrypted hash, ensuring that each piece of data is uniquely
-salted and securely stored.</p>
+<dd><p>DEPRECATED — use <cite>hash_string_v2()</cite>.
+Note: the key parameter is ignored in this deprecated API.</p>
+<p>Hashes a given string using the Scrypt Key Derivation Function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>raw_string</strong> – The raw string to be hashed and encrypted.
+<li><p><strong>raw_string</strong> – The raw string to be hashed.
 Typically, this would be a password or any other
 sensitive information requiring secure handling.</p></li>
-<li><p><strong>key</strong> – The secret key used for encrypting the hashed
+<li><p><strong>key</strong> – The secret key used for hashing the hashed
 string. This key should be generated and managed using
 secure cryptographic practices and must be a 32-byte key
 for AES-256.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The encrypted hash of the input string.
-This output includes both the Scrypt-derived
-hash and the salt, encrypted for additional security.
-The resulting binary data is suitable for secure
-storage in a database or file system, where it can
-later be decrypted and verified against a user-provided
-string.</p>
+<dd class="field-even"><p>The hash of the input string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.hash_string_v2">
+<span class="sig-name descname"><span class="pre">hash_string_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scrypt_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ScryptParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.hash_string_v2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.hash_string_v2" title="Link to this definition">¶</a></dt>
+<dd><p>Hash a given string with scrypt and return a PHC-style string:</p>
+<p>scrypt$ln=&lt;n2exp&gt;,r=&lt;r&gt;,p=&lt;p&gt;$&lt;salt_b64&gt;$&lt;hash_b64&gt;</p>
+<p>A new 16-byte random salt is generated per given string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_string</strong> – The raw string to be hashed.
+Typically, this would be a password or any other
+sensitive information requiring secure handling.</p></li>
+<li><p><strong>scrypt_params</strong> – The scrypt parameters to be used for
+hashing. If not provided, secure defaults are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The hash of the input string PHC-style scrypt string.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -281,31 +311,47 @@ encoded, and returned.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match">
 <span class="sig-name descname"><span class="pre">validate_hash_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.validate_hash_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match" title="Link to this definition">¶</a></dt>
-<dd><p>Validates whether a provided raw string matches the encrypted
-and hashed string stored. This function is designed to work in
-conjunction with hash_string function, reversing its hashing and
-encryption process to verify user input against stored values
-securely.</p>
+<dd><p>DEPRECATED — use <cite>validate_hash_match_v2()</cite>.
+Note: the key parameter is ignored in this deprecated API.</p>
+<p>Validates whether a provided raw string matches the hashed
+string stored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>raw_string</strong> – The plaintext string provided by the user,
 typically a password or sensitive information that needs
 validation against a stored, hashed version.</p></li>
-<li><p><strong>hashed_to_match</strong> – The encrypted and hashed data that the
-raw_string is compared against. This should have been
-previously generated by the hash_string function.</p></li>
-<li><p><strong>key</strong> – The secret key used for decrypting the hashed
-string. It must be the same key used for
-encrypting the string initially with the <cite>hash_string</cite>
-function.</p></li>
+<li><p><strong>hashed_to_match</strong> – The hashed data that the
+raw_string is compared against.</p></li>
+<li><p><strong>key</strong> – The secret key used for hashing the hashed
+string.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the raw_string, when hashed and processed,
-matches the hashed_string_to_match; False otherwise.
-The function also returns False in the case of
-decryption or verification failures.</p>
+matches the hashed_string_to_match; False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match_v2">
+<span class="sig-name descname"><span class="pre">validate_hash_match_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashed_to_match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.validate_hash_match_v2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match_v2" title="Link to this definition">¶</a></dt>
+<dd><p>Verify a provided raw string against a PHC-style scrypt string
+in constant time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_string</strong> – The plaintext string provided by the user,
+typically a password or sensitive information that needs
+validation against a stored, hashed version.</p></li>
+<li><p><strong>hashed_to_match</strong> – The hashed data that the
+raw_string is compared against.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the raw_string, when hashed and processed,
+matches the hashed_string_to_match; False otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,7 +382,7 @@ original data, and the hash signature with the keys
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography.verify_token">
-<span class="sig-name descname"><span class="pre">verify_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ciphertoken</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.verify_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.verify_token" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">verify_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ciphertoken</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography.verify_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography.verify_token" title="Link to this definition">¶</a></dt>
 <dd><p>Verifies the validity of the given token by decrypting the
 cipher token using the provided key, and checks if it’s expired
 based on the current time and the expiry time embedded in the
@@ -347,6 +393,7 @@ cipher token.</p>
 <li><p><strong>token</strong> – The original token to be validated.</p></li>
 <li><p><strong>ciphertoken</strong> – The encrypted string containing the token
 and expiry.</p></li>
+<li><p><strong>now_epoch</strong> – Current time in seconds since the epoch.</p></li>
 <li><p><strong>key</strong> – The secret key used for encryption.
 Must be a 32-byte key for AES-256.</p></li>
 </ul>
@@ -365,16 +412,25 @@ occurs.</p>
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">EncryptionAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>Defines supported encryption algorithms and their corresponding
-security levels.</p>
+<p>Defines supported encryption algorithms anf their envelope prefixes.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128">
-<span class="sig-name descname"><span class="pre">AES_128</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES_128</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:fernet:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256">
-<span class="sig-name descname"><span class="pre">AES_256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES_256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:cbc:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM">
+<span class="sig-name descname"><span class="pre">AES_GCM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v2:gcm:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_alg_prefixes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm.all_alg_prefixes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -510,10 +566,12 @@ CBC.</p>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.deserialize_key_from_str_storage"><code class="docutils literal notranslate"><span class="pre">Cryptography.deserialize_key_from_str_storage()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.encrypt_string"><code class="docutils literal notranslate"><span class="pre">Cryptography.encrypt_string()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.hash_string"><code class="docutils literal notranslate"><span class="pre">Cryptography.hash_string()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.hash_string_v2"><code class="docutils literal notranslate"><span class="pre">Cryptography.hash_string_v2()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.re_encrypt_string"><code class="docutils literal notranslate"><span class="pre">Cryptography.re_encrypt_string()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.serialize_key_for_str_storage"><code class="docutils literal notranslate"><span class="pre">Cryptography.serialize_key_for_str_storage()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.sign"><code class="docutils literal notranslate"><span class="pre">Cryptography.sign()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match"><code class="docutils literal notranslate"><span class="pre">Cryptography.validate_hash_match()</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.validate_hash_match_v2"><code class="docutils literal notranslate"><span class="pre">Cryptography.validate_hash_match_v2()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.verify_signature"><code class="docutils literal notranslate"><span class="pre">Cryptography.verify_signature()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.Cryptography.verify_token"><code class="docutils literal notranslate"><span class="pre">Cryptography.verify_token()</span></code></a></li>
 </ul>
@@ -521,6 +579,8 @@ CBC.</p>
 <li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm"><code class="docutils literal notranslate"><span class="pre">EncryptionAlgorithm</span></code></a><ul>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128"><code class="docutils literal notranslate"><span class="pre">EncryptionAlgorithm.AES_128</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256"><code class="docutils literal notranslate"><span class="pre">EncryptionAlgorithm.AES_256</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM"><code class="docutils literal notranslate"><span class="pre">EncryptionAlgorithm.AES_GCM</span></code></a></li>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes"><code class="docutils literal notranslate"><span class="pre">EncryptionAlgorithm.all_alg_prefixes()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.utils.encryption.KeyOutputType"><code class="docutils literal notranslate"><span class="pre">KeyOutputType</span></code></a><ul>

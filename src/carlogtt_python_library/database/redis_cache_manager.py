@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/database/redis_cache_manager.py
+# src/carlogtt_python_library/database/redis_cache_manager.py
 # Created 6/7/24 - 10:30 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL

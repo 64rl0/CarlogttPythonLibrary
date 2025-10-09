@@ -96,7 +96,7 @@ def _patch_redis(monkeypatch):
 
 @pytest.fixture
 def manager():
-    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
+    from carlogtt_python_library.database.redis_cache_manager import RedisCacheManager
 
     return RedisCacheManager(
         host="fake-host",
@@ -107,7 +107,7 @@ def manager():
 
 @pytest.fixture
 def serializer():
-    from carlogtt_library.database.redis_cache_manager import _RedisSerializer
+    from carlogtt_python_library.database.redis_cache_manager import _RedisSerializer
 
     return _RedisSerializer()
 
@@ -188,14 +188,14 @@ def test_clear_single_and_all(manager):
 
 
 def test_unknown_category_raises(manager):
-    from carlogtt_library.exceptions import RedisCacheManagerError
+    from carlogtt_python_library.exceptions import RedisCacheManagerError
 
     with pytest.raises(RedisCacheManagerError):
         manager.set("invalid", "k", 1)
 
 
 def _make_manager():
-    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
+    from carlogtt_python_library.database.redis_cache_manager import RedisCacheManager
 
     return RedisCacheManager(
         host="fake",
@@ -219,7 +219,7 @@ def _make_manager():
     ],
 )
 def test_unknown_category_raises(method, kwargs):
-    from carlogtt_library.exceptions import RedisCacheManagerError
+    from carlogtt_python_library.exceptions import RedisCacheManagerError
 
     m = _make_manager()
     with pytest.raises(RedisCacheManagerError):
@@ -242,7 +242,7 @@ def test_unknown_category_raises(method, kwargs):
     ],
 )
 def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs):
-    from carlogtt_library.exceptions import RedisCacheManagerError
+    from carlogtt_python_library.exceptions import RedisCacheManagerError
 
     m = _make_manager()
 
@@ -260,8 +260,8 @@ def test_redis_operation_failure_raises(monkeypatch, method, redis_attr, kwargs)
 
 
 def test_initial_ping_failure(monkeypatch):
-    from carlogtt_library.database.redis_cache_manager import RedisCacheManager
-    from carlogtt_library.exceptions import RedisCacheManagerError
+    from carlogtt_python_library.database.redis_cache_manager import RedisCacheManager
+    from carlogtt_python_library.exceptions import RedisCacheManagerError
 
     class _BadRedis(_FakeRedis):
         def ping(self):

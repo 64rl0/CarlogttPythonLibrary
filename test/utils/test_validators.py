@@ -54,7 +54,7 @@ import pytest
 # ----------------------------------------------------------------------
 @pytest.fixture(scope="module")
 def iv():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     return mylib.InputValidator()
 

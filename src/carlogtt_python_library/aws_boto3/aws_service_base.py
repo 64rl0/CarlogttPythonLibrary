@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/CarlogttLibrary/src/carlogtt_library/aws_boto3/aws_service_base.py
+# src/carlogtt_python_library/aws_boto3/aws_service_base.py
 # Created 5/12/25 - 7:50 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL

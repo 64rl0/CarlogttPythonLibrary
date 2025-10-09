@@ -9,7 +9,7 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/database/__init__.py
+# src/carlogtt_python_library/database/__init__.py
 # Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL

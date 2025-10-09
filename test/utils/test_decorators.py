@@ -65,15 +65,15 @@ def reload_decorators_module_to_override_patch():
     Fixture to reload the decorators module to override the patch decorator.
     """
 
-    import carlogtt_library.utils.decorators
+    import carlogtt_python_library.utils.decorators
 
-    reload(carlogtt_library.utils.decorators)
+    reload(carlogtt_python_library.utils.decorators)
 
     yield
 
 
 def test_retry_success():
-    from carlogtt_library.utils.decorators import retry
+    from carlogtt_python_library.utils.decorators import retry
 
     counter = {"calls": 0}
 
@@ -89,7 +89,7 @@ def test_retry_success():
 
 
 def test_retry_failure():
-    from carlogtt_library.utils.decorators import retry
+    from carlogtt_python_library.utils.decorators import retry
 
     @retry(CustomException, tries=2, delay_secs=0)
     def always_fail():
@@ -100,7 +100,7 @@ def test_retry_failure():
 
 
 def test_retry_context_manager():
-    from carlogtt_library.utils.decorators import retry
+    from carlogtt_python_library.utils.decorators import retry
 
     counter = {"calls": 0}
 
@@ -117,7 +117,7 @@ def test_retry_context_manager():
 
 
 def test_benchmark_execution(caplog):
-    from carlogtt_library.utils.decorators import benchmark_execution
+    from carlogtt_python_library.utils.decorators import benchmark_execution
 
     caplog.set_level(logging.INFO)
 
@@ -133,7 +133,7 @@ def test_benchmark_execution(caplog):
 
 
 def test_benchmark_custom_resolution(caplog):
-    from carlogtt_library.utils.decorators import BenchmarkResolution, benchmark_execution
+    from carlogtt_python_library.utils.decorators import BenchmarkResolution, benchmark_execution
 
     caplog.set_level(logging.INFO)
 
@@ -147,7 +147,7 @@ def test_benchmark_custom_resolution(caplog):
 
 
 def test_log_execution(caplog):
-    from carlogtt_library.utils.decorators import log_execution
+    from carlogtt_python_library.utils.decorators import log_execution
 
     caplog.set_level(logging.INFO)
 
@@ -164,28 +164,28 @@ def test_log_execution(caplog):
 
 
 def test_retry_invalid_exception():
-    from carlogtt_library.utils.decorators import retry
+    from carlogtt_python_library.utils.decorators import retry
 
     with pytest.raises(ValueError):
         retry(["not_an_exception"], tries=2)
 
 
 def test_benchmark_invalid_resolution_type():
-    from carlogtt_library.utils.decorators import benchmark_execution
+    from carlogtt_python_library.utils.decorators import benchmark_execution
 
     with pytest.raises(TypeError):
         benchmark_execution(resolution=123)
 
 
 def test_benchmark_invalid_resolution_value():
-    from carlogtt_library.utils.decorators import benchmark_execution
+    from carlogtt_python_library.utils.decorators import benchmark_execution
 
     with pytest.raises(ValueError):
         benchmark_execution(resolution="invalid")
 
 
 def test_retryer_non_callable_arg_raises():
-    from carlogtt_library.utils.decorators import retry
+    from carlogtt_python_library.utils.decorators import retry
 
     with retry(Exception) as retryer:
         with pytest.raises(TypeError) as excinfo:

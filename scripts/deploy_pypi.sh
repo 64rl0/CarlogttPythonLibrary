@@ -79,16 +79,7 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
-# Format package
-icarus builder forge --format
-
-# Activate local venv
-. "${project_root_dir_abs}/build_venv/bin/activate"
-echo -e "\n\n${bold_green}${green_check_mark} venv build_venv activated:${end}"
-echo -e "OS Version: $(uname)"
-echo -e "Kernel Version: $(uname -r)"
-echo -e "venv: $VIRTUAL_ENV"
-echo -e "running: $(python --version)"
+icarus builder release
 
 echo -e "\n\n"
 
@@ -110,27 +101,24 @@ echo -e "completed!"
 
 # Build new package version
 echo -e "\n\n${bold_green}${hammer_and_wrench}  Building package${end}"
-python3 -m build >/dev/null 2>&1
+icarus build exec 'python3 -m build >/dev/null 2>&1'
 echo -e "completed!"
 
 # Check package artifacts
 echo -e "\n\n${bold_green}${package} Checking package health${end}"
-twine check dist/*
+icarus build exec 'python3 -m twine check dist/*'
 
 # Upload package to TEST PyPi
 echo -e "\n\n${bold_green}${network_world} Uploading package to TEST PyPi${end}"
-twine upload \
+icarus build exec "python3 -m twine upload \
 	--repository testpypi \
 	--username __token__ \
 	--password "${CARLOGTT_SECRET_PYPI_TEST_API_TOKEN}" \
-	dist/*
+	dist/*"
 
 # Upload package to PROD PyPi
 echo -e "\n\n${bold_green}${network_world} Uploading package to PROD PyPi${end}"
-twine upload \
+icarus build exec "python3 -m twine upload \
 	--username __token__ \
 	--password "${CARLOGTT_SECRET_PYPI_PROD_API_TOKEN}" \
-	dist/*
-
-echo -e "\n\n${bold_yellow}${warning_sign} Virtual environment deactivated!${end}"
-deactivate
+	dist/*"

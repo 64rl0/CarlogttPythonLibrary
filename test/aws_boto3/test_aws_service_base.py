@@ -43,8 +43,8 @@ import botocore.exceptions
 import pytest
 
 # My Library Imports
-from carlogtt_library import exceptions
-from carlogtt_library.aws_boto3.aws_service_base import AwsServiceBase
+from carlogtt_python_library import exceptions
+from carlogtt_python_library.aws_boto3.aws_service_base import AwsServiceBase
 
 # END IMPORTS
 # ======================================================================

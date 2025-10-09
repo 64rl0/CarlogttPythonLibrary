@@ -54,20 +54,22 @@ import pytest
 
 @pytest.fixture
 def dynamodb_instance():
-    from carlogtt_library.database.database_dynamo import DynamoDB
+    from carlogtt_python_library.database.database_dynamo import DynamoDB
 
     return DynamoDB(aws_region_name="us-east-1", caching=True)
 
 
 @pytest.fixture
 def mock_boto3():
-    with mock.patch("carlogtt_library.aws_boto3.aws_service_base.boto3") as mock_boto3:
+    with mock.patch("carlogtt_python_library.aws_boto3.aws_service_base.boto3") as mock_boto3:
         yield mock_boto3
 
 
 @pytest.fixture
 def mock_client():
-    with mock.patch("carlogtt_library.database.database_dynamo.DynamoDB._client") as mock_client:
+    with mock.patch(
+        "carlogtt_python_library.database.database_dynamo.DynamoDB._client"
+    ) as mock_client:
         yield mock_client
 
 
@@ -90,7 +92,7 @@ def test_invalidate_client_cache(dynamodb_instance):
 
 
 def test_invalidate_client_cache_without_caching():
-    from carlogtt_library.database.database_dynamo import DynamoDB
+    from carlogtt_python_library.database.database_dynamo import DynamoDB
 
     instance = DynamoDB(aws_region_name="us-east-1", caching=False)
     with pytest.raises(Exception) as excinfo:

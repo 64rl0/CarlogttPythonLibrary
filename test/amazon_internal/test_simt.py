@@ -118,14 +118,14 @@ def _patch_tickety(monkeypatch):
 
 @pytest.fixture
 def simt_instance():
-    from carlogtt_library.amazon_internal.simt import SimT
+    from carlogtt_python_library.amazon_internal.simt import SimT
 
     return SimT("eu-west-1", caching=False)
 
 
 @pytest.fixture
 def simt_instance_cached():
-    from carlogtt_library.amazon_internal.simt import SimT
+    from carlogtt_python_library.amazon_internal.simt import SimT
 
     return SimT("eu-west-1", caching=True)
 
@@ -154,7 +154,7 @@ def test_get_ticket_details_success(simt_instance):
 
 
 def test_get_ticket_details_missing_field_raises(simt_instance):
-    from carlogtt_library.exceptions import SimTError
+    from carlogtt_python_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
         simt_instance.get_ticket_details("missing_field")
@@ -167,7 +167,7 @@ def test_update_ticket_success(simt_instance_cached):
 
 
 def test_update_ticket_bad_status_raises(simt_instance_cached):
-    from carlogtt_library.exceptions import SimTError
+    from carlogtt_python_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
         simt_instance_cached.update_ticket("bad", {})
@@ -179,7 +179,7 @@ def test_create_comment_success(simt_instance_cached):
 
 
 def test_create_comment_missing_key_raises(simt_instance_cached):
-    from carlogtt_library.exceptions import SimTError
+    from carlogtt_python_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
         simt_instance_cached.create_ticket_comment("fail", "oops")
@@ -191,21 +191,21 @@ def test_create_ticket_success(simt_instance):
 
 
 def test_create_ticket_missing_id_raises(simt_instance):
-    from carlogtt_library.exceptions import SimTError
+    from carlogtt_python_library.exceptions import SimTError
 
     with pytest.raises(SimTError):
         simt_instance.create_ticket({"no_summary": "bad"})
 
 
 def test_simticket_handler_deprecation():
-    from carlogtt_library.amazon_internal.simt import SimTicketHandler
+    from carlogtt_python_library.amazon_internal.simt import SimTicketHandler
 
     with pytest.warns(DeprecationWarning):
         handler = SimTicketHandler("us-east-1")
 
 
 def test_update_ticket_success(simt_instance, mock_client):
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     simt_instance._cache['client'] = mock_client
     mock_client.update_ticket.return_value = {"ResponseMetadata": {"HTTPStatusCode": 200}}

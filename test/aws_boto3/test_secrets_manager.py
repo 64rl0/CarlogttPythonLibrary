@@ -118,14 +118,14 @@ def _patch_boto3(monkeypatch):
 # ----------------------------------------------------------------------
 @pytest.fixture
 def cached_manager():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     return mylib.SecretsManager("eu-west-1", caching=True)
 
 
 @pytest.fixture
 def fresh_manager():
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     return mylib.SecretsManager("eu-west-1", caching=False)
 
@@ -144,7 +144,7 @@ def test_client_cached(cached_manager):
 
 
 def test_invalidate_without_cache_raises(fresh_manager):
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     with pytest.raises(mylib.SecretsManagerError):
         fresh_manager.invalidate_client_cache()
@@ -182,7 +182,7 @@ def test_get_secret_password_field(cached_manager):
 
 
 def test_get_secret_error_raises(cached_manager):
-    import carlogtt_library as mylib
+    import carlogtt_python_library as mylib
 
     with pytest.raises(mylib.SecretsManagerError):
         cached_manager.get_secret("not-there")

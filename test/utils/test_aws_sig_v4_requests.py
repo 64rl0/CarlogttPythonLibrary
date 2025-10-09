@@ -63,7 +63,7 @@ def dummy_boto_session():
 
 @pytest.fixture
 def session(dummy_boto_session):
-    from carlogtt_library.utils.aws_sig_v4_requests import (
+    from carlogtt_python_library.utils.aws_sig_v4_requests import (
         AwsSigV4Protocol,
         AwsSigV4Session,
     )
@@ -146,7 +146,7 @@ def test_request_serializes_data_and_returns(monkeypatch, session):
 
 
 def test_request_raises_on_http_error(monkeypatch, session):
-    from carlogtt_library.exceptions import AwsSigV4SessionError
+    from carlogtt_python_library.exceptions import AwsSigV4SessionError
 
     monkeypatch.setattr(
         requests.Session,
@@ -160,8 +160,8 @@ def test_request_raises_on_http_error(monkeypatch, session):
 
 
 def test_request_rpcv0_detects_embedded_error(monkeypatch, dummy_boto_session):
-    from carlogtt_library.exceptions import AwsSigV4SessionError
-    from carlogtt_library.utils.aws_sig_v4_requests import (
+    from carlogtt_python_library.exceptions import AwsSigV4SessionError
+    from carlogtt_python_library.utils.aws_sig_v4_requests import (
         AwsSigV4Protocol,
         AwsSigV4Session,
     )
