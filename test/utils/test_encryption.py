@@ -42,7 +42,7 @@ import pytest
 from cryptography.fernet import Fernet
 
 # My Library Imports
-import carlogtt_library as mylib
+import carlogtt_python_library as mylib
 
 # END IMPORTS
 # ======================================================================
@@ -123,6 +123,11 @@ def test_encrypt_decrypt_aes128_roundtrip(crypto, fernet_key):
     assert pt == plaintext
 
 
+def test_encrypt_string_wrong_key_len_aes128_raises(crypto):
+    with pytest.raises(ValueError):
+        crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_128)
+
+
 # ----------------------------------------------------------------------
 # AES-256 path
 # ----------------------------------------------------------------------
@@ -133,7 +138,7 @@ def test_encrypt_decrypt_aes256_roundtrip(crypto, aes256_key):
     assert pt == plaintext
 
 
-def test_encrypt_string_wrong_key_len_raises(crypto):
+def test_encrypt_string_wrong_key_len_aes256_raises(crypto):
     with pytest.raises(ValueError):
         crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_256)
 
