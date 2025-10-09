@@ -9,15 +9,13 @@
 #  (      _ \     /  |     (   | (_ |    |      |
 # \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|
 
-# src/carlogtt_library/utils/encryption.py
+# src/carlogtt_python_library/utils/encryption.py
 # Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
 # Copyright (c) Amazon.com Inc. All Rights Reserved.
 # AMAZON.COM CONFIDENTIAL
 
 """
-This module provides functions and utilities for password encryption.
-It offers encryption algorithms and techniques specifically designed for
-securely storing and handling passwords.
+Utilities for authenticated encryption and password hashing.
 """
 
 # ======================================================================
@@ -39,14 +37,15 @@ import base64
 import enum
 import logging
 import os
-import random
+import secrets
 import string
-import time
+import warnings
 from collections.abc import Sequence
-from typing import Union
+from typing import Optional, TypedDict, Union
 
 # Third Party Library Imports
 import cryptography.fernet
+import cryptography.hazmat.primitives.ciphers.aead
 import cryptography.hazmat.primitives.ciphers.algorithms
 import cryptography.hazmat.primitives.ciphers.modes
 import cryptography.hazmat.primitives.hashes
@@ -75,6 +74,13 @@ module_logger = logging.getLogger(__name__)
 
 # Type aliases
 #
+
+
+class ScryptParamsType(TypedDict):
+    n: int
+    r: int
+    p: int
+    length: int
 
 
 class KeyType(enum.Enum):
@@ -116,12 +122,16 @@ class KeyOutputType(enum.Enum):
 
 class EncryptionAlgorithm(enum.Enum):
     """
-    Defines supported encryption algorithms and their corresponding
-    security levels.
+    Defines supported encryption algorithms anf their envelope prefixes.
     """
 
-    AES_128 = enum.auto()
-    AES_256 = enum.auto()
+    AES_128 = "v1:fernet:"
+    AES_256 = "v1:cbc:"
+    AES_GCM = "v2:gcm:"
+
+    @classmethod
+    def all_alg_prefixes(cls) -> tuple[str, ...]:
+        return tuple(alg.value for alg in cls)
 
 
 class Cryptography:
@@ -154,7 +164,7 @@ class Cryptography:
             raise exceptions.CryptographyError(f"Invalid key type: {key_type}")
 
         # Create a random bytes
-        key = os.urandom(key_type.value)
+        key = self._rand_bytes(n=key_type.value)
 
         # Return the key based on the output format
         self.logger.debug(
@@ -203,114 +213,153 @@ class Cryptography:
 
     def hash_string(self, raw_string: str, key: bytes) -> str:
         """
-        Hashes a given string using the Scrypt Key Derivation Function
-        and encrypts the result for secure storage.
-        The function embeds the salt used for hashing within the
-        encrypted hash, ensuring that each piece of data is uniquely
-        salted and securely stored.
+        DEPRECATED — use `hash_string_v2()`.
+        Note: the key parameter is ignored in this deprecated API.
 
-        :param raw_string: The raw string to be hashed and encrypted.
+        Hashes a given string using the Scrypt Key Derivation Function
+
+        :param raw_string: The raw string to be hashed.
                Typically, this would be a password or any other
                sensitive information requiring secure handling.
-        :param key: The secret key used for encrypting the hashed
+        :param key: The secret key used for hashing the hashed
                string. This key should be generated and managed using
                secure cryptographic practices and must be a 32-byte key
                for AES-256.
-        :return: The encrypted hash of the input string.
-                 This output includes both the Scrypt-derived
-                 hash and the salt, encrypted for additional security.
-                 The resulting binary data is suitable for secure
-                 storage in a database or file system, where it can
-                 later be decrypted and verified against a user-provided
-                 string.
+        :return: The hash of the input string.
         """
 
-        # Encode raw_password to bytes
-        b_raw_string = raw_string.encode()
+        msg = (
+            f"[DEPRECATED] '{self.hash_string.__name__}' is deprecated in Class"
+            f" '{self.__class__.__name__}'. Use the new method '{self.hash_string_v2.__name__}()'"
+            " instead."
+        )
+        warnings.warn(msg, DeprecationWarning, stacklevel=3)
+        module_logger.warning(msg)
 
-        # Generate a random salt for the password encryption
-        salt = self.create_key(KeyType.AES128, KeyOutputType.BYTES)
-        # Encode the salt to url-safe byte array
-        salt_base64 = base64.urlsafe_b64encode(salt)
+        return self.hash_string_v2(raw_string=raw_string)
 
-        # Derive key using Scrypt
-        b_hashed = self._derive_key_scrypt(salt, b_raw_string)
-
-        # Encode derived_key to url-safe byte array
-        b_hashed_base64 = base64.urlsafe_b64encode(b_hashed)
-
-        # Embed salt into hashed string joining them together with
-        # byte "&"
-        b_hashed_salt = b_hashed_base64 + b"&" + salt_base64
-
-        # It's now time to encrypt it for additional security as at this
-        # stage the string is simply urlsafe_b64encoded therefore would
-        # be pretty straight forward for someone to decode it with
-        # urlsafe_b64decode and find the special "&" which separates the
-        # hashed_string and the salt
-
-        # Decode to pass to encrypt function
-        s_hashed_salt = b_hashed_salt.decode()
-
-        # Encrypt
-        ciphertext = self.encrypt_string(s_hashed_salt, key, EncryptionAlgorithm.AES_256)
-
-        return ciphertext
-
-    def validate_hash_match(
-        self,
-        raw_string: str,
-        hashed_to_match: str,
-        key: bytes,
-    ) -> bool:
+    def hash_string_v2(
+        self, raw_string: str, scrypt_params: Optional[ScryptParamsType] = None
+    ) -> str:
         """
-        Validates whether a provided raw string matches the encrypted
-        and hashed string stored. This function is designed to work in
-        conjunction with hash_string function, reversing its hashing and
-        encryption process to verify user input against stored values
-        securely.
+        Hash a given string with scrypt and return a PHC-style string:
+
+        scrypt$ln=<n2exp>,r=<r>,p=<p>$<salt_b64>$<hash_b64>
+
+        A new 16-byte random salt is generated per given string.
+
+        :param raw_string: The raw string to be hashed.
+               Typically, this would be a password or any other
+               sensitive information requiring secure handling.
+        :param scrypt_params: The scrypt parameters to be used for
+               hashing. If not provided, secure defaults are used.
+        :return: The hash of the input string PHC-style scrypt string.
+        """
+
+        if not scrypt_params:
+            scrypt_params = {
+                "n": 2**17,
+                "r": 8,
+                "p": 1,
+                "length": 32,
+            }
+
+        n = scrypt_params['n']
+        if n <= 1 or (n & (n - 1)) != 0:
+            raise ValueError("scrypt 'n' must be a power of two > 1")
+
+        # since n is power of two
+        ln = n.bit_length() - 1
+
+        salt = self._rand_bytes(16)
+
+        kdf = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
+            salt=salt,
+            length=scrypt_params['length'],
+            n=scrypt_params['n'],
+            r=scrypt_params['r'],
+            p=scrypt_params['p'],
+        )
+
+        # Derive the key
+        dk = kdf.derive(raw_string.encode())
+
+        self.logger.debug("Scrypt key derived successfully")
+
+        hash_string = f"scrypt$ln={ln},r={scrypt_params['r']},p={scrypt_params['p']}${self._b64u_encode(salt)}${self._b64u_encode(dk)}"  # noqa
+
+        return hash_string
+
+    def validate_hash_match(self, raw_string: str, hashed_to_match: str, key: bytes) -> bool:
+        """
+        DEPRECATED — use `validate_hash_match_v2()`.
+        Note: the key parameter is ignored in this deprecated API.
+
+        Validates whether a provided raw string matches the hashed
+        string stored.
 
         :param raw_string: The plaintext string provided by the user,
                typically a password or sensitive information that needs
                validation against a stored, hashed version.
-        :param hashed_to_match: The encrypted and hashed data that the
-               raw_string is compared against. This should have been
-               previously generated by the hash_string function.
-        :param key: The secret key used for decrypting the hashed
-               string. It must be the same key used for
-               encrypting the string initially with the `hash_string`
-               function.
+        :param hashed_to_match: The hashed data that the
+               raw_string is compared against.
+        :param key: The secret key used for hashing the hashed
+               string.
         :return: True if the raw_string, when hashed and processed,
                  matches the hashed_string_to_match; False otherwise.
-                 The function also returns False in the case of
-                 decryption or verification failures.
+        """
+
+        msg = (
+            f"[DEPRECATED] '{self.validate_hash_match.__name__}' is deprecated in Class"
+            f" '{self.__class__.__name__}'. Use the new method"
+            f" '{self.validate_hash_match_v2.__name__}()' instead."
+        )
+        warnings.warn(msg, DeprecationWarning, stacklevel=3)
+        module_logger.warning(msg)
+
+        return self.validate_hash_match_v2(raw_string=raw_string, hashed_to_match=hashed_to_match)
+
+    def validate_hash_match_v2(self, raw_string: str, hashed_to_match: str) -> bool:
+        """
+        Verify a provided raw string against a PHC-style scrypt string
+        in constant time.
+
+        :param raw_string: The plaintext string provided by the user,
+               typically a password or sensitive information that needs
+               validation against a stored, hashed version.
+        :param hashed_to_match: The hashed data that the
+               raw_string is compared against.
+        :return: True if the raw_string, when hashed and processed,
+                 matches the hashed_string_to_match; False otherwise.
         """
 
         if not raw_string and hashed_to_match:
             return False
 
         try:
-            # Decrypt
-            s_hashed_salt = self.decrypt_string(hashed_to_match, key, EncryptionAlgorithm.AES_256)
+            scheme, param_str, salt_b64, dk_b64 = hashed_to_match.split("$", 3)
 
-            # Encode
-            b_hashed_salt = s_hashed_salt.encode()
+            if scheme != "scrypt":
+                return False
 
-            # Split
-            # b_hashed_string_url_safe_clean and salt_url_safe_clean
-            b_hashed_base64, salt_base64 = b_hashed_salt.split(b"&")
+            scrypt_params = dict(kv.split("=", 1) for kv in param_str.split(","))
+            n = 1 << int(scrypt_params["ln"])
+            r = int(scrypt_params["r"])
+            p = int(scrypt_params["p"])
 
-            # Retrieve original salt and original b_hashed_string by
-            # decoding urlsafe_b64decode
-            b_hashed = base64.urlsafe_b64decode(b_hashed_base64)
-            salt = base64.urlsafe_b64decode(salt_base64)
+            salt = self._b64u_decode(salt_b64)
+            expected = self._b64u_decode(dk_b64)
 
-            # Now we are ready to compare with the string to validate,
-            # we need to convert the raw string to bytes
-            b_raw_string = raw_string.encode()
+            length = len(expected)
 
-            # Verify derived key using Scrypt
-            self._verify_derived_key_scrypt(salt, b_raw_string, b_hashed)
+            kdf = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
+                salt=salt, length=length, n=n, r=r, p=p
+            )
+
+            # Attempt to verify the derived key
+            kdf.verify(raw_string.encode(), expected)
+
+            self.logger.debug("Scrypt key verified successfully")
 
             return True
 
@@ -428,36 +477,45 @@ class Cryptography:
         self,
         plaintext: str,
         key: bytes,
-        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
+        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_GCM,
+        associated_data: Optional[bytes] = None,
     ) -> str:
         """
-        Encrypts a string using the specified symmetric encryption
-        algorithm.
+        Encrypts plaintext using the selected algorithm and returns a
+        versioned, Base64-url-safe string.
 
-        This function provides a unified interface to encrypt strings
-        using different encryption algorithms specified by the
-        'algorithm' parameter. It delegates the encryption process to
-        the appropriate internal function based on the chosen algorithm.
+        Envelope prefixes:
+          - v2:gcm:...    → AES-256-GCM (default)
+          - v1:cbc:...    → AES-256-CBC + HMAC-SHA256 (legacy)
+          - v1:fernet:... → Fernet (legacy)
+
+        - AES_GCM: expects a 32-byte key (AES-256-GCM). Optional AAD.
+        - AES_256 (CBC+HMAC): expects a 32-byte key; integrity via HMAC.
+        - AES_128 (Fernet): expects a 44-byte urlsafe base64-encoded
+          key.
 
         :param plaintext: The plaintext string to be encrypted.
         :param key: The secret key used for encryption. The format and
                length depend on the algorithm being used.
-               For AES-128, must be a URL-safe base64-encoded 32-byte
-               key. For AES-256, must be a 32-byte key.
         :param algorithm: An instance of the
-               EncryptionEncryptionAlgorithm enum indicating the
+               EncryptionAlgorithm enum indicating the
                encryption algorithm to use.
-               Default EncryptionAlgorithm.AES_256
+               Default EncryptionAlgorithm.AES_GCM
+        :param associated_data: Additional authenticated data (AAD) to
+               be authenticated but not encrypted. It must be provided
+               as a byte string if used.
         :return: The encrypted string, encoded with Base64 to ensure the
-                 encrypted data is text-safe. With padding removed for
-                 storage efficiency.
+                 encrypted data is text-safe.
         """
 
-        if algorithm is EncryptionAlgorithm.AES_128:
-            return self._encrypt_aes128(plaintext=plaintext, fernet_key=key)
+        if algorithm is EncryptionAlgorithm.AES_GCM:
+            return self._encrypt_aes_gcm(plaintext=plaintext, key=key, aad=associated_data)
 
         elif algorithm is EncryptionAlgorithm.AES_256:
             return self._encrypt_aes256(plaintext=plaintext, key=key)
+
+        elif algorithm is EncryptionAlgorithm.AES_128:
+            return self._encrypt_aes128(plaintext=plaintext, fernet_key=key)
 
         else:
             raise ValueError(f"algorthm must be one of the following {list(EncryptionAlgorithm)}")
@@ -466,34 +524,53 @@ class Cryptography:
         self,
         ciphertext: str,
         key: bytes,
-        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_256,
+        algorithm: EncryptionAlgorithm = EncryptionAlgorithm.AES_GCM,
+        associated_data: Optional[bytes] = None,
     ) -> str:
         """
         Decrypts a string previously encrypted by the `encrypt_string`
-        function using the specified symmetric encryption algorithm.
+        function.
 
-        This function provides a unified interface to decrypt strings
-        using different encryption algorithms specified by the
-        'algorithm' parameter. It delegates the decryption process to
-        the appropriate internal function based on the chosen algorithm.
+        If a version prefix is present, auto-detect the algorithm:
+          - v2:gcm:...    → AES-GCM
+          - v1:cbc:...    → AES-CBC + HMAC (legacy)
+          - v1:fernet:... → Fernet (legacy)
+        Otherwise, fall back to the provided `algorithm`.
 
         :param ciphertext: The encrypted string to be decrypted.
-               It is expected to be Base64 encoded and without padding.
+               It is expected to be Base64 encoded.
         :param key: The secret key used for decryption. Must match the
                key used for encryption and be appropriate for the
                specified algorithm.
         :param algorithm: An instance of the EncryptionAlgorithm enum
                indicating the encryption algorithm to use.
-               Default EncryptionAlgorithm.AES_256
+               Default EncryptionAlgorithm.AES_GCM
+        :param associated_data: Additional authenticated data (AAD) to
+               be authenticated but not encrypted. It must be provided
+               as a byte string if used.
         :return: The decrypted plaintext string. Returns an empty string
                  and logs a warning if decryption fails.
         """
 
-        if algorithm is EncryptionAlgorithm.AES_128:
+        # Try auto-detect alg first then fall back to user provided alg
+        if ciphertext.startswith(EncryptionAlgorithm.AES_GCM.value):
+            return self._decrypt_aes_gcm(ciphertext=ciphertext, key=key, aad=associated_data)
+
+        if ciphertext.startswith(EncryptionAlgorithm.AES_256.value):
+            return self._decrypt_aes256(ciphertext=ciphertext, key=key)
+
+        if ciphertext.startswith(EncryptionAlgorithm.AES_128.value):
             return self._decrypt_aes128(ciphertext=ciphertext, fernet_key=key)
+
+        # manual selection
+        if algorithm is EncryptionAlgorithm.AES_GCM:
+            return self._decrypt_aes_gcm(ciphertext=ciphertext, key=key, aad=associated_data)
 
         elif algorithm is EncryptionAlgorithm.AES_256:
             return self._decrypt_aes256(ciphertext=ciphertext, key=key)
+
+        elif algorithm is EncryptionAlgorithm.AES_128:
+            return self._decrypt_aes128(ciphertext=ciphertext, fernet_key=key)
 
         else:
             raise ValueError(f"algorthm must be one of the following {list(EncryptionAlgorithm)}")
@@ -546,17 +623,22 @@ class Cryptography:
         return ciphertext_re_encrypted
 
     def create_token(
-        self, length: int, validity_secs: int, key: bytes, population: Sequence = ()
-    ) -> dict[str, Union[str, int]]:
+        self,
+        length: int,
+        validity_secs: Union[int, float],
+        now_epoch: float,
+        key: bytes,
+        population: Sequence = (),
+    ) -> dict[str, Union[str, float]]:
         """
         Generates a secure token and its expiry time. The token is
         encrypted with a given key to produce a cipher token.
 
-        :param length: Length of the random token
-               maximum is 62 characters.
+        :param length: Length of the random token.
         :param validity_secs: Time in seconds until the token expires.
         :param key: The secret key used for encryption.
                Must be a 32-byte key for AES-256.
+        :param now_epoch: Current time in seconds since the epoch.
         :param population: Lets you define a different set of characters
                that the token can be composed of.
                Default letters and digits
@@ -565,24 +647,21 @@ class Cryptography:
                  keys.
         """
 
-        if length > 62:
-            raise ValueError("length cannot be greater than 62")
+        alphabet = string.ascii_letters + string.digits
+        population = population or alphabet
 
-        population = population or string.ascii_letters + string.digits
-
-        random_string = "".join(random.sample(population, length))
-        random_string_hashed = self.hash_string(random_string, key)
+        random_string = "".join(secrets.choice(population) for _ in range(length))
+        random_string_hashed = self.hash_string_v2(raw_string=random_string)
         random_string_hashed_base64 = base64.urlsafe_b64encode(random_string_hashed.encode())
 
-        now = time.time_ns()
-        expires = now + validity_secs * 1_000_000_000
+        expires = float(now_epoch) + float(validity_secs)
         expires_base64 = base64.urlsafe_b64encode(str(expires).encode())
 
         combined = random_string_hashed_base64 + b"&" + expires_base64
 
-        combined_encrypted = self.encrypt_string(combined.decode(), key)
+        combined_encrypted = self.encrypt_string(plaintext=combined.decode(), key=key)
 
-        response: dict[str, Union[str, int]] = {
+        response: dict[str, Union[str, float]] = {
             'token': random_string,
             'expiry': expires,
             'ciphertoken': combined_encrypted,
@@ -591,8 +670,8 @@ class Cryptography:
         return response
 
     def verify_token(
-        self, token: str, ciphertoken: str, key: bytes
-    ) -> dict[str, Union[str, int, bool]]:
+        self, token: str, ciphertoken: str, now_epoch: float, key: bytes
+    ) -> dict[str, Union[str, float, bool]]:
         """
         Verifies the validity of the given token by decrypting the
         cipher token using the provided key, and checks if it's expired
@@ -602,6 +681,7 @@ class Cryptography:
         :param token: The original token to be validated.
         :param ciphertoken: The encrypted string containing the token
                and expiry.
+        :param now_epoch: Current time in seconds since the epoch.
         :param key: The secret key used for encryption.
                Must be a 32-byte key for AES-256.
         :return: A dictionary with the keys 'token_valid', 'token',
@@ -610,20 +690,19 @@ class Cryptography:
         """
 
         # Initializing code validity response and override if True
-        response: dict[str, Union[str, int, bool]] = {
+        response: dict[str, Union[str, float, bool]] = {
             'token_valid': False,
             'token': "",
-            'expiry': 0,
+            'expiry': 0.0,
         }
 
-        combined = self.decrypt_string(ciphertoken, key).encode()
+        combined = self.decrypt_string(ciphertext=ciphertoken, key=key).encode()
 
         try:
             random_string_hashed_base64, expiry_base64 = combined.split(b"&")
             random_string_hashed = base64.urlsafe_b64decode(random_string_hashed_base64).decode()
 
-            expiry = int(base64.urlsafe_b64decode(expiry_base64).decode())
-            now = time.time_ns()
+            expiry = float(base64.urlsafe_b64decode(expiry_base64).decode())
 
             response.update(token=token, expiry=expiry)
 
@@ -631,8 +710,10 @@ class Cryptography:
             response.update(response_info=repr(ex))
             return response
 
-        if now < expiry:
-            confirmation_code_valid = self.validate_hash_match(token, random_string_hashed, key)
+        if float(now_epoch) < expiry:
+            confirmation_code_valid = self.validate_hash_match_v2(
+                raw_string=token, hashed_to_match=random_string_hashed
+            )
             response.update(token_valid=confirmation_code_valid)
         else:
             response.update(response_info="Token expired")
@@ -644,37 +725,36 @@ class Cryptography:
         Encrypts a string using Fernet symmetric encryption.
 
         This function encrypts a given string with Fernet, encoding the
-        input to bytes, then encrypting. It removes the padding ("=") at
-        the end of the encrypted byte array to minimize storage.
+        input to bytes, then encrypting.
 
         :param plaintext: The plaintext string to be encrypted.
         :param fernet_key: The secret key used for encryption. Must be a
                URL-safe base64-encoded 32-byte key.
         :return: The encrypted string, encoded with Base64 to ensure the
-                 encrypted data is text-safe. With padding removed for
-                 storage efficiency.
+                 encrypted data is text-safe.
         """
 
         # Ensure the Fernet key length is valid
         # For a bytes_length of 32, the length of the Base64-encoded
         # string without stripping padding would be 44 characters.
-        if len(fernet_key) != 44:
-            msg = "Fernet key must be a URL-safe base64-encoded 32-byte key."
-            self.logger.error(msg)
-            raise ValueError(msg)
+        self._ensure_len(
+            key=fernet_key,
+            n=44,
+            exc_msg="Fernet key must be a URL-safe base64-encoded and 32-byte key",
+        )
 
         cipher_suite = cryptography.fernet.Fernet(key=fernet_key)
 
         b_string_to_encrypt = plaintext.encode()
         b_encrypted = cipher_suite.encrypt(b_string_to_encrypt)
 
-        # Strip last two "==" at the end as Fernet always return a 64
-        # bytes array which ends with two "=="
-        b_encrypted_clean = b_encrypted.rstrip(b"=")
+        s_encrypted_clean = b_encrypted.decode()
 
-        s_encrypted_clean = b_encrypted_clean.decode()
+        # Add alg info prefix
+        alg_prefix = EncryptionAlgorithm.AES_128.value
+        s_encrypted_clean_with_alg = f"{alg_prefix}{s_encrypted_clean}"
 
-        return s_encrypted_clean
+        return s_encrypted_clean_with_alg
 
     def _decrypt_aes128(self, ciphertext: str, fernet_key: bytes) -> str:
         """
@@ -685,7 +765,6 @@ class Cryptography:
         warning, and returns an empty string to indicate failure.
 
         :param ciphertext: The encrypted string to be decrypted.
-               Padding will be re-added internally for decryption.
         :param fernet_key: The secret key used for decryption.
                Must match the key used for encryption.
         :return: The decrypted plaintext string. Returns an empty string
@@ -695,15 +774,13 @@ class Cryptography:
         # Ensure the Fernet key length is valid
         # For a bytes_length of 32, the length of the Base64-encoded
         # string without stripping padding would be 44 characters.
-        if len(fernet_key) != 44:
-            msg = "Fernet key must be a URL-safe base64-encoded 32-byte key."
-            self.logger.error(msg)
-            raise ValueError(msg)
+        self._ensure_len(
+            key=fernet_key,
+            n=44,
+            exc_msg="Fernet key must be a URL-safe base64-encoded and 32-byte key",
+        )
 
-        # Correct the Base64 padding if necessary
-        missing_padding = len(ciphertext) % 4
-        if missing_padding:
-            ciphertext += "=" * (4 - missing_padding)
+        ciphertext = self._get_encrypted_ciphertext(ciphertext=ciphertext)
 
         cipher_suite = cryptography.fernet.Fernet(key=fernet_key)
 
@@ -734,15 +811,11 @@ class Cryptography:
         :param key: The secret key used for encryption.
                Must be a 32-byte key for AES-256.
         :return: The encrypted string, encoded with Base64 to ensure the
-                 encrypted data is text-safe. With padding removed for
-                 storage efficiency.
+                 encrypted data is text-safe.
         """
 
         # Ensure the AES key length is valid for AES-256
-        if len(key) != 32:
-            msg = "AES key must be 32 bytes long for AES-256."
-            self.logger.error(msg)
-            raise ValueError(msg)
+        self._ensure_len(key=key, n=32, exc_msg="AES-256 must be 32-byte key")
 
         # Generate a random salt used to randomizes the KDF’s output
         # Used to derive 2 keys, one for encryption and one for signing
@@ -785,11 +858,11 @@ class Cryptography:
         b_ciphertext_signed_salt = b_ciphertext_signed_base64 + b"&" + salt_base64
 
         # Encode base64 to remove the &
-        b_ciphertext_signed_salt_base64 = base64.urlsafe_b64encode(b_ciphertext_signed_salt)
+        ciphertext = self._b64u_encode(b_ciphertext_signed_salt)
 
-        # Decode Base64 and strip the "=" padding at the end if not a
-        # multiple of 4
-        ciphertext = b_ciphertext_signed_salt_base64.decode().rstrip("=")
+        # Add alg info prefix
+        alg_prefix = EncryptionAlgorithm.AES_256.value
+        ciphertext = f"{alg_prefix}{ciphertext}"
 
         return ciphertext
 
@@ -806,7 +879,6 @@ class Cryptography:
         authenticity issue.
 
         :param ciphertext: The encrypted string to be decrypted.
-               Padding will be re-added internally for decryption.
         :param key: The secret key used for encryption.
                Must be a 32-byte key for AES-256.
         :return: The decrypted plaintext string. Returns an empty string
@@ -814,20 +886,12 @@ class Cryptography:
         """
 
         # Ensure the AES key length is valid for AES-256
-        if len(key) != 32:
-            msg = "AES key must be 32 bytes long for AES-256."
-            self.logger.error(msg)
-            raise ValueError(msg)
+        self._ensure_len(key=key, n=32, exc_msg="AES-256 must be 32-byte key")
 
-        # Correct the Base64 padding if necessary
-        missing_padding = len(ciphertext) % 4
-        if missing_padding:
-            ciphertext += "=" * (4 - missing_padding)
-
-        b_ciphertext_signed_salt_base64 = ciphertext.encode()
+        ciphertext = self._get_encrypted_ciphertext(ciphertext=ciphertext)
 
         # Decode base64 to reveal the &
-        b_ciphertext_signed_salt = base64.urlsafe_b64decode(b_ciphertext_signed_salt_base64)
+        b_ciphertext_signed_salt = self._b64u_decode(ciphertext)
 
         # Split the data and salt at the &
         b_ciphertext_signed_base64, salt_base64 = b_ciphertext_signed_salt.split(b"&")
@@ -873,6 +937,72 @@ class Cryptography:
         plaintext = b_plaintext.decode()
 
         return plaintext
+
+    def _encrypt_aes_gcm(self, plaintext: str, key: bytes, aad: Optional[bytes] = None) -> str:
+        """
+        Encrypts a string using AES-GCM symmetric encryption.
+
+        :param plaintext: The plaintext string to be encrypted.
+        :param key: The secret key used for encryption. Must be a
+               32-byte key.
+        :param aad: Additional authenticated data (AAD) to be
+               authenticated but not encrypted. It must be provided
+               as a byte string if used.
+        :return: The encrypted string, encoded with Base64 to ensure the
+                 encrypted data is text-safe.
+        """
+
+        # Ensure the AES key length is valid for AES-GCM
+        self._ensure_len(key=key, n=32, exc_msg="AES-GCM must be 32-byte key")
+
+        # 96-bit recommended
+        nonce = self._rand_bytes(12)
+        aead = cryptography.hazmat.primitives.ciphers.aead.AESGCM(key)
+
+        ct = aead.encrypt(nonce=nonce, data=plaintext.encode(), associated_data=aad)
+
+        # Envelope: nonce || ct (ct already includes tag)
+        blob = self._b64u_encode(nonce + ct)
+
+        # Add alg info prefix
+        alg_prefix = EncryptionAlgorithm.AES_GCM.value
+        encrypted = f"{alg_prefix}{blob}"
+
+        return encrypted
+
+    def _decrypt_aes_gcm(self, ciphertext: str, key: bytes, aad: Optional[bytes] = None) -> str:
+        """
+        Decrypts a string that was encrypted using AES-GCM symmetric
+        encryption.
+
+        :param ciphertext: The encrypted string to be decrypted.
+        :param key: The secret key used for encryption. Must be a
+               32-byte key.
+        :param aad: Additional authenticated data (AAD) that was
+               authenticated but not encrypted. It must be provided
+               as a byte string if used.
+        :return: The decrypted plaintext string.
+        """
+
+        # Ensure the AES key length is valid for AES-GCM
+        self._ensure_len(key=key, n=32, exc_msg="AES-GCM must be 32-byte key")
+
+        ciphertext = self._get_encrypted_ciphertext(ciphertext=ciphertext)
+
+        blob = self._b64u_decode(ciphertext)
+
+        nonce, ct = blob[:12], blob[12:]
+        aead = cryptography.hazmat.primitives.ciphers.aead.AESGCM(key)
+
+        try:
+            pt = aead.decrypt(nonce=nonce, data=ct, associated_data=aad)
+        except Exception as ex:
+            self.logger.warning(f"GCM decryption failed (bad tag/AAD/nonce): {ex}")
+            return ""
+
+        decrypted = pt.decode()
+
+        return decrypted
 
     def _derive_key_hkdf(self, salt: bytes, key_material: bytes) -> tuple[bytes, bytes]:
         """
@@ -921,71 +1051,84 @@ class Cryptography:
 
         return aes_key, hash_key
 
-    def _derive_key_scrypt(self, salt: bytes, key_material: bytes) -> bytes:
+    def _get_encrypted_ciphertext(self, ciphertext: str) -> str:
         """
-        Derives a cryptographic key from a given key material using the
-        Scrypt KDF.
+        Extracts the encrypted ciphertext from the input string.
 
-        Scrypt is designed to be resistant against hardware-assisted
-        attacks by allowing tunable memory and CPU cost parameters.
-        It is particularly suitable for password storage and protection.
-
-        :param salt: A byte string used to salt the key derivation to
-               prevent rainbow table attacks. The salt should be unique
-               for each credential to be protected but does not need to
-               be kept secret.
-        :param key_material: The input key material from which to derive
-               the key.
-        :return: The derived cryptographic key.
+        :param ciphertext: The input string containing the encrypted
+               ciphertext and other information.
+        :return: The encrypted ciphertext as a string.
         """
 
-        # Scrypt configuration
-        length = 32  # The desired length of the derived key in bytes
-        n = 2**14  # CPU/Memory cost parameter. It must be larger than 1 and be a power of 2
-        r = 8  # Block size parameter
-        p = 1  # Parallelization parameter
+        self.logger.debug("Getting encrypted ciphertext")
 
-        scrypt = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
-            salt=salt, length=length, n=n, r=r, p=p
-        )
+        # Remove alg info prefix
+        # Using if for older stored values
+        for alg in EncryptionAlgorithm.all_alg_prefixes():
+            if ciphertext.startswith(alg):
+                start = len(alg)
+                ciphertext = ciphertext[start:]
+                break
 
-        # Derive the key
-        key_derived = scrypt.derive(key_material)
+        # Correct the Base64 padding if necessary
+        missing_padding = len(ciphertext) % 4
+        if missing_padding:
+            ciphertext += "=" * (4 - missing_padding)
 
-        self.logger.debug("Scrypt key derived successfully")
+        return ciphertext
 
-        return key_derived
-
-    def _verify_derived_key_scrypt(
-        self, salt: bytes, key_material: bytes, expected_key: bytes
-    ) -> None:
+    def _b64u_encode(self, b: bytes) -> str:
         """
-        Verifies a derived key against an expected key using the Scrypt
-        KDF.
+        Encodes a byte string to a Base64 URL-safe string.
 
-        :param salt: A byte string used to salt the key derivation to
-               prevent rainbow table attacks. The salt should be unique
-               for each credential to be protected but does not need to
-               be kept secret.
-        :param key_material: The original key material used for key
-               derivation.
-        :param expected_key: The expected derived key to verify against.
-        :raise: Exception is raised when the derived key does not match
-                the expected key.
+        :param b: The byte string to be encoded.
+        :return: The Base64 URL-safe encoded string.
         """
 
-        # Re-configure Scrypt with the same parameters used for deriving
-        # the key
-        length = 32  # The desired length of the derived key in bytes
-        n = 2**14  # CPU/Memory cost parameter. It must be larger than 1 and be a power of 2
-        r = 8  # Block size parameter
-        p = 1  # Parallelization parameter
+        encoded = base64.urlsafe_b64encode(b).decode()
 
-        scrypt = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
-            salt=salt, length=length, n=n, r=r, p=p
-        )
+        return encoded
 
-        # Attempt to verify the derived key
-        scrypt.verify(key_material, expected_key)
+    def _b64u_decode(self, s: str) -> bytes:
+        """
+        Decodes a Base64 URL-safe encoded string to a byte string.
 
-        self.logger.debug("Scrypt key verified successfully")
+        :param s: The Base64 URL-safe encoded string to be decoded.
+        :return: The decoded byte string.
+        """
+
+        decoded = base64.urlsafe_b64decode(s.encode())
+
+        return decoded
+
+    def _rand_bytes(self, n: int) -> bytes:
+        """
+        Generates cryptographically secure random bytes.
+
+        :param n: The number of random bytes to generate.
+        :return: A byte string containing the generated random bytes.
+        """
+
+        self.logger.debug(f"Generating {n} random bytes")
+
+        b = os.urandom(n)
+
+        return b
+
+    def _ensure_len(self, key: bytes, n: int, exc_msg: str) -> None:
+        """
+        Ensures that a byte string is of a specific length.
+
+        :param key: The byte string to be checked.
+        :param n: The expected length of the byte string.
+        :param exc_msg: The exception message to be raised if the
+               length check fails.
+        :raise: ValueError is raised if the byte string's length does
+                not match the expected length.
+        """
+
+        self.logger.debug(f"Ensuring key length is {n} bytes")
+
+        if len(key) != n:
+            self.logger.error(exc_msg)
+            raise ValueError(exc_msg)

@@ -144,6 +144,36 @@ def test_encrypt_string_wrong_key_len_aes256_raises(crypto):
 
 
 # ----------------------------------------------------------------------
+# AES-GCS path
+# ----------------------------------------------------------------------
+def test_encrypt_decrypt_aes_gcm_roundtrip(crypto, aes256_key):
+    plaintext = "προσωπικό μυστικό"
+    ct = crypto.encrypt_string(plaintext, aes256_key, mylib.EncryptionAlgorithm.AES_GCM)
+    pt = crypto.decrypt_string(ct, aes256_key, mylib.EncryptionAlgorithm.AES_GCM)
+    assert pt == plaintext
+
+
+def test_encrypt_string_wrong_key_len_aes_gcm_raises(crypto):
+    with pytest.raises(ValueError):
+        crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_GCM)
+
+
+# ----------------------------------------------------------------------
+# Default encryption
+# ----------------------------------------------------------------------
+def test_encrypt_decrypt_default_encryption_roundtrip(crypto, aes256_key):
+    plaintext = "προσωπικό μυστικό"
+    ct = crypto.encrypt_string(plaintext, aes256_key)
+    pt = crypto.decrypt_string(ct, aes256_key)
+    assert pt == plaintext
+
+
+def test_encrypt_string_wrong_key_len_default_encryption_raises(crypto):
+    with pytest.raises(ValueError):
+        crypto.encrypt_string("oops", b"short_key")
+
+
+# ----------------------------------------------------------------------
 # Hash / Validate
 # ----------------------------------------------------------------------
 def test_hash_and_validate_success(crypto, aes256_key):
@@ -156,6 +186,18 @@ def test_hash_and_validate_failure(crypto, aes256_key):
     raw = "p@ssw0rd"
     hashed = crypto.hash_string(raw, aes256_key)
     assert not crypto.validate_hash_match("WRONG", hashed, aes256_key)
+
+
+def test_hash_and_validate_success_v2(crypto, aes256_key):
+    raw = "p@ssw0rd"
+    hashed = crypto.hash_string_v2(raw)
+    assert crypto.validate_hash_match_v2(raw, hashed)
+
+
+def test_hash_and_validate_failure_v2(crypto, aes256_key):
+    raw = "p@ssw0rd"
+    hashed = crypto.hash_string_v2(raw)
+    assert not crypto.validate_hash_match_v2("WRONG", hashed)
 
 
 # ----------------------------------------------------------------------
@@ -183,15 +225,17 @@ def test_sign_verify_signature(crypto, aes256_key):
 # Token generation / verification
 # ----------------------------------------------------------------------
 def test_create_and_verify_token_valid(crypto, aes256_key):
-    tok_info = crypto.create_token(length=12, validity_secs=5, key=aes256_key)
-    res = crypto.verify_token(tok_info["token"], tok_info["ciphertoken"], aes256_key)
+    now_epoch = time.time()
+    tok_info = crypto.create_token(length=12, validity_secs=5, now_epoch=now_epoch, key=aes256_key)
+    res = crypto.verify_token(tok_info["token"], tok_info["ciphertoken"], now_epoch, aes256_key)
     assert res["token_valid"]
 
 
 def test_verify_token_expired(crypto, aes256_key):
-    tok_info = crypto.create_token(length=6, validity_secs=0, key=aes256_key)
+    now_epoch = time.time()
+    tok_info = crypto.create_token(length=6, validity_secs=0, now_epoch=now_epoch, key=aes256_key)
 
     time.sleep(0.5)
 
-    res = crypto.verify_token(tok_info["token"], tok_info["ciphertoken"], aes256_key)
+    res = crypto.verify_token(tok_info["token"], tok_info["ciphertoken"], now_epoch, aes256_key)
     assert not res["token_valid"] and res.get("response_info") == "Token expired"
