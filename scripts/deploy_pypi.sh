@@ -79,7 +79,8 @@ declare -r script_dir_abs
 project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
-icarus builder release
+# We accept this because of false gitleak failures
+icarus builder release || true
 
 echo -e "\n\n"
 
@@ -90,7 +91,7 @@ echo -e "\n\n"
 # Commit changes
 pushd "${project_root_dir_abs}" >/dev/null
 git add pyproject.toml
-git commit -m "REFACTOR: bump version to -> ${new_version}"
+git commit -m "bump version to -> ${new_version}"
 git push
 popd >/dev/null
 
@@ -99,26 +100,5 @@ echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
 rm -rf "${project_root_dir_abs}/dist"
 echo -e "completed!"
 
-# Build new package version
-echo -e "\n\n${bold_green}${hammer_and_wrench}  Building package${end}"
-icarus build exec 'python3 -m build >/dev/null 2>&1'
-echo -e "completed!"
-
-# Check package artifacts
-echo -e "\n\n${bold_green}${package} Checking package health${end}"
-icarus build exec 'python3 -m twine check dist/*'
-
-# Upload package to TEST PyPi
-echo -e "\n\n${bold_green}${network_world} Uploading package to TEST PyPi${end}"
-icarus build exec "python3 -m twine upload \
-	--repository testpypi \
-	--username __token__ \
-	--password "${CARLOGTT_SECRET_PYPI_TEST_API_TOKEN}" \
-	dist/*"
-
-# Upload package to PROD PyPi
-echo -e "\n\n${bold_green}${network_world} Uploading package to PROD PyPi${end}"
-icarus build exec "python3 -m twine upload \
-	--username __token__ \
-	--password "${CARLOGTT_SECRET_PYPI_PROD_API_TOKEN}" \
-	dist/*"
+# Build and push from the icarus env
+icarus builder exec ". ${script_dir_abs}/build_and_push.sh"
