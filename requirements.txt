@@ -1,7 +1,3 @@
-# My Library
-
-# Runtime dependencies
-
 # Test dependencies
 pytest
 
