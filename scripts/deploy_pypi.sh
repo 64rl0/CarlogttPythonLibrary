@@ -95,10 +95,16 @@ git commit -m "bump version to -> ${new_version}"
 git push
 popd >/dev/null
 
-# Clean environment
+# Clean environment BEFORE
 echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
 rm -rf "${project_root_dir_abs}/dist"
 echo -e "completed!"
 
 # Build and push from the icarus env
 icarus builder exec ". ${script_dir_abs}/build_and_push.sh"
+
+# Clean environment AFTER
+echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
+rm -rf "${project_root_dir_abs}/dist"
+echo -e "completed!"
+
