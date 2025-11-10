@@ -134,3 +134,9 @@ def test_create_presigned_url_for_file(mock_client, s3_instance):
     mock_client.generate_presigned_url.return_value = "https://s3.amazon.com/file1.txt"
     url = s3_instance.create_presigned_url_for_file("bucket", "file1.txt")
     assert url.startswith("https://")
+
+
+def test_create_presigned_post_for_file(mock_client, s3_instance):
+    mock_client.generate_presigned_post.return_value = "https://s3.amazon.com/file1.txt"
+    url = s3_instance.create_presigned_post_for_file("bucket", "file1.txt")
+    assert url.startswith("https://")

@@ -258,7 +258,6 @@ def test_sqlite_fetch_one(sqlite):
 # ----------------------------------------------------------------------
 # 7. PostgreSQL (run only when psycopg2 available) ---------------------
 # ----------------------------------------------------------------------
-@pytest.mark.skipif("psycopg2" not in globals() or psycopg2 is None, reason="psycopg2 missing")
 @pytest.fixture
 def postgres():
     from carlogtt_python_library.database.database_sql import PostgreSQL

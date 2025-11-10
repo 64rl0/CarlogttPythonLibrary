@@ -33,7 +33,7 @@ This module ...
 
 # Standard Library Imports
 import logging
-from typing import Any, Optional, Union
+from typing import IO, Any, Optional, Union
 
 # Third Party Library Imports
 import botocore.exceptions
@@ -197,7 +197,7 @@ class S3(aws_service_base.AwsServiceBase[S3Client]):
             raise exceptions.S3Error(str(ex)) from None
 
     def store_file(
-        self, bucket: str, filename: str, file: Union[str, bytes], **kwargs
+        self, bucket: str, filename: str, file: Union[str, bytes, IO[Any]], **kwargs
     ) -> type_defs.PutObjectOutputTypeDef:
         """
         Store objects to Amazon S3.
@@ -287,6 +287,44 @@ class S3(aws_service_base.AwsServiceBase[S3Client]):
 
         try:
             s3_response = self._client.generate_presigned_url(**generate_url_payload)
+
+            return s3_response
+
+        except botocore.exceptions.ClientError as ex:
+            raise exceptions.S3Error(str(ex.response)) from None
+
+        except Exception as ex:
+            raise exceptions.S3Error(str(ex)) from None
+
+    def create_presigned_post_for_file(
+        self, bucket: str, filename: str, expiration_time: int = 3600, **kwargs
+    ) -> dict[str, Any]:
+        """
+        Creates a presigned URL and the form fields used for a
+        presigned s3 post
+        The URL expires after a fixed amount of time.
+
+        :param bucket: The name of the S3 bucket.
+        :param filename: The name of the file to upload.
+        :param expiration_time: The number of seconds until the URL
+               expires. (Default: 3600).
+        :param kwargs: Any other param passed to the underlying boto3.
+        :return: A dictionary with two elements: url and fields. Url is
+                 the url to post to. Fields is a dictionary filled with
+                 the form fields and respective values to use when
+                 submitting the post.
+        :raise S3Error: If operation fails.
+        """
+
+        generate_url_payload: dict[str, Any] = {
+            'Bucket': bucket,
+            'Key': filename,
+            'ExpiresIn': expiration_time,
+            **kwargs,
+        }
+
+        try:
+            s3_response = self._client.generate_presigned_post(**generate_url_payload)
 
             return s3_response
 

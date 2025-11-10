@@ -77,6 +77,34 @@ will be passed to the low-level service client.</p></li>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file">
+<span class="sig-name descname"><span class="pre">create_presigned_post_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_post_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a presigned URL and the form fields used for a
+presigned s3 post
+The URL expires after a fixed amount of time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bucket</strong> – The name of the S3 bucket.</p></li>
+<li><p><strong>filename</strong> – The name of the file to upload.</p></li>
+<li><p><strong>expiration_time</strong> – The number of seconds until the URL
+expires. (Default: 3600).</p></li>
+<li><p><strong>kwargs</strong> – Any other param passed to the underlying boto3.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with two elements: url and fields. Url is
+the url to post to. Fields is a dictionary filled with
+the form fields and respective values to use when
+submitting the post.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.S3Error" title="carlogtt_python_library.exceptions.exceptions.S3Error"><strong>S3Error</strong></a> – If operation fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file">
 <span class="sig-name descname"><span class="pre">create_presigned_url_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_url_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a presigned URL for a file stored in Amazon S3.
@@ -168,7 +196,7 @@ list. Leave default to list all the files in the bucket.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.store_file">
-<span class="sig-name descname"><span class="pre">store_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PutObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.store_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.store_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">store_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IO</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PutObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.store_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.store_file" title="Link to this definition">¶</a></dt>
 <dd><p>Store objects to Amazon S3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -234,6 +262,7 @@ list. Leave default to list all the files in the bucket.
 <li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.kms.html">carlogtt_python_library.aws_boto3.kms module</a></li>
 <li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.aws_boto3.s3 module</a><ul>
 <li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3"><code class="docutils literal notranslate"><span class="pre">S3</span></code></a><ul>
+<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file"><code class="docutils literal notranslate"><span class="pre">S3.create_presigned_post_for_file()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file"><code class="docutils literal notranslate"><span class="pre">S3.create_presigned_url_for_file()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.delete_file"><code class="docutils literal notranslate"><span class="pre">S3.delete_file()</span></code></a></li>
 <li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.get_file"><code class="docutils literal notranslate"><span class="pre">S3.get_file()</span></code></a></li>

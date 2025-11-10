@@ -66,7 +66,7 @@
 
 <span class="c1"># Standard Library Imports</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="c1"># Third Party Library Imports</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">botocore.exceptions</span>
@@ -240,7 +240,7 @@
 <div class="viewcode-block" id="S3.store_file">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.s3.html#carlogtt_python_library.aws_boto3.s3.S3.store_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">store_file</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_defs</span><span class="o">.</span><span class="n">PutObjectOutputTypeDef</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store objects to Amazon S3.</span>
@@ -336,6 +336,47 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">s3_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">generate_presigned_url</span><span class="p">(</span><span class="o">**</span><span class="n">generate_url_payload</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">s3_response</span>
+
+        <span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ClientError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">S3Error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">response</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">S3Error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="S3.create_presigned_post_for_file">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.s3.html#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_presigned_post_for_file</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expiration_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3600</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a presigned URL and the form fields used for a</span>
+<span class="sd">        presigned s3 post</span>
+<span class="sd">        The URL expires after a fixed amount of time.</span>
+
+<span class="sd">        :param bucket: The name of the S3 bucket.</span>
+<span class="sd">        :param filename: The name of the file to upload.</span>
+<span class="sd">        :param expiration_time: The number of seconds until the URL</span>
+<span class="sd">               expires. (Default: 3600).</span>
+<span class="sd">        :param kwargs: Any other param passed to the underlying boto3.</span>
+<span class="sd">        :return: A dictionary with two elements: url and fields. Url is</span>
+<span class="sd">                 the url to post to. Fields is a dictionary filled with</span>
+<span class="sd">                 the form fields and respective values to use when</span>
+<span class="sd">                 submitting the post.</span>
+<span class="sd">        :raise S3Error: If operation fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">generate_url_payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;Bucket&#39;</span><span class="p">:</span> <span class="n">bucket</span><span class="p">,</span>
+            <span class="s1">&#39;Key&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
+            <span class="s1">&#39;ExpiresIn&#39;</span><span class="p">:</span> <span class="n">expiration_time</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">s3_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">generate_presigned_post</span><span class="p">(</span><span class="o">**</span><span class="n">generate_url_payload</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">s3_response</span>
 
