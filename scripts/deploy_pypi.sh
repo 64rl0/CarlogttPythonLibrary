@@ -107,4 +107,3 @@ icarus builder exec ". ${script_dir_abs}/build_and_push.sh"
 echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
 rm -rf "${project_root_dir_abs}/dist"
 echo -e "completed!"
-

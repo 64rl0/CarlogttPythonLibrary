@@ -38,7 +38,8 @@ import functools
 import logging
 import time
 from collections.abc import Callable, Iterable
-from typing import Any, Literal, Union
+from types import TracebackType
+from typing import Any, Concatenate, Literal, Optional, ParamSpec, TypeAlias, TypeVar, Union
 
 # END IMPORTS
 # ======================================================================
@@ -56,10 +57,9 @@ __all__ = [
 module_logger = logging.getLogger(__name__)
 
 # Type aliases
-OriginalFunction = Callable[..., Any]
-InnerFunction = Callable[..., Any]
-RetryerFunction = Callable[..., Any]
-DecoratorFunction = Callable[[OriginalFunction], InnerFunction]
+P = ParamSpec("P")
+R = TypeVar("R")
+Retryer: TypeAlias = Callable[Concatenate[Callable[P, R], P], R]
 
 
 class BenchmarkResolution(enum.Enum):
@@ -131,19 +131,24 @@ class retry:  # noqa
                 "exception_to_check must be an exception type or an iterable of exception types"
             )
 
-    def __call__(self, original_func: OriginalFunction) -> InnerFunction:
+    def __call__(self, original_func: Callable[P, R]) -> Callable[P, R]:
         return self._decorator(original_func)
 
-    def __enter__(self) -> RetryerFunction:
+    def __enter__(self) -> Callable[..., Any]:
         """
         Enter the retry context.
 
-        :returns: retryer – a small helper::
+        :returns: retryer – a small helper
         """
 
         return self._retryer
 
-    def __exit__(self, exc_type, exc, exc_tb) -> Literal[False]:
+    def __exit__(
+        self,
+        exc_type: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> Literal[False]:
         """
         Exit the retry context.
 
@@ -153,7 +158,7 @@ class retry:  # noqa
 
         return False
 
-    def _retryer(self, original_func: OriginalFunction, *args: Any, **kwargs: Any) -> Any:
+    def _retryer(self, original_func: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R:
         """
         Internal one-shot wrapper used by the context-manager helper.
 
@@ -168,13 +173,13 @@ class retry:  # noqa
 
         return self._decorator(original_func)(*args, **kwargs)
 
-    def _decorator(self, original_func: OriginalFunction) -> InnerFunction:
+    def _decorator(self, original_func: Callable[P, R]) -> Callable[P, R]:
         """
         Build the retrying wrapper around original_func.
         """
 
         @functools.wraps(original_func)
-        def inner(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: P.args, **kwargs: P.kwargs) -> R:
             while self.tries > 1:
                 try:
                     return original_func(*args, **kwargs)
@@ -203,7 +208,7 @@ class retry:  # noqa
 def benchmark_execution(
     logger: logging.Logger = module_logger,
     resolution: Union[str, BenchmarkResolution] = BenchmarkResolution.SECONDS,
-) -> DecoratorFunction:
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Measure and log the execution time of the decorated function.
 
@@ -247,9 +252,9 @@ def benchmark_execution(
 
     unit_label, divisor = resolution_enum.value
 
-    def decorator_benchmark(original_func: OriginalFunction) -> InnerFunction:
+    def decorator_benchmark(original_func: Callable[P, R]) -> Callable[P, R]:
         @functools.wraps(original_func)
-        def inner(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: P.args, **kwargs: P.kwargs) -> R:
             start_time = time.perf_counter()
             result = original_func(*args, **kwargs)
             execution_time = time.perf_counter() - start_time
@@ -268,7 +273,9 @@ def benchmark_execution(
     return decorator_benchmark
 
 
-def log_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
+def log_execution(
+    logger: logging.Logger = module_logger,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Log the start and completion of the decorated function using the
     provided logger.
@@ -279,9 +286,9 @@ def log_execution(logger: logging.Logger = module_logger) -> DecoratorFunction:
            Python's standard logging module as a default logger.
     """
 
-    def decorator_logging(original_func: OriginalFunction) -> InnerFunction:
+    def decorator_logging(original_func: Callable[P, R]) -> Callable[P, R]:
         @functools.wraps(original_func)
-        def inner(*args: Any, **kwargs: Any) -> Any:
+        def inner(*args: P.args, **kwargs: P.kwargs) -> R:
             logger.info(f"Initiating {original_func.__name__}")
             result = original_func(*args, **kwargs)
             logger.info(f"Finished {original_func.__name__}")
