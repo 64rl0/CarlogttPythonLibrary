@@ -18,6 +18,7 @@ dependencies = [
     "requests",
     "selenium",
     # Type checkin dependencies
+    "typing-extensions",
     "types-cryptography",
     "types-requests",
     "types-redis",

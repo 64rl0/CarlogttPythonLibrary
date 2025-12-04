@@ -36,10 +36,16 @@ application.
 import enum
 import functools
 import logging
+import sys
 import time
 from collections.abc import Callable, Iterable
 from types import TracebackType
-from typing import Any, Concatenate, Literal, Optional, ParamSpec, TypeAlias, TypeVar, Union
+from typing import Any, Literal, Optional, TypeVar, Union
+
+if sys.version_info >= (3, 10):
+    from typing import Concatenate, ParamSpec, TypeAlias
+else:
+    from typing_extensions import Concatenate, ParamSpec, TypeAlias
 
 # END IMPORTS
 # ======================================================================
