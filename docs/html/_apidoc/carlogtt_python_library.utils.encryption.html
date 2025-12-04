@@ -10,8 +10,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
     <script src="../_static/documentation_options.js?v=30015795"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="carlogtt_python_library.utils.miscs module" href="carlogtt_python_library.utils.miscs.html" />
@@ -38,7 +38,7 @@
 <p>Utilities for authenticated encryption and password hashing.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.Cryptography">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">Cryptography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger:</span> <span class="pre">~logging.Logger</span> <span class="pre">=</span> <span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.encryption</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">Cryptography</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Logger</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;Logger</span> <span class="pre">carlogtt_python_library.utils.encryption</span> <span class="pre">(WARNING)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#Cryptography"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.Cryptography" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Provides cryptographic functionalities including key generation,
 serialization for storage, encryption, decryption, and signing.
@@ -410,34 +410,34 @@ occurs.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">EncryptionAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">EncryptionAlgorithm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>Defines supported encryption algorithms anf their envelope prefixes.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128">
-<span class="sig-name descname"><span class="pre">AES_128</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:fernet:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES_128</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:fernet:'</span></span><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_128" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256">
-<span class="sig-name descname"><span class="pre">AES_256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:cbc:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES_256</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v1:cbc:'</span></span><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_256" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM">
-<span class="sig-name descname"><span class="pre">AES_GCM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v2:gcm:'</span></em><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES_GCM</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'v2:gcm:'</span></span><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.AES_GCM" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_alg_prefixes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm.all_alg_prefixes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">all_alg_prefixes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#EncryptionAlgorithm.all_alg_prefixes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.EncryptionAlgorithm.all_alg_prefixes" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.KeyOutputType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">KeyOutputType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#KeyOutputType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.KeyOutputType" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">KeyOutputType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#KeyOutputType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.KeyOutputType" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>Enumeration to specify the output format of the generated key.</p>
 <dl class="py attribute">
@@ -454,19 +454,19 @@ occurs.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">BASE64</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">BASE64</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">BYTES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">BYTES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.encryption.KeyType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">KeyType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#KeyType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.KeyType" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.utils.encryption.</span></span><span class="sig-name descname"><span class="pre">KeyType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/encryption.html#KeyType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.encryption.KeyType" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>Enumeration to specify the key type based on its length.</p>
 <dl class="py attribute">
@@ -498,17 +498,17 @@ CBC.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">AES128</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES128</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></span><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">AES256</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></em><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">AES256</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">32</span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">INITIALIZATION_VECTOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></em><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">INITIALIZATION_VECTOR</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16</span></span><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -651,7 +651,7 @@ CBC.</p>
       &#169;2025, Carlo Gatti.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

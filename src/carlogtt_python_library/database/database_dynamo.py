@@ -70,6 +70,7 @@ DynamoDbMap = Mapping[str, Any]
 DynamoDbMapDeserialized = Mapping[str, Any]
 
 PartitionKeyValue = Union[bytes, str, float]
+SortKeyValue = Union[bytes, str, float]
 
 AttributeValue = Union[
     str,
@@ -197,7 +198,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         """
 
         try:
-            dynamodb_response = self._client.list_tables()
+            ddb_response = self._client.list_tables()
 
         except botocore.exceptions.ClientError as ex:
             raise exceptions.DynamoDBError(str(ex.response)) from None
@@ -207,7 +208,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # If TableNames is not present then return an empty list
         try:
-            response = dynamodb_response['TableNames']
+            response = ddb_response['TableNames']
 
         except KeyError:
             response = []
@@ -225,13 +226,13 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :raise DynamoDBError: If retrieval fails.
         """
 
-        dynamodb_scan_args: type_defs.ScanInputTypeDef = {'TableName': table}
+        ddb_scan_args: type_defs.ScanInputTypeDef = {'TableName': table}
 
         try:
             while True:
                 try:
                     with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                        dynamodb_response = retryer(self._client.scan, **dynamodb_scan_args)
+                        ddb_response = retryer(self._client.scan, **ddb_scan_args)
 
                 except botocore.exceptions.ClientError as ex:
                     raise exceptions.DynamoDBError(str(ex.response))
@@ -239,18 +240,18 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
                 except Exception as ex:
                     raise exceptions.DynamoDBError(str(ex))
 
-                if dynamodb_response.get('Items') and len(dynamodb_response['Items']) > 0:
+                if ddb_response.get('Items') and len(ddb_response['Items']) > 0:
                     # Convert the DynamoDB attribute values to
                     # deserialized values
-                    deserialized_items = (
+                    deser_items = (
                         {
                             key: self._serializer.deserialize_att(value)
-                            for key, value in dynamodb_item.items()
+                            for key, value in ddb_item.items()
                         }
-                        for dynamodb_item in dynamodb_response['Items']
+                        for ddb_item in ddb_response['Items']
                     )
 
-                    yield from deserialized_items
+                    yield from deser_items
 
                 else:
                     # Nothing to yield
@@ -258,8 +259,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
                 # If LastEvaluatedKey is present then we need to scan
                 # for more items
-                if dynamodb_response.get('LastEvaluatedKey'):
-                    dynamodb_scan_args['ExclusiveStartKey'] = dynamodb_response['LastEvaluatedKey']
+                if ddb_response.get('LastEvaluatedKey'):
+                    ddb_scan_args['ExclusiveStartKey'] = ddb_response['LastEvaluatedKey']
 
                 # If no LastEvaluatedKey then break out of the while
                 # loop as we're done
@@ -286,7 +287,12 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         return running_total
 
     def get_item(
-        self, table: str, partition_key_key: str, partition_key_value: PartitionKeyValue
+        self,
+        table: str,
+        partition_key_key: str,
+        partition_key_value: PartitionKeyValue,
+        sort_key_key: Optional[str] = None,
+        sort_key_value: Optional[SortKeyValue] = None,
     ) -> Optional[dict[str, AttributeValueDeserialized]]:
         """
         The get_item_from_table operation returns a dictionary of
@@ -297,17 +303,22 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key_key: The key of the partition key.
         :param partition_key_value: The value of the partition key.:
+        :param sort_key_key: The key of the sort key.
+        :param sort_key_value: The value of the sort key.
         :return: Deserialized item or None.
         :raise DynamoDBError: If retrieval fails.
         """
 
-        partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
+        pk = self._serializer.serialize_p_key(
+            pk_key=partition_key_key,
+            pk_value=partition_key_value,
+            sk_key=sort_key_key,
+            sk_value=sort_key_value,
+        )
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                dynamodb_response = retryer(
-                    self._client.get_item, TableName=table, Key=partition_key
-                )
+                ddb_response = retryer(self._client.get_item, TableName=table, Key=pk)
 
         except botocore.exceptions.ClientError as ex:
             raise exceptions.DynamoDBError(str(ex.response)) from None
@@ -315,15 +326,13 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         except Exception as ex:
             raise exceptions.DynamoDBError(str(ex)) from None
 
-        dynamodb_item = dynamodb_response.get('Item')
+        ddb_item = ddb_response.get('Item')
 
-        if not dynamodb_item:
+        if not ddb_item:
             return None
 
         # Convert the DynamoDB attribute values to deserialized values
-        response = {
-            key: self._serializer.deserialize_att(value) for key, value in dynamodb_item.items()
-        }
+        response = {key: self._serializer.deserialize_att(value) for key, value in ddb_item.items()}
 
         return response
 
@@ -332,6 +341,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         table: str,
         partition_key_key: str,
         partition_key_value: Optional[PartitionKeyValue] = None,
+        sort_key_key: Optional[str] = None,
+        sort_key_value: Optional[SortKeyValue] = None,
         auto_generate_partition_key_value: Optional[bool] = False,
         **items: AttributeValue,
     ) -> dict[str, AttributeValueDeserialized]:
@@ -343,6 +354,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key_key: The key of the partition key.
         :param partition_key_value: The value of the partition key.
+        :param sort_key_key: The key of the sort key.
+        :param sort_key_value: The value of the sort key.
         :param auto_generate_partition_key_value: If set to True, this
             option instructs DynamoDB to automatically generate a
             partition key value based on a counter mechanism.
@@ -378,6 +391,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
                     table=table,
                     partition_key_key=partition_key_key,
                     partition_key_value=partition_key_value,
+                    sort_key_key=sort_key_key,
+                    sort_key_value=sort_key_value,
                     **items,
                 )
 
@@ -415,6 +430,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         self,
         table: str,
         partition_key: dict[str, PartitionKeyValue],
+        sort_key: Optional[dict[str, SortKeyValue]] = None,
         condition_attribute: Optional[dict[str, Any]] = None,
         **items: AttributeValue,
     ) -> dict[str, AttributeValueDeserialized]:
@@ -435,6 +451,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key: DynamoDB partition key as dict of
             partition_key {key: value}.
+        :param sort_key: DynamoDB sort key as dict of sort_key
+            {key: value}.
         :param condition_attribute: DynamoDB attribute to matched as
             dict of attribute_to_match {key: value}. When sent to
             DynamoDB, the attribute will be as a condition to match.
@@ -454,27 +472,25 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # Initialize a dictionary with all the arguments to pass into
         # the DynamoDB update_item call
-        dynamodb_update_item_args: dict[str, Any] = {
+        ddb_update_item_args: dict[str, Any] = {
             'TableName': table,
             'ReturnValues': 'ALL_OLD',
         }
 
         # Serialize partition key
-        partition_key_key, partition_key_value = next(iter(partition_key.items()))
-        partition_key_serialized = self._serializer.serialize_p_key(
-            partition_key_key, partition_key_value
+        pk_key, pk_value = next(iter(partition_key.items()))
+        sk_key, sk_value = next(iter(sort_key.items())) if sort_key is not None else (None, None)
+
+        pk_ser = self._serializer.serialize_p_key(
+            pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
         )
 
         # Serialize attributes
-        update_expression, expression_attribute_names, expression_attribute_values = (
-            self._serializer.serialize_update_items(**items)
-        )
+        exp, exp_att_names, exp_att_values = self._serializer.serialize_update_items(**items)
 
         # Build a condition expression for “strict update”
-        dynamodb_update_item_args.update(
-            {'ConditionExpression': f"attribute_exists(#{partition_key_key})"}
-        )
-        expression_attribute_names.update({f"#{partition_key_key}": partition_key_key})
+        ddb_update_item_args.update({'ConditionExpression': f"attribute_exists(#{pk_key})"})
+        exp_att_names.update({f"#{pk_key}": pk_key})
 
         # Check if a condition is required
         if condition_attribute is not None:
@@ -482,46 +498,43 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             # We cant mutate the original dictionary because of the
             # retry decorator will need to run through it again in case
             # of failure
-            condition_attribute_key, condition_attribute_value = next(
-                iter(condition_attribute.items())
-            )
+            cond_att_key, cond_att_value = next(iter(condition_attribute.items()))
 
             # If condition attribute exists pass it to the DynamoDB call
-            dynamodb_update_item_args.update({
+            ddb_update_item_args.update({
                 'ConditionExpression': (
-                    f"{dynamodb_update_item_args['ConditionExpression']} AND"
-                    f" #{condition_attribute_key} = :condition_attribute_value_placeholder"
+                    f"{ddb_update_item_args['ConditionExpression']} AND"
+                    f" #{cond_att_key} = :condition_attribute_value_placeholder"
                 )
             })
 
             # #condition_attribute_key has to be passed
             # along the ExpressionAttributeNames because is used by the
             # ConditionExpression
-            expression_attribute_names[f"#{condition_attribute_key}"] = condition_attribute_key
+            exp_att_names[f"#{cond_att_key}"] = cond_att_key
 
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
-            expression_attribute_values[':condition_attribute_value_placeholder'] = (
-                self._serializer.serialize_att(condition_attribute_value)
+            exp_att_values[':condition_attribute_value_placeholder'] = (
+                self._serializer.serialize_att(cond_att_value)
             )
 
         # Update DynamoDB call arguments
-        dynamodb_update_item_args['Key'] = partition_key_serialized
-        dynamodb_update_item_args['UpdateExpression'] = update_expression
-        dynamodb_update_item_args['ExpressionAttributeNames'] = expression_attribute_names
-        dynamodb_update_item_args['ExpressionAttributeValues'] = expression_attribute_values
+        ddb_update_item_args['Key'] = pk_ser
+        ddb_update_item_args['UpdateExpression'] = exp
+        ddb_update_item_args['ExpressionAttributeNames'] = exp_att_names
+        ddb_update_item_args['ExpressionAttributeValues'] = exp_att_values
 
-        module_logger.debug(dynamodb_update_item_args)
+        module_logger.debug(ddb_update_item_args)
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
+                ddb_response = retryer(self._client.update_item, **ddb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
                 raise exceptions.DynamoDBConflictError(str(ex.response)) from None
-
             else:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
 
@@ -530,30 +543,25 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # If we get here it means that the item has been updated
         # successfully therefore we return it
-        old_item = dynamodb_response.get('Attributes', {})
-        old_item_deserialized = {
-            key: self._serializer.deserialize_att(value) for key, value in old_item.items()
-        }
-        partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
-            partition_key_serialized
-        )
-        updated_item = {
-            **old_item_deserialized,
-            **items,
-            **{partition_key_key: partition_key_value},
-        }
+        item = ddb_response.get('Attributes', {})
+        item_deser = {key: self._serializer.deserialize_att(value) for key, value in item.items()}
+        pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+        updated_item = {**item_deser, **items, **{pk_key: pk_value}}
+        if sk_key is not None:
+            updated_item.update({sk_key: sk_value})
 
         # Because the **items in the updated_item dict is not serialized
         # we need to normalize the whole dict before returning a dict of
         # type dict[str, AttributeValueDeserialized]
-        updated_item_deserialized = self._serializer.normalize_item(updated_item)
+        updated_item_deser = self._serializer.normalize_item(updated_item)
 
-        return updated_item_deserialized
+        return updated_item_deser
 
     def upsert_item(
         self,
         table: str,
         partition_key: dict[str, PartitionKeyValue],
+        sort_key: Optional[dict[str, SortKeyValue]] = None,
         condition_attribute: Optional[dict[str, Any]] = None,
         **items: AttributeValue,
     ) -> dict[str, AttributeValueDeserialized]:
@@ -567,6 +575,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key: DynamoDB partition key as dict of
             partition_key {key: value}.
+        :param sort_key: DynamoDB sort key as dict of sort_key
+            {key: value}.
         :param condition_attribute: DynamoDB attribute to matched as
             dict of attribute_to_match {key: value}. When sent to
             DynamoDB, the attribute will be as a condition to match.
@@ -586,21 +596,21 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # Initialize a dictionary with all the arguments to pass into
         # the DynamoDB update_item call
-        dynamodb_update_item_args: dict[str, Any] = {
+        ddb_update_item_args: dict[str, Any] = {
             'TableName': table,
             'ReturnValues': 'ALL_OLD',
         }
 
         # Serialize partition key
-        partition_key_key, partition_key_value = next(iter(partition_key.items()))
-        partition_key_serialized = self._serializer.serialize_p_key(
-            partition_key_key, partition_key_value
+        pk_key, pk_value = next(iter(partition_key.items()))
+        sk_key, sk_value = next(iter(sort_key.items())) if sort_key is not None else (None, None)
+
+        pk_ser = self._serializer.serialize_p_key(
+            pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
         )
 
         # Serialize attributes
-        update_expression, expression_attribute_names, expression_attribute_values = (
-            self._serializer.serialize_update_items(**items)
-        )
+        exp, exp_att_names, exp_att_values = self._serializer.serialize_update_items(**items)
 
         # Check if a condition is required
         if condition_attribute is not None:
@@ -608,45 +618,40 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             # We cant mutate the original dictionary because of the
             # retry decorator will need to run through it again in case
             # of failure
-            condition_attribute_key, condition_attribute_value = next(
-                iter(condition_attribute.items())
-            )
+            cond_att_key, cond_att_value = next(iter(condition_attribute.items()))
 
             # If condition attribute exists pass it to the DynamoDB call
-            dynamodb_update_item_args.update({
-                'ConditionExpression': (
-                    f"#{condition_attribute_key} = :condition_attribute_value_placeholder"
-                )
-            })
+            ddb_update_item_args.update(
+                {'ConditionExpression': f"#{cond_att_key} = :condition_attribute_value_placeholder"}
+            )
 
             # #condition_attribute_key has to be passed
             # along the ExpressionAttributeNames because is used by the
             # ConditionExpression
-            expression_attribute_names[f"#{condition_attribute_key}"] = condition_attribute_key
+            exp_att_names[f"#{cond_att_key}"] = cond_att_key
 
             # :condition_attribute_value_placeholder has to be passed
             # along the ExpressionAttributeValues because is used by the
             # ConditionExpression
-            expression_attribute_values[':condition_attribute_value_placeholder'] = (
-                self._serializer.serialize_att(condition_attribute_value)
+            exp_att_values[':condition_attribute_value_placeholder'] = (
+                self._serializer.serialize_att(cond_att_value)
             )
 
         # Update DynamoDB call arguments
-        dynamodb_update_item_args['Key'] = partition_key_serialized
-        dynamodb_update_item_args['UpdateExpression'] = update_expression
-        dynamodb_update_item_args['ExpressionAttributeNames'] = expression_attribute_names
-        dynamodb_update_item_args['ExpressionAttributeValues'] = expression_attribute_values
+        ddb_update_item_args['Key'] = pk_ser
+        ddb_update_item_args['UpdateExpression'] = exp
+        ddb_update_item_args['ExpressionAttributeNames'] = exp_att_names
+        ddb_update_item_args['ExpressionAttributeValues'] = exp_att_values
 
-        module_logger.debug(dynamodb_update_item_args)
+        module_logger.debug(ddb_update_item_args)
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
+                ddb_response = retryer(self._client.update_item, **ddb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
                 raise exceptions.DynamoDBConflictError(str(ex.response)) from None
-
             else:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
 
@@ -655,31 +660,27 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # If we get here it means that the item has been updated
         # successfully therefore we return it
-        old_item = dynamodb_response.get('Attributes', {})
-        old_item_deserialized = {
-            key: self._serializer.deserialize_att(value) for key, value in old_item.items()
-        }
-        partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
-            partition_key_serialized
-        )
-        updated_item = {
-            **old_item_deserialized,
-            **items,
-            **{partition_key_key: partition_key_value},
-        }
+        item = ddb_response.get('Attributes', {})
+        item_deser = {key: self._serializer.deserialize_att(value) for key, value in item.items()}
+        pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+        updated_item = {**item_deser, **items, **{pk_key: pk_value}}
+        if sk_key is not None:
+            updated_item.update({sk_key: sk_value})
 
         # Because the **items in the updated_item dict is not serialized
         # we need to normalize the whole dict before returning a dict of
         # type dict[str, AttributeValueDeserialized]
-        updated_item_deserialized = self._serializer.normalize_item(updated_item)
+        updated_item_deser = self._serializer.normalize_item(updated_item)
 
-        return updated_item_deserialized
+        return updated_item_deser
 
     def delete_item(
         self,
         table: str,
         partition_key_key: str,
         partition_key_value: Union[PartitionKeyValue, Iterable[PartitionKeyValue]],
+        sort_key_key: Optional[str] = None,
+        sort_key_value: Optional[Union[SortKeyValue, Iterable[SortKeyValue]]] = None,
     ) -> list[dict[str, AttributeValueDeserialized]]:
         """
         Deletes item(s) in a table by primary key.
@@ -693,36 +694,61 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param partition_key_value: The value or an iterable of values
             of the partition key of the item or items to delete from
             DynamoDB.
+        :param sort_key_key: The key of the sort key.
+        :param sort_key_value: The value or an iterable of values
+            of the sort key of the item or items to delete from
+            DynamoDB.
         :return: A list of deleted DynamoDB Items deserialized.
         :raise DynamoDBError: If deletion fails.
         """
 
-        # Check if it's only one item to delete or many
-        if isinstance(partition_key_value, (str, bytes, int, float)):
-            partition_key_values = [partition_key_value]
+        if (sort_key_key is None) ^ (sort_key_value is None):
+            raise exceptions.DynamoDBError(
+                "Both sort_key_key and sort_key_value must be provided or both must be None."
+            )
+        has_sk = sort_key_key is not None and sort_key_value is not None
 
+        # Check if it's only one item to delete or many
+        pk_values: list[PartitionKeyValue] = []
+        if isinstance(partition_key_value, (str, bytes, int, float)):
+            pk_values.append(partition_key_value)
         else:
-            partition_key_values = list(partition_key_value)
+            pk_values.extend(partition_key_value)
+
+        sk_values: list[Optional[SortKeyValue]] = []
+        if has_sk:
+            assert sort_key_value is not None
+            if isinstance(sort_key_value, (str, bytes, int, float)):
+                sk_values.append(sort_key_value)
+            else:
+                sk_values.extend(sort_key_value)
+        else:
+            sk_values.extend([None] * len(pk_values))
+
+        if len(pk_values) != len(sk_values):
+            raise exceptions.DynamoDBError(
+                "The number of partition key values and sort key values must be the same."
+            )
 
         # Prepare response list
         response: list[dict[str, AttributeValueDeserialized]] = []
 
-        for partition_key_value in partition_key_values:
-            partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
+        for pk_val, sk_val in zip(pk_values, sk_values):
+            pk_ser = self._serializer.serialize_p_key(
+                pk_key=partition_key_key, pk_value=pk_val, sk_key=sort_key_key, sk_value=sk_val
+            )
 
             # Initialize a dictionary with all the arguments to pass
             # into the DynamoDB delete_item call
-            dynamodb_delete_item_args: dict[str, Any] = {
+            ddb_delete_item_args: dict[str, Any] = {
                 'TableName': table,
-                'Key': partition_key,
+                'Key': pk_ser,
                 'ReturnValues': 'ALL_OLD',
             }
 
             try:
                 with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                    dynamodb_response = retryer(
-                        self._client.delete_item, **dynamodb_delete_item_args
-                    )
+                    ddb_response = retryer(self._client.delete_item, **ddb_delete_item_args)
 
             except botocore.exceptions.ClientError as ex:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
@@ -732,14 +758,14 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
             # If we get here it means that the item has been deleted
             # successfully therefore we return it
-            old_item = dynamodb_response.get('Attributes', {})
-            old_item_deserialized = {
-                key: self._serializer.deserialize_att(value) for key, value in old_item.items()
+            item = ddb_response.get('Attributes', {})
+            item_deser = {
+                key: self._serializer.deserialize_att(value) for key, value in item.items()
             }
-            partition_key_key, partition_key_value = self._serializer.deserialize_p_key(
-                partition_key
-            )
-            deleted_item = {**old_item_deserialized, **{partition_key_key: partition_key_value}}
+            pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+            deleted_item = {**item_deser, **{pk_key: pk_value}}
+            if sk_key is not None:
+                deleted_item.update({sk_key: sk_value})
 
             response.append(deleted_item)
 
@@ -751,6 +777,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         partition_key_key: str,
         partition_key_value: PartitionKeyValue,
         attributes_to_delete: Iterable[str],
+        sort_key_key: Optional[str] = None,
+        sort_key_value: Optional[SortKeyValue] = None,
     ) -> dict[str, AttributeValueDeserialized]:
         """
         Deletes item specific values in a table by primary key.
@@ -758,33 +786,39 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key_key: The key of the partition key.
         :param partition_key_value: The value of the partition key.
+        :param sort_key_key: The key of the sort key.
+        :param sort_key_value: The value of the sort key.
         :param attributes_to_delete: An iterable of specific attributes
             that are to be deleted from DynamoDB.
         :return: The updated DynamoDB Item deserialized.
         :raise DynamoDBError: If deletion fails.
         """
 
-        partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
+        pk_ser = self._serializer.serialize_p_key(
+            pk_key=partition_key_key,
+            pk_value=partition_key_value,
+            sk_key=sort_key_key,
+            sk_value=sort_key_value,
+        )
 
-        attribute_updates: dict[str, type_defs.AttributeValueUpdateTypeDef] = {
+        att_updates: dict[str, type_defs.AttributeValueUpdateTypeDef] = {
             item_value: {'Action': "DELETE"} for item_value in attributes_to_delete
         }
 
-        dynamodb_update_item_args: dict[str, Any] = {
+        ddb_update_item_args: dict[str, Any] = {
             'TableName': table,
-            'Key': partition_key,
-            'AttributeUpdates': attribute_updates,
+            'Key': pk_ser,
+            'AttributeUpdates': att_updates,
             'ReturnValues': 'ALL_NEW',
         }
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                dynamodb_response = retryer(self._client.update_item, **dynamodb_update_item_args)
+                ddb_response = retryer(self._client.update_item, **ddb_update_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
                 raise exceptions.DynamoDBConflictError(str(ex.response)) from None
-
             else:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
 
@@ -793,12 +827,10 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # If we get here it means that the item has been updated
         # successfully therefore we return it
-        new_item = dynamodb_response.get('Attributes', {})
-        new_item_deserialized = {
-            key: self._serializer.deserialize_att(value) for key, value in new_item.items()
-        }
+        item = ddb_response.get('Attributes', {})
+        item_deser = {key: self._serializer.deserialize_att(value) for key, value in item.items()}
 
-        return new_item_deserialized
+        return item_deser
 
     def atomic_writes(
         self,
@@ -820,6 +852,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             'TableName': "string DynamoDB Table Name",
             'PartitionKeyKey': "string of the PartitionKey key",
             'PartitionKeyValue': "OPTIONAL - partition key value",
+            'SortKeyKey': "OPTIONAL - string of the SortKey key",
+            'SortKeyValue': "OPTIONAL - sort key value",
             'AutoGeneratePartitionKeyValue': "OPTIONAL - bool",
             'Items': "dict containing all the items to put in DynamoDB",
             }
@@ -828,6 +862,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             schema = {
             'TableName': "string DynamoDB Table Name",
             'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            'SortKey': "OPTIONAL - The sort key as dict of sort_key
             {key: value}",
             'Items': "dict containing all the values for items to be
             updated",
@@ -840,6 +876,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             'TableName': "string DynamoDB Table Name",
             'PartitionKey': "The partition key as dict of partition_key
             {key: value}",
+            'SortKey': "OPTIONAL - The sort key as dict of sort_key
+            {key: value}",
             'Items': "dict containing all the values for items to be
             updated",
             'ConditionAttribute': "OPTIONAL - attribute to matched
@@ -851,6 +889,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             'TableName': "string DynamoDB Table Name",
             'PartitionKey': "The partition key as dict of partition_key
             {key: value}",
+            'SortKey': "OPTIONAL - The sort key as dict of sort_key
+            {key: value}",
             }
         :param condition_check: Applies a condition to an item that is
             not being modified by the transaction. The condition must
@@ -858,6 +898,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             schema = {
             'TableName': "string DynamoDB Table Name",
             'PartitionKey': "The partition key as dict of partition_key
+            {key: value}",
+            'SortKey': "OPTIONAL - The sort key as dict of sort_key
             {key: value}",
             }
         :return: A dictionary with keys
@@ -941,7 +983,6 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
                 raise exceptions.DynamoDBConflictError(str(ex.response)) from None
-
             else:
                 raise exceptions.DynamoDBError(str(ex.response)) from None
 
@@ -975,50 +1016,40 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             assert isinstance(el['Items'], Mapping)
             assert isinstance(el['PartitionKeyKey'], str)
 
-            if (
-                el.get('PartitionKeyValue') is not None
-                and el.get('AutoGeneratePartitionKeyValue', False) is True
-            ):
+            pk_value = el.get('PartitionKeyValue')
+            ag_pk_value = el.get('AutoGeneratePartitionKeyValue', False)
+
+            if pk_value is not None and ag_pk_value is True:
                 raise exceptions.DynamoDBError(
                     "If AutoGeneratePartitionKeyValue is enabled, a PartitionKeyValue MUST NOT be"
                     " passed in."
                 )
 
-            elif (
-                el.get('PartitionKeyValue') is not None
-                and el.get('AutoGeneratePartitionKeyValue', False) is False
-            ):
-                # This is the case where
-                # el['PartitionKeyValue'] = el['PartitionKeyValue']
+            elif pk_value is not None and ag_pk_value is False:
+                # This is the case where we use el['PartitionKeyValue']
+                # as 'PartitionKeyValue'
                 pass
 
-            elif (
-                el.get('PartitionKeyValue') is None
-                and el.get('AutoGeneratePartitionKeyValue', False) is True
-            ):
-                # This is the case where we auto generate the id
-                current_counter_value, last_modified_timestamp = self._get_atomic_counter(
-                    table=el['TableName']
-                )
-                new_counter_value = current_counter_value + 1
+            elif pk_value is None and ag_pk_value is True:
+                # This is the case where we auto generate the
+                # PartitionKeyValue
+                cur_counter, last_mod_timestamp = self._get_atomic_counter(table=el['TableName'])
+                new_counter = cur_counter + 1
 
                 # Check what is the type of the PartitionKey key of
                 # the table
                 pk_type = self._get_pk_type(table=el['TableName'])
 
                 if issubclass(pk_type, str):
-                    auto_generate_pk_value: Union[str, bytes, float] = str(new_counter_value)
+                    auto_generate_pk_value: PartitionKeyValue = str(new_counter)
 
                 elif issubclass(pk_type, bytes):
-                    auto_generate_pk_value = str(new_counter_value).encode()
+                    auto_generate_pk_value = str(new_counter).encode()
 
                 elif issubclass(pk_type, float):
-                    auto_generate_pk_value = new_counter_value
+                    auto_generate_pk_value = new_counter
 
-            elif (
-                el.get('PartitionKeyValue') is None
-                and el.get('AutoGeneratePartitionKeyValue', False) is False
-            ):
+            elif pk_value is None and ag_pk_value is False:
                 raise exceptions.DynamoDBError(
                     "If AutoGeneratePartitionKeyValue is disabled, a PartitionKeyValue MUST be"
                     " passed in."
@@ -1030,47 +1061,63 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
                     " AutoGeneratePartitionKeyValue."
                 )
 
-            partition_key_value = el.get('PartitionKeyValue') or auto_generate_pk_value
+            pk_value_resolved = el.get('PartitionKeyValue') or auto_generate_pk_value
+            assert isinstance(pk_value_resolved, (str, bytes, int, float))
+            pk: dict[str, PartitionKeyValue] = {el['PartitionKeyKey']: pk_value_resolved}
+
+            if (el.get('SortKeyKey') is None) ^ (el.get('SortKeyValue') is None):
+                raise exceptions.DynamoDBError(
+                    "Both SortKeyKey and SortKeyValue must be provided or both must be None."
+                )
+            has_sk = el.get('SortKeyKey') is not None and el.get('SortKeyValue') is not None
+
+            sk: dict[str, PartitionKeyValue] = {}
+            if has_sk:
+                sk_key = el['SortKeyKey']
+                sk_value = el['SortKeyValue']
+                assert isinstance(sk_key, str)
+                assert isinstance(sk_value, (str, bytes, int, float))
+                sk = {sk_key: sk_value}
 
             # If we don't need to increment the counter we just put the
             # item in the table
-            el_put_serialized: type_defs.PutTypeDef = {
+            el_put_ser: type_defs.PutTypeDef = {
                 'TableName': el['TableName'],
-                'Item': self._serializer.serialize_put_items(
-                    **{el['PartitionKeyKey']: partition_key_value, **el['Items']}
-                ),
+                'Item': self._serializer.serialize_put_items(**pk, **sk, **el['Items']),
                 'ConditionExpression': f"attribute_not_exists({el['PartitionKeyKey']})",
             }
 
             # Append the 'put' item to the DynamoDB atomic call
-            transact_items.append({'Put': el_put_serialized})
+            transact_items.append({'Put': el_put_ser})
 
             # Append the 'put' item to the return list
             response['Put'].append({
                 key: self._serializer.deserialize_att(value)  # type: ignore
-                for key, value in el_put_serialized['Item'].items()
+                for key, value in el_put_ser['Item'].items()
             })
 
             # If we need to increment the counter we update the counter
-            if el.get('AutoGeneratePartitionKeyValue'):
+            if ag_pk_value:
                 # Update the counter
-                counter_update_serialized = self._set_atomic_counter(
+                counter_update_ser = self._set_atomic_counter(
                     table=el['TableName'],
-                    counter_value=new_counter_value,
-                    last_modified_timestamp=last_modified_timestamp,
+                    counter_value=new_counter,
+                    last_modified_timestamp=last_mod_timestamp,
                 )
 
                 # Append the 'update' item to the DynamoDB atomic call
-                transact_items.append({'Update': counter_update_serialized})
+                transact_items.append({'Update': counter_update_ser})
 
                 # Append the 'update' item to the return list
                 updated_item: dict[str, Any] = {
                     key[1:-12]: self._serializer.deserialize_att(value)  # type: ignore
-                    for key, value in counter_update_serialized['ExpressionAttributeValues'].items()
+                    for key, value in counter_update_ser['ExpressionAttributeValues'].items()
                 }
                 del updated_item['condition_attribute_value']
-                p_key_k, p_key_v = self._serializer.deserialize_p_key(
-                    counter_update_serialized['Key']  # type: ignore
+                # Ignoring sk because _set_atomic_counter is not
+                # using it
+                p_key_k, p_key_v, *_ = self._serializer.deserialize_p_key(
+                    counter_update_ser['Key']  # type: ignore
                 )
                 updated_item[p_key_k] = p_key_v
                 response['Update'].append(updated_item)
@@ -1093,24 +1140,37 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             assert isinstance(el['Items'], Mapping)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
-            assert isinstance(partition_key_value, (str, bytes, int, float))
+            pk_key, pk_value = next(iter(el['PartitionKey'].items()))
+            assert isinstance(pk_value, (str, bytes, int, float))
 
-            update_expression, expression_attribute_names, expression_attribute_values = (
-                self._serializer.serialize_update_items(**el['Items'])
+            # Check if a sort_key is passed in
+            if el.get('SortKey') is not None:
+                # Unpack sort_key attribute dictionary
+                assert isinstance(el['SortKey'], MutableMapping)
+                sk_key, sk_value = next(iter(el['SortKey'].items()))
+                assert isinstance(sk_value, (str, bytes, int, float))
+            else:
+                sk_key, sk_value = (None, None)
+
+            pk_ser = self._serializer.serialize_p_key(
+                pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
+            )
+
+            exp, exp_att_names, exp_att_values = self._serializer.serialize_update_items(
+                **el['Items']
             )
 
             # Build a condition expression for “strict update”
-            condition_expression = f"attribute_exists(#{partition_key_key})"
-            expression_attribute_names.update({f"#{partition_key_key}": partition_key_key})
+            cond_exp = f"attribute_exists(#{pk_key})"
+            exp_att_names.update({f"#{pk_key}": pk_key})
 
-            el_update_serialized: type_defs.UpdateTypeDef = {
+            el_update_ser: type_defs.UpdateTypeDef = {
                 'TableName': el['TableName'],
-                'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
-                'ConditionExpression': condition_expression,
-                'UpdateExpression': update_expression,
-                'ExpressionAttributeNames': expression_attribute_names,
-                'ExpressionAttributeValues': expression_attribute_values,
+                'Key': pk_ser,
+                'ConditionExpression': cond_exp,
+                'UpdateExpression': exp,
+                'ExpressionAttributeNames': exp_att_names,
+                'ExpressionAttributeValues': exp_att_values,
             }
 
             # Check if a condition is passed in
@@ -1120,45 +1180,43 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
                 # We cant mutate the original dictionary because of the
                 # retry decorator will need to run through it again in
                 # case of failure
-                condition_att_key, condition_att_value = next(
-                    iter(el['ConditionAttribute'].items())
-                )
+                cond_att_key, cond_att_value = next(iter(el['ConditionAttribute'].items()))
 
                 # If condition attribute exists pass it to the DynamoDB
                 # call
-                el_update_serialized.update({
+                el_update_ser.update({
                     'ConditionExpression': (
-                        f"{el_update_serialized['ConditionExpression']} AND"
-                        f" #{condition_att_key} = :condition_attribute_value_placeholder"
+                        f"{el_update_ser['ConditionExpression']} AND"
+                        f" #{cond_att_key} = :condition_attribute_value_placeholder"
                     )
                 })
 
                 # #condition_att_key has to be passed
                 # along the ExpressionAttributeNames because is used by
                 # the ConditionExpression
-                expression_attribute_names[f"#{condition_att_key}"] = condition_att_key
+                exp_att_names[f"#{cond_att_key}"] = cond_att_key
 
                 # :condition_attribute_value_placeholder has to be
                 # passed along the ExpressionAttributeValues because
                 # is used by the ConditionExpression
-                expression_attribute_values[':condition_attribute_value_placeholder'] = (
-                    self._serializer.serialize_att(condition_att_value)
+                exp_att_values[':condition_attribute_value_placeholder'] = (
+                    self._serializer.serialize_att(cond_att_value)
                 )
 
             # Append the 'update' item to the DynamoDB atomic call
-            transact_items.append({'Update': el_update_serialized})
+            transact_items.append({'Update': el_update_ser})
 
             # Append the 'update' item to the return list
             updated_item = {
                 key[1:-12]: self._serializer.deserialize_att(value)
-                for key, value in expression_attribute_values.items()
+                for key, value in exp_att_values.items()
             }
             if el.get('ConditionAttribute') is not None:
                 del updated_item['condition_attribute_value']
-            p_key_k, p_key_v = self._serializer.deserialize_p_key(
-                el_update_serialized['Key'],  # type: ignore
-            )
-            updated_item[p_key_k] = p_key_v
+            pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+            updated_item[pk_key] = pk_value
+            if sk_key is not None:
+                updated_item[sk_key] = sk_value
             response['Update'].append(updated_item)
 
         return transact_items, response
@@ -1179,19 +1237,32 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             assert isinstance(el['Items'], Mapping)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
-            assert isinstance(partition_key_value, (str, bytes, int, float))
+            pk_key, pk_value = next(iter(el['PartitionKey'].items()))
+            assert isinstance(pk_value, (str, bytes, int, float))
 
-            update_expression, expression_attribute_names, expression_attribute_values = (
-                self._serializer.serialize_update_items(**el['Items'])
+            # Check if a sort_key is passed in
+            if el.get('SortKey') is not None:
+                # Unpack sort_key attribute dictionary
+                assert isinstance(el['SortKey'], MutableMapping)
+                sk_key, sk_value = next(iter(el['SortKey'].items()))
+                assert isinstance(sk_value, (str, bytes, int, float))
+            else:
+                sk_key, sk_value = (None, None)
+
+            pk_ser = self._serializer.serialize_p_key(
+                pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
             )
 
-            el_upsert_serialized: type_defs.UpdateTypeDef = {
+            exp, exp_att_names, exp_att_values = self._serializer.serialize_update_items(
+                **el['Items']
+            )
+
+            el_upsert_ser: type_defs.UpdateTypeDef = {
                 'TableName': el['TableName'],
-                'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
-                'UpdateExpression': update_expression,
-                'ExpressionAttributeNames': expression_attribute_names,
-                'ExpressionAttributeValues': expression_attribute_values,
+                'Key': pk_ser,
+                'UpdateExpression': exp,
+                'ExpressionAttributeNames': exp_att_names,
+                'ExpressionAttributeValues': exp_att_values,
             }
 
             # Check if a condition is passed in
@@ -1201,44 +1272,42 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
                 # We cant mutate the original dictionary because of the
                 # retry decorator will need to run through it again in
                 # case of failure
-                condition_att_key, condition_att_value = next(
-                    iter(el['ConditionAttribute'].items())
-                )
+                cond_att_key, cond_att_value = next(iter(el['ConditionAttribute'].items()))
 
                 # If condition attribute exists pass it to the DynamoDB
                 # call
-                el_upsert_serialized.update({
+                el_upsert_ser.update({
                     'ConditionExpression': (
-                        f"#{condition_att_key} = :condition_attribute_value_placeholder"
+                        f"#{cond_att_key} = :condition_attribute_value_placeholder"
                     )
                 })
 
                 # #condition_att_key has to be passed
                 # along the ExpressionAttributeNames because is used by
                 # the ConditionExpression
-                expression_attribute_names[f"#{condition_att_key}"] = condition_att_key
+                exp_att_names[f"#{cond_att_key}"] = cond_att_key
 
                 # :condition_attribute_value_placeholder has to be
                 # passed along the ExpressionAttributeValues because
                 # is used by the ConditionExpression
-                expression_attribute_values[':condition_attribute_value_placeholder'] = (
-                    self._serializer.serialize_att(condition_att_value)
+                exp_att_values[':condition_attribute_value_placeholder'] = (
+                    self._serializer.serialize_att(cond_att_value)
                 )
 
             # Append the 'update' item to the DynamoDB atomic call
-            transact_items.append({'Update': el_upsert_serialized})
+            transact_items.append({'Update': el_upsert_ser})
 
             # Append the 'upsert' item to the return list
             upsert_item = {
                 key[1:-12]: self._serializer.deserialize_att(value)
-                for key, value in expression_attribute_values.items()
+                for key, value in exp_att_values.items()
             }
             if el.get('ConditionAttribute') is not None:
                 del upsert_item['condition_attribute_value']
-            p_key_k, p_key_v = self._serializer.deserialize_p_key(
-                el_upsert_serialized['Key'],  # type: ignore
-            )
-            upsert_item[p_key_k] = p_key_v
+            pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+            upsert_item[pk_key] = pk_value
+            if sk_key is not None:
+                upsert_item[sk_key] = sk_value
             response['Upsert'].append(upsert_item)
 
         return transact_items, response
@@ -1258,19 +1327,37 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             assert isinstance(el['TableName'], str)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
-            assert isinstance(partition_key_value, (str, bytes, int, float))
+            pk_key, pk_value = next(iter(el['PartitionKey'].items()))
+            assert isinstance(pk_value, (str, bytes, int, float))
 
-            el_delete_serialized: type_defs.DeleteTypeDef = {
+            # Check if a sort_key is passed in
+            if el.get('SortKey') is not None:
+                # Unpack sort_key attribute dictionary
+                assert isinstance(el['SortKey'], MutableMapping)
+                sk_key, sk_value = next(iter(el['SortKey'].items()))
+                assert isinstance(sk_value, (str, bytes, int, float))
+            else:
+                sk_key, sk_value = (None, None)
+
+            pk_ser = self._serializer.serialize_p_key(
+                pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
+            )
+
+            el_delete_ser: type_defs.DeleteTypeDef = {
                 'TableName': el['TableName'],
-                'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
+                'Key': pk_ser,
             }
 
             # Append the 'delete' item to the DynamoDB atomic call
-            transact_items.append({'Delete': el_delete_serialized})
+            transact_items.append({'Delete': el_delete_ser})
 
             # Append the 'delete' item to the return list
-            response['Delete'].append({partition_key_key: partition_key_value})
+            deleted_item: dict[str, AttributeValueDeserialized] = {}
+            pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+            deleted_item[pk_key] = pk_value
+            if sk_key is not None:
+                deleted_item[sk_key] = sk_value
+            response['Delete'].append(deleted_item)
 
         return transact_items, response
 
@@ -1289,12 +1376,25 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             assert isinstance(el['TableName'], str)
             assert isinstance(el['PartitionKey'], MutableMapping)
 
-            partition_key_key, partition_key_value = next(iter(el['PartitionKey'].items()))
-            assert isinstance(partition_key_value, (str, bytes, int, float))
+            pk_key, pk_value = next(iter(el['PartitionKey'].items()))
+            assert isinstance(pk_value, (str, bytes, int, float))
 
-            el_condition_check_serialized: type_defs.ConditionCheckTypeDef = {
+            # Check if a sort_key is passed in
+            if el.get('SortKey') is not None:
+                # Unpack sort_key attribute dictionary
+                assert isinstance(el['SortKey'], MutableMapping)
+                sk_key, sk_value = next(iter(el['SortKey'].items()))
+                assert isinstance(sk_value, (str, bytes, int, float))
+            else:
+                sk_key, sk_value = (None, None)
+
+            pk_ser = self._serializer.serialize_p_key(
+                pk_key=pk_key, pk_value=pk_value, sk_key=sk_key, sk_value=sk_value
+            )
+
+            el_cond_check_ser: type_defs.ConditionCheckTypeDef = {
                 'TableName': el['TableName'],
-                'Key': self._serializer.serialize_p_key(partition_key_key, partition_key_value),
+                'Key': pk_ser,
                 # TODO(carlogtt): not sure how to use the below yet
                 'ConditionExpression': 'string',
                 'ExpressionAttributeNames': {'string': 'string'},
@@ -1303,10 +1403,15 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
             # Append the 'condition_check' item to the DynamoDB atomic
             # call
-            transact_items.append({'ConditionCheck': el_condition_check_serialized})
+            transact_items.append({'ConditionCheck': el_cond_check_ser})
 
             # Append the 'condition_check' item to the return list
-            response['ConditionCheck'].append({partition_key_key: partition_key_value})
+            cond_check_item: dict[str, AttributeValueDeserialized] = {}
+            pk_key, pk_value, sk_key, sk_value = self._serializer.deserialize_p_key(pk_ser)
+            cond_check_item[pk_key] = pk_value
+            if sk_key is not None:
+                cond_check_item[sk_key] = sk_value
+            response['ConditionCheck'].append(cond_check_item)
 
         return transact_items, response
 
@@ -1332,18 +1437,18 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
 
         # Using the tableName_SysItems table for lookup
         sys_table = table + "_SysItems"
-        partition_key = self._serializer.serialize_p_key("pk_id", "__PK_VALUE_COUNTER__")
+        pk_ser = self._serializer.serialize_p_key(pk_key="pk_id", pk_value="__PK_VALUE_COUNTER__")
 
         try:
-            dynamodb_response = self._client.get_item(TableName=sys_table, Key=partition_key)
-            counter = dynamodb_response.get('Item')
+            ddb_response = self._client.get_item(TableName=sys_table, Key=pk_ser)
+            counter = ddb_response.get('Item')
 
         except self._client.exceptions.ResourceNotFoundException:
             module_logger.debug(f"Table: {sys_table} not found in DynamoDB, Creating it.")
 
             # Initialize a dictionary with all the arguments to pass
             # into the DynamoDB put_item call
-            dynamodb_create_table_args: dict[str, Any] = {
+            ddb_create_table_args: dict[str, Any] = {
                 'TableName': sys_table,
                 'BillingMode': 'PAY_PER_REQUEST',
                 'AttributeDefinitions': [{
@@ -1358,7 +1463,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             }
 
             try:
-                self._client.create_table(**dynamodb_create_table_args)
+                self._client.create_table(**ddb_create_table_args)
 
                 # Give it time to create the table
                 time.sleep(15)
@@ -1392,7 +1497,9 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         self,
         table: str,
         partition_key_key: str,
-        partition_key_value: Optional[PartitionKeyValue] = None,
+        partition_key_value: PartitionKeyValue,
+        sort_key_key: Optional[str] = None,
+        sort_key_value: Optional[SortKeyValue] = None,
         **items: AttributeValue,
     ) -> dict[str, AttributeValueDeserialized]:
         """
@@ -1401,6 +1508,8 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         :param table: DynamoDB table name.
         :param partition_key_key: The key of the partition key.
         :param partition_key_value: The value of the partition key.
+        :param sort_key_key: The key of the sort key.
+        :param sort_key_value: The value of the sort key.
         :param items: Additional items to add.
         :return: The stored DynamoDB Item deserialized.
         :raise DynamoDBError: If operation fails.
@@ -1408,28 +1517,30 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             conflict.
         """
 
-        assert isinstance(partition_key_value, (str, bytes, int, float))
-
-        partition_key = self._serializer.serialize_p_key(partition_key_key, partition_key_value)
+        pk_ser = self._serializer.serialize_p_key(
+            pk_key=partition_key_key,
+            pk_value=partition_key_value,
+            sk_key=sort_key_key,
+            sk_value=sort_key_value,
+        )
         additional_items = self._serializer.serialize_put_items(**items)
-        all_items_serialized = {**additional_items, **partition_key}
+        items_ser = {**additional_items, **pk_ser}
 
         # Initialize a dictionary with all the arguments to pass into
         # the DynamoDB put_item call
-        dynamodb_put_item_args: dict[str, Any] = {
+        ddb_put_item_args: dict[str, Any] = {
             'TableName': table,
-            'Item': all_items_serialized,
+            'Item': items_ser,
             'ConditionExpression': f"attribute_not_exists({partition_key_key})",
         }
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                retryer(self._client.put_item, **dynamodb_put_item_args)
+                retryer(self._client.put_item, **ddb_put_item_args)
 
         except botocore.exceptions.ClientError as ex:
             if "ConditionalCheckFailed" in str(ex):
                 raise exceptions.DynamoDBConflictError(str(ex.response))
-
             else:
                 raise exceptions.DynamoDBError(str(ex.response))
 
@@ -1439,8 +1550,7 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         # If we get here it means that the item has been added
         # successfully therefore we return it
         item_put = {
-            key: self._serializer.deserialize_att(value)
-            for key, value in all_items_serialized.items()
+            key: self._serializer.deserialize_att(value) for key, value in items_ser.items()
         }
 
         return item_put
@@ -1513,32 +1623,32 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         sys_table = table + "_SysItems"
 
         # Update the counter
-        update_expression, expression_attribute_names, expression_attribute_values = (
-            self._serializer.serialize_update_items(**{
-                'current_counter_value': counter_value,
-                'last_modified_timestamp': time.time_ns(),
-            })
-        )
+        exp, exp_att_names, exp_att_values = self._serializer.serialize_update_items(**{
+            'current_counter_value': counter_value,
+            'last_modified_timestamp': time.time_ns(),
+        })
 
         # :condition_attribute_value_placeholder has to be
         # passed along the ExpressionAttributeValues because
         # is used by the ConditionExpression
-        expression_attribute_values[':condition_attribute_value_placeholder'] = (
-            self._serializer.serialize_att(last_modified_timestamp)
+        exp_att_values[':condition_attribute_value_placeholder'] = self._serializer.serialize_att(
+            last_modified_timestamp
         )
 
-        el_update_serialized: type_defs.UpdateTypeDef = {
+        pk_ser = self._serializer.serialize_p_key(pk_key="pk_id", pk_value="__PK_VALUE_COUNTER__")
+
+        el_update_ser: type_defs.UpdateTypeDef = {
             'TableName': sys_table,
-            'Key': self._serializer.serialize_p_key("pk_id", "__PK_VALUE_COUNTER__"),
-            'UpdateExpression': update_expression,
-            'ExpressionAttributeNames': expression_attribute_names,
-            'ExpressionAttributeValues': expression_attribute_values,
+            'Key': pk_ser,
+            'UpdateExpression': exp,
+            'ExpressionAttributeNames': exp_att_names,
+            'ExpressionAttributeValues': exp_att_values,
             'ConditionExpression': (
                 "#last_modified_timestamp = :condition_attribute_value_placeholder"
             ),
         }
 
-        return el_update_serialized
+        return el_update_ser
 
     def _get_pk_type(self, table: str) -> Union[type[bytes], type[str], type[float]]:
         """
@@ -1550,12 +1660,12 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
         """
 
         # Initialize values to prevent UnboundLocalError
-        partition_key_key = ""
-        partition_key_key_type = ""
+        pk_key = ""
+        pk_key_type = ""
 
         try:
             with utils.retry(exception_to_check=Exception, delay_secs=1) as retryer:
-                dynamodb_response = retryer(self._client.describe_table, TableName=table)
+                ddb_response = retryer(self._client.describe_table, TableName=table)
 
         except botocore.exceptions.ClientError as ex:
             raise exceptions.DynamoDBError(str(ex.response))
@@ -1564,29 +1674,27 @@ class DynamoDB(aws_boto3.aws_service_base.AwsServiceBase[DynamoDBClient]):
             raise exceptions.DynamoDBError(str(ex))
 
         # Get the PartitionKey Key
-        for idx, schemas in enumerate(dynamodb_response['Table']['KeySchema']):
+        for idx, schemas in enumerate(ddb_response['Table']['KeySchema']):
             for k, v in schemas.items():
                 if k == 'KeyType' and v == 'HASH':
-                    partition_key_key = dynamodb_response['Table']['KeySchema'][idx][
-                        'AttributeName'
-                    ]
+                    pk_key = ddb_response['Table']['KeySchema'][idx]['AttributeName']
 
         # Get the PartitionKey Key Type
-        for idx, attributes in enumerate(dynamodb_response['Table']['AttributeDefinitions']):
+        for idx, attributes in enumerate(ddb_response['Table']['AttributeDefinitions']):
             for k, v in attributes.items():
-                if k == 'AttributeName' and v == partition_key_key:
-                    partition_key_key_type = dynamodb_response['Table']['AttributeDefinitions'][
-                        idx
-                    ]['AttributeType']
+                if k == 'AttributeName' and v == pk_key:
+                    pk_key_type = ddb_response['Table']['AttributeDefinitions'][idx][
+                        'AttributeType'
+                    ]
 
         # Convert to Python type and return
-        if partition_key_key_type == 'S':
+        if pk_key_type == 'S':
             return str
 
-        elif partition_key_key_type == 'B':
+        elif pk_key_type == 'B':
             return bytes
 
-        elif partition_key_key_type == 'N':
+        elif pk_key_type == 'N':
             return float
 
         else:
@@ -1770,40 +1878,66 @@ class DynamoDbSerializer:
             )
 
     def serialize_p_key(
-        self, partition_key_key: str, partition_key_value: PartitionKeyValue
+        self,
+        pk_key: str,
+        pk_value: PartitionKeyValue,
+        sk_key: Optional[str] = None,
+        sk_value: Optional[SortKeyValue] = None,
     ) -> PartitionKeyItem:
         """
         Return a serialized DynamoDB partition key.
 
-        :param partition_key_key: The key of the partition key.
-        :param partition_key_value: The value of the partition key.
+        :param pk_key: The key of the partition key.
+        :param pk_value: The value of the partition key.
+        :param sk_key: The key of the sort key.
+        :param sk_value: The value of the sort key.
         :return: Serialized partition key.
-            i.e. {"id": {"S": "string"}}
+            i.e. {"id": {"S": "string"}, "sortKey": {"S": "string"}}
         """
 
-        partition_key_attribute = self.serialize_att(partition_key_value)
-        partition_key: PartitionKeyItem = {partition_key_key: partition_key_attribute}
+        if (sk_key is None) ^ (sk_value is None):
+            raise exceptions.DynamoDBError(
+                "Both sort_key_key and sort_key_value must be provided or both must be None."
+            )
+        has_sk = sk_key is not None and sk_value is not None
 
-        return partition_key
+        pk_ser: PartitionKeyItem = {pk_key: self.serialize_att(pk_value)}
+
+        if has_sk:
+            assert sk_key is not None
+            pk_ser[sk_key] = self.serialize_att(sk_value)
+
+        return pk_ser
 
     def deserialize_p_key(
-        self, partition_key_serialized: PartitionKeyItem
-    ) -> tuple[str, PartitionKeyValue]:
+        self, pk_serialized: PartitionKeyItem
+    ) -> tuple[str, PartitionKeyValue, Optional[str], Optional[SortKeyValue]]:
         """
         Deserialize a serialized DynamoDB partition key.
 
-        :param partition_key_serialized: The serialized partition key.
-            For example, {"id": {"S": "string"}}.
+        :param pk_serialized: The serialized partition key.
+            i.e., {"id": {"S": "string"}, "sortKey": {"S": "string"}}.
         :return: A tuple containing the partition key and its value.
         """
 
-        partition_key_key, partition_key_value_serialized = next(
-            iter(partition_key_serialized.items())
-        )
-        partition_key_value = self.deserialize_att(partition_key_value_serialized)
-        assert isinstance(partition_key_value, (str, bytes, int, float))
+        iter_pk_ser = iter(pk_serialized.items())
 
-        return partition_key_key, partition_key_value
+        pk_key, pk_value_ser = next(iter_pk_ser)
+        try:
+            sk_key, sk_value_ser = next(iter_pk_ser)
+        except StopIteration:
+            sk_key, sk_value_ser = (None, None)
+
+        pk_value = self.deserialize_att(pk_value_ser)
+        assert isinstance(pk_value, (str, bytes, int, float))
+
+        if sk_value_ser is not None:
+            sk_value = self.deserialize_att(sk_value_ser)
+            assert isinstance(sk_value, (str, bytes, int, float))
+        else:
+            sk_value = None
+
+        return pk_key, pk_value, sk_key, sk_value
 
     def serialize_put_items(self, **items: AttributeValue) -> Item:
         """
@@ -1820,10 +1954,10 @@ class DynamoDbSerializer:
 
         for key, value in items.items():
             normalized_key = self.string_utils.snake_case(key)
-            dynamodb_attribute = self.serialize_att(value)
+            ddb_attribute = self.serialize_att(value)
 
             # Now add it to the additional_items serialized dictionary
-            additional_items[normalized_key] = dynamodb_attribute
+            additional_items[normalized_key] = ddb_attribute
 
         return additional_items
 
@@ -1838,7 +1972,7 @@ class DynamoDbSerializer:
             and ExpressionAttributeValues.
         """
 
-        update_expression = "SET "
+        update_exp = "SET "
 
         # In DynamoDB operations(such as UpdateItem, Query, or Scan),
         # you can use ExpressionAttributeNames to provide alternate
@@ -1846,32 +1980,32 @@ class DynamoDbSerializer:
         # commonly used to work around DynamoDB's reserved keywords or
         # to use attribute names that contain special characters not
         # allowed in expressions.
-        expression_attribute_names: dict[str, str] = {}
+        exp_att_names: dict[str, str] = {}
 
         # In DynamoDB API, the ExpressionAttributeValues dictionary is
         # used to pass in placeholders for values that will be used in
         # your UpdateExpression and ConditionExpression. The keys for
         # these placeholders should start with a : and should not be
         # confused with actual column names.
-        expression_attribute_values: Item = {}
+        exp_att_values: Item = {}
 
         for key, value in items.items():
             normalized_key = self.string_utils.snake_case(key)
-            dynamodb_attribute = self.serialize_att(value)
+            ddb_attribute = self.serialize_att(value)
 
             # Add to the update_expression string
-            update_expression += f"#{normalized_key} = :{normalized_key}_placeholder, "
+            update_exp += f"#{normalized_key} = :{normalized_key}_placeholder, "
 
             # Add to the expression_attribute_names dict
-            expression_attribute_names[f"#{normalized_key}"] = normalized_key
+            exp_att_names[f"#{normalized_key}"] = normalized_key
 
             # Add to the expression_attribute_values serialized dict
-            expression_attribute_values[f":{normalized_key}_placeholder"] = dynamodb_attribute
+            exp_att_values[f":{normalized_key}_placeholder"] = ddb_attribute
 
         # Removing the trailing ", " from the update_expression string
-        update_expression = update_expression[:-2]
+        update_exp = update_exp[:-2]
 
-        return update_expression, expression_attribute_names, expression_attribute_values
+        return update_exp, exp_att_names, exp_att_values
 
     def normalize_item(self, item: dict[str, Any]) -> dict[str, AttributeValueDeserialized]:
         """
@@ -1886,10 +2020,8 @@ class DynamoDbSerializer:
             (i.e., matching AttributeValueDeserialized).
         """
 
-        item_serialized = {key: self.serialize_att(value) for key, value in item.items()}
+        item_ser = {key: self.serialize_att(value) for key, value in item.items()}
 
-        item_deserialized = {
-            key: self.deserialize_att(value) for key, value in item_serialized.items()
-        }
+        item_deser = {key: self.deserialize_att(value) for key, value in item_ser.items()}
 
-        return item_deserialized
+        return item_deser
