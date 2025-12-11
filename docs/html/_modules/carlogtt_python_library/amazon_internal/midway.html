@@ -68,6 +68,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -111,12 +112,25 @@
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
-            <span class="c1"># Run mwinit -s</span>
-            <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;mwinit </span><span class="si">{options}</span><span class="s2"> || exit 1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+        <span class="c1"># Build the argument list safely</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mwinit&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">command_args</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+            <span class="n">command</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">command_args</span><span class="p">)</span>
 
-            <span class="c1"># Run the command using subprocess.Popen</span>
-            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Run the command using subprocess.Popen</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_BOLD_RED</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[ERROR] &#39;mwinit&#39; command not found. Ensure it is installed and in your&quot;</span>
+                    <span class="s2">&quot; PATH.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="o">+</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_END</span><span class="p">,</span>
+                    <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="c1"># Wait for the process to complete</span>
             <span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
