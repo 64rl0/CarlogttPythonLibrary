@@ -35,6 +35,7 @@ This module ...
 import logging
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -74,12 +75,25 @@ class MidwayUtils:
         :return: None
         """
 
-        for i in range(max_retries):
-            # Run mwinit -s
-            command = "mwinit {options} || exit 1".format(options=options)
+        # Build the argument list safely
+        command = ["mwinit"]
+        if options:
+            command_args = shlex.split(options)
+            command.extend(command_args)
 
-            # Run the command using subprocess.Popen
-            process = subprocess.Popen(command, shell=True, executable="/bin/bash")
+        for i in range(max_retries):
+            try:
+                # Run the command using subprocess.Popen
+                process = subprocess.Popen(command)
+            except FileNotFoundError:
+                print(
+                    utils.CLIStyle.CLI_BOLD_RED
+                    + "\n[ERROR] 'mwinit' command not found. Ensure it is installed and in your"
+                    " PATH.\n"
+                    + utils.CLIStyle.CLI_END,
+                    flush=True,
+                )
+                sys.exit(1)
 
             # Wait for the process to complete
             process.wait()
