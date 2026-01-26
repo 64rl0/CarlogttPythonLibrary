@@ -287,4 +287,5 @@ cython_debug/
 
 
 ### Carlo Personal Exclusions
+.icarus/
 build_*/
