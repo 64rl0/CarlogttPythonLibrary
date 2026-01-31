@@ -47,7 +47,8 @@ project = 'CarlogttPythonLibrary'
 version = 'v.'
 release = 'r.'
 copyright = f"{datetime.datetime.now().year}, Carlo Gatti"
-author = "Carlo Gatti"
+author = 'Carlo Gatti'
+language = 'en'
 
 # General configuration
 extensions = [
@@ -69,7 +70,7 @@ source_suffix = {
 }
 
 # Options for HTML output
-html_theme = 'classic'
+html_theme = 'alabaster'
 html_static_path = ['_static']
 
 
