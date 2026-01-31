@@ -111,4 +111,3 @@ echo -e "\n\n"
 
 # Update Read the Docs
 "${script_dir_abs}/build_read_the_docs.sh"
-

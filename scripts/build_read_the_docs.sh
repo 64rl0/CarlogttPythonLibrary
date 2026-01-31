@@ -71,8 +71,8 @@ declare -r package="\xF0\x9F\x93\xA6"
 declare -r network_world="\xF0\x9F\x8C\x90"
 
 # Script Options
-set -o errexit   # Exit immediately if a command exits with a non-zero status
-set -o pipefail  # Exit status of a pipeline is the status of the last cmd to exit with non-zero
+set -o errexit  # Exit immediately if a command exits with a non-zero status
+set -o pipefail # Exit status of a pipeline is the status of the last cmd to exit with non-zero
 
 # Script Paths
 script_dir_abs="$(realpath -- "$(dirname -- "${BASH_SOURCE[0]}")")"
@@ -81,8 +81,8 @@ project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
 if [[ -z "${CARLOGTT_SECRET_READ_THE_DOCS_API_KEY}" ]]; then
-    echo "${bold_red}[ERROR]${end} - CARLOGTT_SECRET_READ_THE_DOCS_API_KEY is not set"
-    exit 1
+	echo "${bold_red}[ERROR]${end} - CARLOGTT_SECRET_READ_THE_DOCS_API_KEY is not set"
+	exit 1
 fi
 
 # Read the Docs Project
@@ -97,6 +97,3 @@ echo -e "Follow the build progress at:"
 echo "${response}" | jq -r '.build.urls.build'
 echo -e "\n${bold_green}${green_check_mark} Build started successfully ${end}\n"
 echo
-
-
-

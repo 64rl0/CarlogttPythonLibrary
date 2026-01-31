@@ -1,4 +1,5 @@
-git+https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/64rl0/CarlogttPythonLibrary.git
+git+https://github.com/64rl0/CarlogttPythonLibrary.git
+sphinx-rtd-theme
 alabaster==1.0.0
 async-generator==1.10
 attrs==25.4.0
