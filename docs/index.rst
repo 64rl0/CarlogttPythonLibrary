@@ -18,4 +18,6 @@ _____________
 .. toctree::
    :maxdepth: 1000
 
+    intro
+
    _apidoc/modules
