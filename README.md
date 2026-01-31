@@ -31,6 +31,11 @@ sqlite = carlogtt_python_library.SQLite("/path/to/db", "db_filename")
 
 <br>
 
+## Package documentation
+[Read the Docs](https://carlogttpythonlibrary.readthedocs.io/en/latest/)
+
+<br>
+
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
