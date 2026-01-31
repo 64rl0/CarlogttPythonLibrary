@@ -12,6 +12,9 @@ __________________
 * :ref:`search`
 
 
+API Reference
+_____________
+
 .. toctree::
    :maxdepth: 1000
 
