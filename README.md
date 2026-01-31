@@ -32,7 +32,7 @@ sqlite = carlogtt_python_library.SQLite("/path/to/db", "db_filename")
 <br>
 
 ## Package documentation
-[Read the Docs](https://carlogttpythonlibrary.readthedocs.io/en/latest/index.html)
+[Read the Docs](https://carlogttpythonlibrary.readthedocs.io/en/latest/)
 
 <br>
 
