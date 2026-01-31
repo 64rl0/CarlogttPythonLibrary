@@ -1,44 +1,100 @@
+
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html lang="en" data-content_root="../">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.aws_boto3.s3 module &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
-    <title>carlogtt_python_library.aws_boto3.s3 module &#8212; CarlogttPythonLibrary r. documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
-    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=9d6d948b" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=772fa434" />
-    <script src="../_static/documentation_options.js?v=30015795"></script>
-    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=30015795"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="carlogtt_python_library.aws_boto3.secrets_manager module" href="carlogtt_python_library.aws_boto3.secrets_manager.html" />
-    <link rel="prev" title="carlogtt_python_library.aws_boto3.kms module" href="carlogtt_python_library.aws_boto3.kms.html" />
-   
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
+    <link rel="prev" title="carlogtt_python_library.aws_boto3.kms module" href="carlogtt_python_library.aws_boto3.kms.html" /> 
+</head>
 
-  
-  
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
           
+          
+          <a href="../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
 
-          <div class="body" role="main">
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+          <li class="breadcrumb-item"><a href="carlogtt_python_library.html">carlogtt_python_library package</a></li>
+          <li class="breadcrumb-item"><a href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.aws_boto3.s3 module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_apidoc/carlogtt_python_library.aws_boto3.s3.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <section id="module-carlogtt_python_library.aws_boto3.s3">
-<span id="carlogtt-python-library-aws-boto3-s3-module"></span><h1>carlogtt_python_library.aws_boto3.s3 module<a class="headerlink" href="#module-carlogtt_python_library.aws_boto3.s3" title="Link to this heading">¶</a></h1>
+<span id="carlogtt-python-library-aws-boto3-s3-module"></span><h1>carlogtt_python_library.aws_boto3.s3 module<a class="headerlink" href="#module-carlogtt_python_library.aws_boto3.s3" title="Link to this heading"></a></h1>
 <p>This module …</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.aws_boto3.s3.</span></span><span class="sig-name descname"><span class="pre">S3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aws_region_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caching</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.aws_boto3.s3.</span></span><span class="sig-name descname"><span class="pre">S3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aws_region_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caching</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">AwsServiceBase</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">S3Client</span></code>]</p>
 <p>The S3 class provides a simplified interface for interacting with
 Amazon S3 services within a Python application.</p>
@@ -78,7 +134,7 @@ will be passed to the low-level service client.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file">
-<span class="sig-name descname"><span class="pre">create_presigned_post_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_post_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_presigned_post_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_post_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file" title="Link to this definition"></a></dt>
 <dd><p>Creates a presigned URL and the form fields used for a
 presigned s3 post
 The URL expires after a fixed amount of time.</p>
@@ -106,7 +162,7 @@ submitting the post.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file">
-<span class="sig-name descname"><span class="pre">create_presigned_url_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_url_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_presigned_url_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiration_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.create_presigned_url_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file" title="Link to this definition"></a></dt>
 <dd><p>Creates a presigned URL for a file stored in Amazon S3.
 The URL can be used to access the file for a limited time.
 The URL expires after a fixed amount of time.</p>
@@ -131,7 +187,7 @@ expires. (Default: 3600).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.delete_file">
-<span class="sig-name descname"><span class="pre">delete_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DeleteObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.delete_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.delete_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">delete_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DeleteObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.delete_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.delete_file" title="Link to this definition"></a></dt>
 <dd><p>Delete objects from Amazon S3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -152,7 +208,7 @@ expires. (Default: 3600).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.get_file">
-<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GetObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.get_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GetObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.get_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.get_file" title="Link to this definition"></a></dt>
 <dd><p>Retrieves objects from Amazon S3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -173,7 +229,7 @@ expires. (Default: 3600).</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.list_files">
-<span class="sig-name descname"><span class="pre">list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.list_files" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.list_files" title="Link to this definition"></a></dt>
 <dd><p>List all the files in the bucket.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -196,7 +252,7 @@ list. Leave default to list all the files in the bucket.
 
 <dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.aws_boto3.s3.S3.store_file">
-<span class="sig-name descname"><span class="pre">store_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IO</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PutObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.store_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.store_file" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">store_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">IO</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PutObjectOutputTypeDef</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/aws_boto3/s3.html#S3.store_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.aws_boto3.s3.S3.store_file" title="Link to this definition"></a></dt>
 <dd><p>Store objects to Amazon S3.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -221,118 +277,35 @@ list. Leave default to list all the files in the bucket.
 </section>
 
 
+           </div>
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="Main">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../index.html">CarlogttPythonLibrary</a></h1>
-
-
-
-
-
-
-
-
-
-
-<search id="searchbox" style="display: none" role="search">
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
-      <input type="submit" value="Go" />
-    </form>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="carlogtt_python_library.aws_boto3.kms.html" class="btn btn-neutral float-left" title="carlogtt_python_library.aws_boto3.kms module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="carlogtt_python_library.aws_boto3.secrets_manager.html" class="btn btn-neutral float-right" title="carlogtt_python_library.aws_boto3.secrets_manager module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-</search>
-<script>document.getElementById('searchbox').style.display = "block"</script>
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a><ul class="current">
-<li class="toctree-l5 current"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.aws_lambda.html">carlogtt_python_library.aws_boto3.aws_lambda module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.aws_service_base.html">carlogtt_python_library.aws_boto3.aws_service_base module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.cloud_front.html">carlogtt_python_library.aws_boto3.cloud_front module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.ec2.html">carlogtt_python_library.aws_boto3.ec2 module</a></li>
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.kms.html">carlogtt_python_library.aws_boto3.kms module</a></li>
-<li class="toctree-l6 current"><a class="current reference internal" href="#">carlogtt_python_library.aws_boto3.s3 module</a><ul>
-<li class="toctree-l7"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3"><code class="docutils literal notranslate"><span class="pre">S3</span></code></a><ul>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_post_for_file"><code class="docutils literal notranslate"><span class="pre">S3.create_presigned_post_for_file()</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.create_presigned_url_for_file"><code class="docutils literal notranslate"><span class="pre">S3.create_presigned_url_for_file()</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.delete_file"><code class="docutils literal notranslate"><span class="pre">S3.delete_file()</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.get_file"><code class="docutils literal notranslate"><span class="pre">S3.get_file()</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.list_files"><code class="docutils literal notranslate"><span class="pre">S3.list_files()</span></code></a></li>
-<li class="toctree-l8"><a class="reference internal" href="#carlogtt_python_library.aws_boto3.s3.S3.store_file"><code class="docutils literal notranslate"><span class="pre">S3.store_file()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l6"><a class="reference internal" href="carlogtt_python_library.aws_boto3.secrets_manager.html">carlogtt_python_library.aws_boto3.secrets_manager module</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
 
+  <hr/>
 
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="modules.html">src</a><ul>
-  <li><a href="carlogtt_python_library.html">carlogtt_python_library package</a><ul>
-  <li><a href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a><ul>
-      <li>Previous: <a href="carlogtt_python_library.aws_boto3.kms.html" title="previous chapter">carlogtt_python_library.aws_boto3.kms module</a></li>
-      <li>Next: <a href="carlogtt_python_library.aws_boto3.secrets_manager.html" title="next chapter">carlogtt_python_library.aws_boto3.secrets_manager module</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
 
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
-
-
-
-
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &#169;2025, Carlo Gatti.
-      
-      |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
-      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
-      
-      |
-      <a href="../_sources/_apidoc/carlogtt_python_library.aws_boto3.s3.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-    
-
-    
-  </body>
+</body>
 </html>
