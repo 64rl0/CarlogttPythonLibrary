@@ -1,0 +1,21 @@
+# Read the Docs configuration file for Sphinx projects
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+# Required
+version: 2
+
+# Set the OS, Python version and other tools you might need
+build:
+  os: ubuntu-lts-latest
+  tools:
+    python: "3"
+
+# Build documentation in the "docs/" directory with Sphinx
+sphinx:
+  builder: html
+  configuration: docs/conf.py
+  fail_on_warning: false
+
+# List of submodules to be included.
+submodules:
+  include: all
