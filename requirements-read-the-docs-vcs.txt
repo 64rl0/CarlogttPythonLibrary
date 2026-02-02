@@ -1,0 +1,11 @@
+#
+# Read the Docs uses pip to install your Python packages.
+# If you have local dependencies, you can install them
+# from a Git repository or a repository manager.
+#
+# Pip supports installing packages from a Git repository using the URI form:
+#
+#    git+https://gitprovider.com/user/project.git@{version}
+#
+
+git+https://github.com/64rl0/CarlogttPythonLibrary.git
