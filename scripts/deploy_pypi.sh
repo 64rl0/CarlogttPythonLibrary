@@ -81,33 +81,25 @@ declare -r project_root_dir_abs
 
 # We accept this because of false gitleak failures
 icarus builder release || true
-
 echo -e "\n\n"
 
-# Update version on file
-. "${script_dir_abs}/update_version.sh"
+# Update version
+echo -e "${bold_green}Select release type${end}"
+icarus builder hook --bumpver
 echo -e "\n\n"
 
-# Commit changes
+# Commit version update changes
 pushd "${project_root_dir_abs}" >/dev/null
-git add pyproject.toml
-git commit -m "bump version to -> ${new_version}"
+git add icarus.cfg
+git commit -m "publish version ${new_version}"
 git push
 popd >/dev/null
-
-# Clean environment BEFORE
-echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
-rm -rf "${project_root_dir_abs}/dist"
-echo -e "completed!"
-
-# Build and push from the icarus env
-icarus builder exec ". ${script_dir_abs}/build_and_push.sh"
-
-# Clean environment AFTER
-echo -e "\n\n${bold_green}${broom} Cleaning environment${end}"
-rm -rf "${project_root_dir_abs}/dist"
-echo -e "completed!"
 echo -e "\n\n"
 
+# Build and push from the icarus env
+# We MUST build the pkg after having bumped the version!
+icarus builder build
+icarus builder hook --pypi
+
 # Update Read the Docs
-"${script_dir_abs}/build_read_the_docs.sh"
+"${script_dir_abs}/deploy_read_the_docs.sh"

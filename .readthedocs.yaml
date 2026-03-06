@@ -8,8 +8,8 @@ version: 2
 # See https://docs.readthedocs.io/en/stable/guides/reproducible-builds.html
 python:
   install:
-    - requirements: requirements-read-the-docs.txt
-    - requirements: requirements-read-the-docs-vcs.txt
+    - requirements: requirements/read-the-docs-requirements.txt
+    - requirements: requirements/read-the-docs-vcs-requirements.txt
 
 # Set the OS, Python version and other tools you might need
 build:

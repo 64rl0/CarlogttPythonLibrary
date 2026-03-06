@@ -85,6 +85,8 @@ if [[ -z "${CARLOGTT_SECRET_READ_THE_DOCS_API_KEY}" ]]; then
 	exit 1
 fi
 
+icarus builder hook --readthedocs
+
 # Read the Docs Project
 project_name="carlogttpythonlibrary"
 project_version="latest"
