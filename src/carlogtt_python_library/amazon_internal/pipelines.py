@@ -34,7 +34,7 @@ This module ...
 # Standard Library Imports
 import enum
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # Third Party Library Imports
 import boto3
@@ -146,7 +146,7 @@ class Pipelines:
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_pipelines_client()
-            return self._cache['client']
+            return cast(PipelinesClient, self._cache['client'])
 
         else:
             return self._get_pipelines_client()
@@ -206,6 +206,7 @@ class Pipelines:
             )
 
             response_obj = response.json()
+            assert isinstance(response_obj, dict)
 
             return response_obj
 

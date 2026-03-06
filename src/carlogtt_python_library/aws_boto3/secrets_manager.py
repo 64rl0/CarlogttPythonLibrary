@@ -196,6 +196,7 @@ class SecretsManager(aws_service_base.AwsServiceBase[SecretsManagerClient]):
 
             # If secret is found load the string to Python dict
             secret = json.loads(secret_str)
+            assert isinstance(secret, dict)
 
             return secret
 

@@ -209,7 +209,10 @@ class Cryptography:
 
         self.logger.debug("Deserializing key from storage")
 
-        return ast.literal_eval(key)
+        response = ast.literal_eval(key)
+        assert isinstance(response, bytes)
+
+        return response
 
     def hash_string(self, raw_string: str, key: bytes) -> str:
         """

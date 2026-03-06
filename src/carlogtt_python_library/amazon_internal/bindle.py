@@ -33,7 +33,7 @@ This module ...
 
 # Standard Library Imports
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # Third Party Library Imports
 import boto3
@@ -124,7 +124,7 @@ class Bindle:
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_bindle_client()
-            return self._cache['client']
+            return cast(BindleClient, self._cache['client'])
 
         else:
             return self._get_bindle_client()
@@ -181,6 +181,7 @@ class Bindle:
             )
 
             response_obj = response.json()
+            assert isinstance(response_obj, dict)
 
             return response_obj
 

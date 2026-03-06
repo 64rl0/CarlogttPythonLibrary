@@ -75,4 +75,6 @@ class Apollo:
                 bender.apollo_environment_info.BrazilBootstrapEnvironmentInfo().root
             )
 
+        assert isinstance(root, str)
+
         return root

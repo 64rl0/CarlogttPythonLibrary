@@ -92,4 +92,6 @@ class AmazonTinyUrl:
         except KeyError:
             tiny_url = ""
 
+        assert isinstance(tiny_url, str)
+
         return tiny_url

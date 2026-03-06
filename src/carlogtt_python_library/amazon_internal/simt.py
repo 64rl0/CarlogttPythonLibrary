@@ -36,7 +36,7 @@ import functools
 import logging
 import warnings
 from collections.abc import Generator
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # Third Party Library Imports
 import boto3
@@ -141,7 +141,7 @@ class SimT:
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_boto_tickety_client()
-            return self._cache['client']
+            return cast(TicketyClient, self._cache['client'])
 
         else:
             return self._get_boto_tickety_client()
@@ -371,7 +371,9 @@ class SimT:
             )
 
             try:
-                return tickety_response['commentId']
+                comment_id = tickety_response['commentId']
+                assert isinstance(comment_id, str)
+                return comment_id
 
             except KeyError as ex_inner:
                 raise exceptions.SimTError(str(ex_inner))
@@ -400,7 +402,9 @@ class SimT:
             )
 
             try:
-                return ticket_response['id']
+                ticket_id = ticket_response['id']
+                assert isinstance(ticket_id, str)
+                return ticket_id
 
             except KeyError as ex_inner:
                 raise exceptions.SimTError(str(ex_inner))

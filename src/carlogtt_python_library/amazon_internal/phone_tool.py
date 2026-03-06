@@ -86,4 +86,6 @@ class PhoneTool:
         else:
             json_data = {'error': response.text}
 
+        assert isinstance(json_data, dict)
+
         return json_data

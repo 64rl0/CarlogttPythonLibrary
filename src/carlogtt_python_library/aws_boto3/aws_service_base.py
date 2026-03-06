@@ -138,7 +138,7 @@ class AwsServiceBase(Generic[AwsServiceClient]):
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_boto_client()
-            return self._cache['client']
+            return cast(AwsServiceClient, self._cache['client'])
 
         else:
             return self._get_boto_client()

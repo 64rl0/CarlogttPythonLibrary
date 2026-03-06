@@ -33,7 +33,7 @@ This module ...
 
 # Standard Library Imports
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # Third Party Library Imports
 import aws_mirador_api_service_python_client_utils
@@ -136,7 +136,7 @@ class Mirador:
         if self._caching:
             if self._cache.get('client') is None:
                 self._cache['client'] = self._get_boto_mirador_client()
-            return self._cache['client']
+            return cast(MiradorClient, self._cache['client'])
 
         else:
             return self._get_boto_mirador_client()

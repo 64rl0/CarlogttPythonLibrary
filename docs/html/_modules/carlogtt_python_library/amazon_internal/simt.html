@@ -108,7 +108,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="c1"># Third Party Library Imports</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
@@ -215,7 +215,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;client&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boto_tickety_client</span><span class="p">()</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">TicketyClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boto_tickety_client</span><span class="p">()</span>
@@ -459,7 +459,9 @@
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">&#39;commentId&#39;</span><span class="p">]</span>
+                <span class="n">comment_id</span> <span class="o">=</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">&#39;commentId&#39;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">comment_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">comment_id</span>
 
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex_inner</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex_inner</span><span class="p">))</span>
@@ -491,7 +493,9 @@
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">ticket_response</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+                <span class="n">ticket_id</span> <span class="o">=</span> <span class="n">ticket_response</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ticket_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">ticket_id</span>
 
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex_inner</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex_inner</span><span class="p">))</span>
