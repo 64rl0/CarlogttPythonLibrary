@@ -80,6 +80,7 @@ project_root_dir_abs="$(realpath -- "${script_dir_abs}/..")"
 declare -r project_root_dir_abs
 
 # We accept this because of false gitleak failures
+icarus builder clean
 icarus builder release || true
 echo -e "\n\n"
 
