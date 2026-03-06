@@ -102,6 +102,7 @@ echo -e "\n\n"
 # We MUST build the pkg after having bumped the version!
 icarus builder build
 icarus builder hook --pypi
+echo -e "\n\n"
 
 # Update Read the Docs
 "${script_dir_abs}/deploy_read_the_docs.sh"

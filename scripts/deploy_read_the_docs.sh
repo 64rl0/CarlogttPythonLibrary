@@ -86,16 +86,16 @@ if [[ -z "${CARLOGTT_SECRET_READ_THE_DOCS_API_KEY}" ]]; then
 fi
 
 icarus builder hook --readthedocs
+echo -e "\n\n"
 
-# Read the Docs Project
+echo -e "${bold_green}${hammer_and_wrench} Read the Docs${end}"
 project_name="carlogttpythonlibrary"
 project_version="latest"
 url="https://app.readthedocs.org/api/v3/projects/${project_name}/versions/${project_version}/builds/"
-
-response=$(curl -s -X POST -H "Authorization: Token ${CARLOGTT_SECRET_READ_THE_DOCS_API_KEY}" "${url}")
-
-echo -e "\n\n${bold_green}${hammer_and_wrench} Read the Docs${end}"
+response=$(curl -s -X POST -H "Authorization: Token ${CARLOGTT_SECRET_READ_THE_DOCS_API_KEY}" "${url}") || exit 1
 echo -e "Follow the build progress at:"
 echo "${response}" | jq -r '.build.urls.build'
-echo -e "\n${bold_green}${green_check_mark} Build started successfully ${end}\n"
+echo
+
+echo -e "${bold_green}${green_check_mark} Read the Docs build started successfully${end}\n"
 echo
