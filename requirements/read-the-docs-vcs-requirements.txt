@@ -8,4 +8,6 @@
 #    git+https://gitprovider.com/user/project.git@{version}
 #
 
-git+https://github.com/64rl0/CarlogttPythonLibrary.git
+# This library is actually available on pypi so take it from there
+# using the latest version available
+carlogtt-python-library

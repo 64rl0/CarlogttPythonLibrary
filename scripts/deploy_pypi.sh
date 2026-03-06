@@ -87,6 +87,7 @@ echo -e "\n\n"
 # Update version
 echo -e "${bold_green}Select release type${end}"
 icarus builder hook --bumpver
+new_version=$(icarus builder path 'pkg.version')
 echo -e "\n\n"
 
 # Commit version update changes
