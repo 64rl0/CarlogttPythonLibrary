@@ -11,8 +11,6 @@
 
 # test/playground_app_logger.py
 # Created 4/12/25 - 9:24 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

@@ -11,8 +11,6 @@
 
 # test/_playground_base.py
 # Created 4/8/25 - 8:25 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

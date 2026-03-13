@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/utils/encryption.py
 # Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 Utilities for authenticated encryption and password hashing.

@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/utils/validators.py
 # Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module provides a set of functions and utilities for data

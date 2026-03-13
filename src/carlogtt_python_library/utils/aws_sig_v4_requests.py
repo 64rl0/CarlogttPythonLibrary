@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/utils/aws_sig_v4_requests.py
 # Created 4/8/25 - 1:34 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

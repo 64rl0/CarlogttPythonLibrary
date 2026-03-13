@@ -11,8 +11,6 @@
 
 # test/test_database_dynamo.py
 # Created 4/13/25 - 3:02 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

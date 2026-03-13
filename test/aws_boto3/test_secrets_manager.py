@@ -11,8 +11,6 @@
 
 # test/test_secrets_manager.py
 # Created 4/26/25 - 8:20 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

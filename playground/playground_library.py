@@ -11,8 +11,6 @@
 
 # playground_library.py
 # Created 11/9/23 - 11:39 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module is only used for testing purposes

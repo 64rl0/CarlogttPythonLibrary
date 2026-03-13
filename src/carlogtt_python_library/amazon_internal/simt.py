@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/amazon_internal/simt.py
 # Created 10/25/23 - 3:55 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

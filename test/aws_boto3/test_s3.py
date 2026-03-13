@@ -11,8 +11,6 @@
 
 # test/test_s3.py
 # Created 4/25/25 - 8:53 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

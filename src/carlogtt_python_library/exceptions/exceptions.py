@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/exceptions/exceptions.py
 # Created 9/25/23 - 6:34 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module provides a collection of custom exception classes that can

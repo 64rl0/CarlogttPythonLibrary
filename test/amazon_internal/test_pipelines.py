@@ -11,8 +11,6 @@
 
 # test/test_pipelines.py
 # Created 4/7/25 - 11:36 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

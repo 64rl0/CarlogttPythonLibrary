@@ -6,8 +6,6 @@
 
 # scripts/build_read_the_docs.sh
 # Created 1/31/26 - 12:34 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 # Basic Foreground Colors
 declare -r black=$'\033[30m'

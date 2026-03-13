@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/logger/__init__.py
 # Created 9/29/23 - 1:44 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module contains the package imports for the current package.

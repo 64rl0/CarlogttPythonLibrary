@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/amazon_internal/tiny_url.py
 # Created 2/24/24 - 11:31 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

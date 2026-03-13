@@ -11,8 +11,6 @@
 
 # test/playground_cli_utils.py
 # Created 4/10/25 - 1:18 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

@@ -11,8 +11,6 @@
 
 # test/test_redis_cache_manager.py
 # Created 4/25/25 - 10:32 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

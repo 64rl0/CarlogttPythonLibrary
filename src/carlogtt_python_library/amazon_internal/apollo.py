@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/amazon_internal/apollo.py
 # Created 10/30/23 - 11:01 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

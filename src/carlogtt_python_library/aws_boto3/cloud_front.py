@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/aws_boto3/cloud_front.py
 # Created 2/8/24 - 1:07 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

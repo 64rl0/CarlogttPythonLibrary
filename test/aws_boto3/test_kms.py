@@ -11,8 +11,6 @@
 
 # src/CarlogttLibrary/test/aws_boto3/test_kms.py
 # Created 5/12/25 - 3:08 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

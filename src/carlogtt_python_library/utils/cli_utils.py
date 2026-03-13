@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/utils/cli_utils.py
 # Created 12/22/23 - 6:57 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

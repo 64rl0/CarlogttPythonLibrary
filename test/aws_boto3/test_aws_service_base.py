@@ -11,8 +11,6 @@
 
 # src/CarlogttLibrary/test/aws_boto3/test_aws_service_base.py
 # Created 5/12/25 - 10:21 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

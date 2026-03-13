@@ -6,8 +6,6 @@
 
 # scripts/deploy_pypi.sh
 # Created 1/24/25 - 6:46 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 # Basic Foreground Colors
 declare -r black=$'\033[30m'

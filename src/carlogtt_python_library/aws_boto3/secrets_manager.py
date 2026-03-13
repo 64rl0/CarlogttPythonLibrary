@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/aws_boto3/secrets_manager.py
 # Created 11/22/23 - 12:25 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

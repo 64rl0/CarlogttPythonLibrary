@@ -11,8 +11,6 @@
 
 # test/test_database_sql.py
 # Created 2/20/25 - 12:54 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

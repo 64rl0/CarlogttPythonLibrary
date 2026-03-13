@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/__init__.py
 # Created 10/4/23 - 10:44 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 carlogtt_python_library is a collection of utility functions designed to

@@ -11,8 +11,6 @@
 
 # test/amazon_internal/test_tiny_url.py
 # Created 4/27/25 - 6:18 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...

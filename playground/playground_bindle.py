@@ -11,8 +11,6 @@
 
 # test/playground_bindle.py
 # Created 4/8/25 - 2:10 PM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module ...
