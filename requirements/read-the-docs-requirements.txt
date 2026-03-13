@@ -11,13 +11,14 @@
 
 alabaster==1.0.0
 attrs==25.4.0
-awscrt==0.31.2
+awscrt==0.31.3
 babel==2.18.0
-black==26.1.0
-boto3==1.42.62
-boto3-stubs==1.42.62
-botocore==1.42.62
+black==26.3.1
+boto3==1.42.67
+boto3-stubs==1.42.67
+botocore==1.42.67
 botocore-stubs==1.42.41
+carlogtt-python-library==1.8.0
 certifi==2026.2.25
 cffi==2.0.0
 charset-normalizer==3.4.5
@@ -32,7 +33,7 @@ imagesize==2.0.0
 iniconfig==2.3.0
 isort==8.0.1
 jaraco.classes==3.4.0
-jaraco.context==6.1.0
+jaraco.context==6.1.1
 jaraco.functools==4.4.0
 Jinja2==3.1.6
 jmespath==1.1.0
@@ -50,7 +51,7 @@ mypy-boto3-dynamodb==1.42.55
 mypy-boto3-ec2==1.42.62
 mypy-boto3-kms==1.42.50
 mypy-boto3-lambda==1.42.37
-mypy-boto3-s3==1.42.37
+mypy-boto3-s3==1.42.67
 mypy-boto3-secretsmanager==1.42.8
 mypy_extensions==1.1.0
 mysql-connector-python==9.6.0
@@ -70,7 +71,7 @@ pytest==9.0.2
 python-dateutil==2.9.0.post0
 pytokens==0.4.1
 readme_renderer==44.0
-redis==7.2.1
+redis==7.3.0
 requests==2.32.5
 requests-toolbelt==1.0.0
 rfc3986==2.0.0
@@ -94,8 +95,8 @@ sphinxcontrib-serializinghtml==2.0.0
 trio==0.33.0
 trio-websocket==0.12.2
 twine==6.2.0
-types-awscrt==0.31.2
-types-cffi==1.17.0.20250915
+types-awscrt==0.31.3
+types-cffi==1.17.0.20260307
 types-cryptography==3.3.23.2
 types-psycopg2==2.9.21.20260223
 types-pyOpenSSL==24.1.0.20240722
