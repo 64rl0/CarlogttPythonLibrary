@@ -1951,7 +1951,7 @@ class DynamoDbSerializer:
         additional_items: Item = {}
 
         for key, value in items.items():
-            normalized_key = self.string_utils.snake_case(key)
+            normalized_key = self.string_utils.snake_case_v2(key)
             ddb_attribute = self.serialize_att(value)
 
             # Now add it to the additional_items serialized dictionary
@@ -1988,7 +1988,7 @@ class DynamoDbSerializer:
         exp_att_values: Item = {}
 
         for key, value in items.items():
-            normalized_key = self.string_utils.snake_case(key)
+            normalized_key = self.string_utils.snake_case_v2(key)
             ddb_attribute = self.serialize_att(value)
 
             # Add to the update_expression string

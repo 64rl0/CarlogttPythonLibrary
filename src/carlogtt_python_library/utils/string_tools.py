@@ -11,8 +11,6 @@
 
 # src/carlogtt_python_library/utils/string_tools.py
 # Created 10/2/23 - 9:25 AM UK Time (London) by carlogtt
-# Copyright (c) Amazon.com Inc. All Rights Reserved.
-# AMAZON.COM CONFIDENTIAL
 
 """
 This module contains useful functions to work with strings.
@@ -34,7 +32,9 @@ This module contains useful functions to work with strings.
 # Standard Library Imports
 import logging
 import random
+import re
 import string
+import warnings
 
 # END IMPORTS
 # ======================================================================
@@ -82,6 +82,14 @@ class StringUtils:
                  underscores.
         """
 
+        msg = (
+            f"[DEPRECATED] '{self.snake_case.__name__}' is deprecated in Class"
+            f" '{self.__class__.__name__}'. Use the new method '{self.snake_case_v2.__name__}()'"
+            " instead."
+        )
+        warnings.warn(msg, DeprecationWarning, stacklevel=3)
+        module_logger.warning(msg)
+
         result: list[str] = []
 
         for idx, ch in enumerate(string_to_normalize):
@@ -116,3 +124,40 @@ class StringUtils:
         result_str = "".join(result).strip("_")
 
         return result_str
+
+    def snake_case_v2(self, string_to_normalize: str) -> str:
+        """
+        Normalize the given string to snake_case by handling consecutive
+        uppercase letters, digit boundaries, whitespaces, hyphens,
+        and underscores.
+
+        :param string_to_normalize: The original string that needs to be
+               normalized.
+        :return: The normalized snake_case string.
+        """
+
+        result = string_to_normalize
+
+        # Replace whitespace and hyphens with underscores
+        result = re.sub(r'[\s\-]+', '_', result)
+
+        # Collapse multiple underscores
+        result = re.sub(r'_+', '_', result)
+
+        # Insert underscore between lowercase/digit and uppercase
+        result = re.sub(r'([a-z\d])([A-Z])', r'\1_\2', result)
+
+        # Insert underscore between consecutive uppercase and
+        # uppercase followed by lowercase
+        result = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', result)
+
+        # Insert underscore between letter and digit
+        result = re.sub(r'([a-zA-Z])(\d)', r'\1_\2', result)
+
+        # Insert underscore between digit and letter
+        result = re.sub(r'(\d)([a-zA-Z])', r'\1_\2', result)
+
+        # Convert to lowercase
+        result = result.casefold()
+
+        return result
