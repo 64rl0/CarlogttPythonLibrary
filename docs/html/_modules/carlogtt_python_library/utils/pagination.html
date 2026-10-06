@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.utils.pagination &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=30015795"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.utils.pagination</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for carlogtt_python_library.utils.pagination</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module's purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_python_library/utils/pagination.py</span>
+<span class="c1"># Created 9/8/26 - 3:31 PM UK Time (London) by carlogtt</span>
+
+<span class="sd">"""</span>
+<span class="sd">This module contains utilities for cursor-based pagination of list</span>
+<span class="sd">results using opaque, URL-safe cursor tokens.</span>
+<span class="sd">"""</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made or code quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span>
+
+<span class="c1"># Local Folder (Relative) Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'Paginator'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="n">ItemType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'ItemType'</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Paginator">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.pagination.html#carlogtt_python_library.utils.pagination.Paginator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Paginator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A collection of utilities to paginate list results with opaque,</span>
+<span class="sd">    URL-safe cursor tokens.</span>
+
+<span class="sd">    The cursor payload is a flat dict with str keys and str values</span>
+<span class="sd">    chosen by the caller (i.e. the sort-key fields of the last item</span>
+<span class="sd">    of a page). Tokens are deterministic for a given payload and must</span>
+<span class="sd">    be treated as opaque by clients and passed back verbatim.</span>
+
+<span class="sd">    Tokens are NOT signed nor encrypted, therefore the decoded</span>
+<span class="sd">    payload must be treated as untrusted client input.</span>
+
+<span class="sd">    :param default_page_size: The page size used when a request does</span>
+<span class="sd">           not specify one. Must be &gt;= 1 and &lt;= max_page_size.</span>
+<span class="sd">    :param max_page_size: The hard upper bound for the page size.</span>
+<span class="sd">    :param logger: The logging.Logger instance to be used for</span>
+<span class="sd">           logging. If not explicitly provided, the module uses</span>
+<span class="sd">           Python's standard logging module as a default logger.</span>
+<span class="sd">    :raise PaginationError: If the page size configuration is</span>
+<span class="sd">           invalid.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">default_page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="n">max_page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span> <span class="o">=</span> <span class="n">module_logger</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">default_page_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PaginationError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Invalid default_page_size: </span><span class="si">{</span><span class="n">default_page_size</span><span class="si">!r}</span><span class="s2"> must be &gt;= 1"</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_page_size</span> <span class="o">&lt;</span> <span class="n">default_page_size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PaginationError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Invalid max_page_size: </span><span class="si">{</span><span class="n">max_page_size</span><span class="si">!r}</span><span class="s2"> must be &gt;="</span>
+                <span class="sa">f</span><span class="s2">" default_page_size (</span><span class="si">{</span><span class="n">default_page_size</span><span class="si">!r}</span><span class="s2">)"</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_page_size</span> <span class="o">=</span> <span class="n">default_page_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span> <span class="o">=</span> <span class="n">max_page_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+
+<div class="viewcode-block" id="Paginator.normalize_page_size">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.pagination.html#carlogtt_python_library.utils.pagination.Paginator.normalize_page_size">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_page_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the effective page size for a request.</span>
+
+<span class="sd">        When max_results is None the configured default page size is</span>
+<span class="sd">        returned, otherwise the value is clamped into the range</span>
+<span class="sd">        [1, max_page_size].</span>
+
+<span class="sd">        :param max_results: The page size requested by the caller, or</span>
+<span class="sd">               None if the caller did not specify one.</span>
+<span class="sd">        :return: The effective page size.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">max_results</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_page_size</span>
+
+        <span class="n">page_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_results</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_page_size</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">page_size</span></div>
+
+
+<div class="viewcode-block" id="Paginator.encode_cursor">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.pagination.html#carlogtt_python_library.utils.pagination.Paginator.encode_cursor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Encode a resume-after cursor payload into an opaque, URL-safe</span>
+<span class="sd">        token.</span>
+
+<span class="sd">        Encoding is deterministic: the same payload always produces</span>
+<span class="sd">        the same token, regardless of the payload key order.</span>
+
+<span class="sd">        :param payload: The cursor payload. It must be a flat dict</span>
+<span class="sd">               with str keys and str values.</span>
+<span class="sd">        :return: The opaque URL-safe token.</span>
+<span class="sd">        :raise PaginationError: If the payload is not a flat dict</span>
+<span class="sd">               with str keys and str values.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_payload</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PaginationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid pagination payload: </span><span class="si">{</span><span class="n">payload</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Encoded pagination cursor with keys: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">token</span></div>
+
+
+<div class="viewcode-block" id="Paginator.decode_cursor">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.pagination.html#carlogtt_python_library.utils.pagination.Paginator.decode_cursor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Decode an opaque cursor token back into its payload.</span>
+
+<span class="sd">        Tokens are opaque and must be passed back verbatim, therefore</span>
+<span class="sd">        a token that does not decode to the expected shape is treated</span>
+<span class="sd">        as a caller error. Tokens are not signed, so treat the</span>
+<span class="sd">        decoded payload as untrusted client input.</span>
+
+<span class="sd">        :param token: The opaque token to decode.</span>
+<span class="sd">        :return: The decoded cursor payload.</span>
+<span class="sd">        :raise PaginationError: If the token is not a valid</span>
+<span class="sd">               pagination token.</span>
+<span class="sd">        """</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PaginationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid pagination token: </span><span class="si">{</span><span class="n">token</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_payload</span><span class="p">(</span><span class="n">payload</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PaginationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid pagination token: </span><span class="si">{</span><span class="n">token</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Decoded pagination cursor with keys: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">payload</span></div>
+
+
+<div class="viewcode-block" id="Paginator.paginate">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.pagination.html#carlogtt_python_library.utils.pagination.Paginator.paginate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">paginate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">items</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">cursor_factory</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ItemType</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">max_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Slice a single page off items and build the token for the</span>
+<span class="sd">        next page.</span>
+
+<span class="sd">        The items sequence must already be sorted and filtered down</span>
+<span class="sd">        to the items following the cursor of the previous page.</span>
+<span class="sd">        Resume-after filtering is domain specific and is the caller</span>
+<span class="sd">        responsibility.</span>
+
+<span class="sd">        :param items: The sorted sequence of the remaining items.</span>
+<span class="sd">        :param cursor_factory: A callable that receives the last item</span>
+<span class="sd">               of the page and returns its cursor payload.</span>
+<span class="sd">        :param max_results: The page size requested by the caller, or</span>
+<span class="sd">               None to use the configured default page size.</span>
+<span class="sd">        :return: A tuple of (page, next_token). next_token is None</span>
+<span class="sd">                 when there are no more items after this page.</span>
+<span class="sd">        :raise PaginationError: If the payload returned by the</span>
+<span class="sd">               cursor_factory is not a flat dict with str keys and</span>
+<span class="sd">               str values.</span>
+<span class="sd">        """</span>
+
+        <span class="n">page_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_page_size</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">[:</span><span class="n">page_size</span><span class="p">])</span>
+
+        <span class="n">next_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">page_size</span><span class="p">:</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encode_cursor</span><span class="p">(</span><span class="n">cursor_factory</span><span class="p">(</span><span class="n">page</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Paginated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2"> items into a page of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">page</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" (more_pages=</span><span class="si">{</span><span class="n">next_token</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">page</span><span class="p">,</span> <span class="n">next_token</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_payload</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return True if payload is a flat dict with str keys and str</span>
+<span class="sd">        values.</span>
+<span class="sd">        """</span>
+
+        <span class="n">is_valid</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">is_valid</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/utils/context_managers.py</span>
 <span class="c1"># Created 7/2/23 - 2:21 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -113,9 +113,9 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;suppress_errors&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;redirect_stdout_to_file&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;redirect_stdout_to_stderr&#39;</span><span class="p">,</span>
+    <span class="s1">'suppress_errors'</span><span class="p">,</span>
+    <span class="s1">'redirect_stdout_to_file'</span><span class="p">,</span>
+    <span class="s1">'redirect_stdout_to_stderr'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -129,7 +129,7 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.context_managers.html#carlogtt_python_library.utils.context_managers.suppress_errors">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">suppress_errors</span><span class="p">(</span><span class="o">*</span><span class="n">exceptions</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Context manager to suppress specified exceptions.</span>
 
 <span class="sd">    :param exceptions: Variable length exception list which includes</span>
@@ -138,7 +138,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        with suppress_errors(ZeroDivisionError):</span>
 <span class="sd">            1/0  # This will not raise an exception</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">yield</span>
@@ -152,16 +152,16 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.context_managers.html#carlogtt_python_library.utils.context_managers.redirect_stdout_to_file">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">redirect_stdout_to_file</span><span class="p">(</span><span class="n">fileobj</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Context manager to redirect stdout to file.</span>
 
 <span class="sd">    :param fileobj: Opened file object to redirect stdout to.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        with open(&quot;file.txt&quot;, &#39;w&#39;) as file:</span>
+<span class="sd">        with open("file.txt", 'w') as file:</span>
 <span class="sd">            with redirect_stdout_to_file(file):</span>
-<span class="sd">                print(&quot;Hello World!&quot;)  # This will print to file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">                print("Hello World!")  # This will print to file.</span>
+<span class="sd">    """</span>
 
     <span class="n">current_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">fileobj</span>
@@ -178,13 +178,13 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.context_managers.html#carlogtt_python_library.utils.context_managers.redirect_stdout_to_stderr">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">redirect_stdout_to_stderr</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Context manager to redirect stdout to stderr.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        with redirect_stdout_to_stderr():</span>
-<span class="sd">            print(&quot;Hello World!&quot;)  # This will print to stderr.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">            print("Hello World!")  # This will print to stderr.</span>
+<span class="sd">    """</span>
 
     <span class="n">current_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>

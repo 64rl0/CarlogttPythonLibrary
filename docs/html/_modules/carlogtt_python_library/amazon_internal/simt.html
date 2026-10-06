@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/amazon_internal/simt.py</span>
 <span class="c1"># Created 10/25/23 - 3:55 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -122,8 +122,8 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;SimT&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SimTicketHandler&#39;</span><span class="p">,</span>
+    <span class="s1">'SimT'</span><span class="p">,</span>
+    <span class="s1">'SimTicketHandler'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -136,7 +136,7 @@
 <div class="viewcode-block" id="SimT">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimT">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimT</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A handler class for the TicketyPythonSdk.</span>
 
 <span class="sd">    It includes an option to cache the client session to minimize</span>
@@ -179,7 +179,7 @@
 <span class="sd">           of API calls. Default is False.</span>
 <span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
 <span class="sd">           will be passed to the low-level service client.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -191,8 +191,8 @@
         <span class="n">aws_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">client_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">aws_account_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-        <span class="n">ticketing_system_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="n">aws_account_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default"</span><span class="p">,</span>
+        <span class="n">ticketing_system_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"default"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_aws_region_name</span> <span class="o">=</span> <span class="n">aws_region_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_aws_profile_name</span> <span class="o">=</span> <span class="n">aws_profile_name</span>
@@ -203,24 +203,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_aws_account_id</span> <span class="o">=</span> <span class="n">aws_account_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ticketing_system_name</span> <span class="o">=</span> <span class="n">ticketing_system_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_tickety_region_name</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">&quot;tickety&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">&quot;https://global.api.tickety.amazon.dev&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_tickety_region_name</span> <span class="o">=</span> <span class="s2">"global"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">"tickety"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">"https://global.api.tickety.amazon.dev"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client_parameters</span> <span class="o">=</span> <span class="n">client_parameters</span> <span class="k">if</span> <span class="n">client_parameters</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TicketyClient</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;client&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boto_tickety_client</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">TicketyClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'client'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boto_tickety_client</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">TicketyClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boto_tickety_client</span><span class="p">()</span>
 
     <span class="nd">@functools</span><span class="o">.</span><span class="n">cached_property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_tickety_client_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        The botocore config is where you can set a number of other</span>
 <span class="sd">        overrides for your client such as the RetryMode and Client Side</span>
 <span class="sd">        Timeouts. You should evaluate these based on the needs of your</span>
@@ -241,17 +241,17 @@
 <span class="sd">        then your system will be vulnerable to outages in that region</span>
 <span class="sd">        and will not be able to take advantage of the multi-region</span>
 <span class="sd">        nature of the global endpoint.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">return</span> <span class="n">botocore</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">signature_version</span><span class="o">=</span><span class="s2">&quot;v4a&quot;</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;adaptive&quot;</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">botocore</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span><span class="n">signature_version</span><span class="o">=</span><span class="s2">"v4a"</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="p">{</span><span class="s2">"mode"</span><span class="p">:</span> <span class="s2">"adaptive"</span><span class="p">})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_boto_tickety_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TicketyClient</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a low level tickety client.</span>
 
 <span class="sd">        :return: A tickety client.</span>
 <span class="sd">        :raise: SimTError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">boto_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
@@ -279,41 +279,41 @@
 <div class="viewcode-block" id="SimT.invalidate_client_cache">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimT.invalidate_client_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_client_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Clears the cached client, if caching is enabled.</span>
 
 <span class="sd">        This method allows manually invalidating the cached client,</span>
 <span class="sd">        forcing a new client instance to be created on the next access.</span>
-<span class="sd">        Useful if AWS credentials have changed or if there&#39;s a need to</span>
+<span class="sd">        Useful if AWS credentials have changed or if there's a need to</span>
 <span class="sd">        connect to a different region within the same instance</span>
 <span class="sd">        lifecycle.</span>
 
 <span class="sd">        :return: None.</span>
 <span class="sd">        :raise SimTError: Raises an error if caching is not enabled</span>
 <span class="sd">               for this instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="SimT.get_tickets">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimT.get_tickets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_tickets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns an iterable of ticketIds.</span>
 
 <span class="sd">        :param filters:</span>
 <span class="sd">        :return: Returns an iterable of ticketIds.</span>
 <span class="sd">        :raise: SimTError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;filters&#39;</span><span class="p">:</span> <span class="n">filters</span><span class="p">}</span>
-        <span class="n">next_token</span> <span class="o">=</span> <span class="s1">&#39;valid_string&#39;</span>
+        <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'filters'</span><span class="p">:</span> <span class="n">filters</span><span class="p">}</span>
+        <span class="n">next_token</span> <span class="o">=</span> <span class="s1">'valid_string'</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="n">next_token</span><span class="p">:</span>
@@ -325,10 +325,10 @@
                         <span class="o">**</span><span class="n">payload</span><span class="p">,</span>
                     <span class="p">)</span>
 
-                <span class="n">next_token</span> <span class="o">=</span> <span class="n">tickety_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nextToken&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;nextToken&#39;</span><span class="p">:</span> <span class="n">next_token</span><span class="p">})</span>
+                <span class="n">next_token</span> <span class="o">=</span> <span class="n">tickety_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'nextToken'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
+                <span class="n">payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'nextToken'</span><span class="p">:</span> <span class="n">next_token</span><span class="p">})</span>
 
-                <span class="k">for</span> <span class="n">ticket_data</span> <span class="ow">in</span> <span class="n">tickety_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ticketSummaries&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="k">for</span> <span class="n">ticket_data</span> <span class="ow">in</span> <span class="n">tickety_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ticketSummaries'</span><span class="p">,</span> <span class="p">[]):</span>
                     <span class="k">yield</span> <span class="n">ticket_data</span>
 
         <span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ClientError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
@@ -345,7 +345,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ticket_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves a ticket from the ticketing system.</span>
 
 <span class="sd">        Internal Amazon API:</span>
@@ -354,7 +354,7 @@
 <span class="sd">        :param ticket_id: The ticket ID.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        :raise: SimTError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tickety_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_ticket</span><span class="p">(</span>
@@ -364,7 +364,7 @@
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">&#39;ticket&#39;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">'ticket'</span><span class="p">]</span>
 
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex_inner</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex_inner</span><span class="p">))</span>
@@ -380,7 +380,7 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimT.update_ticket">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_ticket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticket_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Updates a ticket in the ticketing system.</span>
 
 <span class="sd">        Internal Amazon API:</span>
@@ -390,7 +390,7 @@
 <span class="sd">        :param payload:</span>
 <span class="sd">        :return:</span>
 <span class="sd">        :raise: SimTError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">update_ticket</span><span class="p">(</span>
@@ -408,7 +408,7 @@
 
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ResponseMetadata&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;HTTPStatusCode&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">200</span>
+            <span class="ow">or</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ResponseMetadata'</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'HTTPStatusCode'</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">200</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">))</span></div>
 
@@ -420,10 +420,10 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ticket_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">thread_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CORRESPONDENCE&quot;</span><span class="p">,</span>
-        <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;text/amz-markdown-sim&quot;</span><span class="p">,</span>
+        <span class="n">thread_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"CORRESPONDENCE"</span><span class="p">,</span>
+        <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"text/amz-markdown-sim"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Updates a ticket in the ticketing system.</span>
 
 <span class="sd">        Internal Amazon API:</span>
@@ -431,21 +431,21 @@
 
 <span class="sd">        :param ticket_id: The ticket ID.</span>
 <span class="sd">        :param thread_name: Must be one of these 3:</span>
-<span class="sd">               &quot;CORRESPONDENCE&quot; &quot;WORKLOG&quot; &quot;ANNOUNCEMENTS&quot;.</span>
-<span class="sd">               Auto default to &quot;CORRESPONDENCE&quot;.</span>
+<span class="sd">               "CORRESPONDENCE" "WORKLOG" "ANNOUNCEMENTS".</span>
+<span class="sd">               Auto default to "CORRESPONDENCE".</span>
 <span class="sd">        :param comment: The comment to post.</span>
 <span class="sd">               Between 3 and 60_000 characters.</span>
 <span class="sd">        :param content_type: Must be one of these 2:</span>
-<span class="sd">               &quot;text/amz-markdown-sim&quot; &quot;text/plain&quot;.</span>
-<span class="sd">               Auto default to &quot;text/amz-markdown-sim&quot;.</span>
+<span class="sd">               "text/amz-markdown-sim" "text/plain".</span>
+<span class="sd">               Auto default to "text/amz-markdown-sim".</span>
 <span class="sd">        :return: The SIM-T commentId as a string.</span>
 <span class="sd">        :raise: SimTError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;threadName&#39;</span><span class="p">:</span> <span class="n">thread_name</span><span class="p">,</span>
-            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">comment</span><span class="p">,</span>
-            <span class="s1">&#39;contentType&#39;</span><span class="p">:</span> <span class="n">content_type</span><span class="p">,</span>
+            <span class="s1">'threadName'</span><span class="p">:</span> <span class="n">thread_name</span><span class="p">,</span>
+            <span class="s1">'message'</span><span class="p">:</span> <span class="n">comment</span><span class="p">,</span>
+            <span class="s1">'contentType'</span><span class="p">:</span> <span class="n">content_type</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -457,7 +457,7 @@
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">comment_id</span> <span class="o">=</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">&#39;commentId&#39;</span><span class="p">]</span>
+                <span class="n">comment_id</span> <span class="o">=</span> <span class="n">tickety_response</span><span class="p">[</span><span class="s1">'commentId'</span><span class="p">]</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">comment_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">comment_id</span>
 
@@ -475,13 +475,13 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimT.create_ticket">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">SimTError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_ticket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticket_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a ticket in the ticketing system and return the</span>
 <span class="sd">        ticket ID.</span>
 
 <span class="sd">        :param ticket_data:</span>
 <span class="sd">        :return: The ticket ID.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ticket_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">create_ticket</span><span class="p">(</span>
@@ -491,7 +491,7 @@
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">ticket_id</span> <span class="o">=</span> <span class="n">ticket_response</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+                <span class="n">ticket_id</span> <span class="o">=</span> <span class="n">ticket_response</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ticket_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">ticket_id</span>
 
@@ -510,15 +510,15 @@
 <div class="viewcode-block" id="SimTicketHandler">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.simt.html#carlogtt_python_library.amazon_internal.simt.SimTicketHandler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimTicketHandler</span><span class="p">(</span><span class="n">SimT</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    DEPRECATED: Please use SimT instead.</span>
 <span class="sd">    This subclass only exists for backward compatibility.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;[DEPRECATED] &#39;</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">&#39; class &#39;SimTicketHandler&#39; is deprecated. Use &#39;SimT&#39;&quot;</span>
-            <span class="s2">&quot; instead.&quot;</span>
+            <span class="sa">f</span><span class="s2">"[DEPRECATED] '</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">' class 'SimTicketHandler' is deprecated. Use 'SimT'"</span>
+            <span class="s2">" instead."</span>
         <span class="p">)</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>

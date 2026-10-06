@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/aws_boto3/cloud_front.py</span>
 <span class="c1"># Created 2/8/24 - 1:07 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -121,7 +121,7 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;CloudFront&#39;</span><span class="p">,</span>
+    <span class="s1">'CloudFront'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -134,7 +134,7 @@
 <div class="viewcode-block" id="CloudFront">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.cloud_front.html#carlogtt_python_library.aws_boto3.cloud_front.CloudFront">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CloudFront</span><span class="p">(</span><span class="n">aws_service_base</span><span class="o">.</span><span class="n">AwsServiceBase</span><span class="p">[</span><span class="n">CloudFrontClient</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The CloudFront class provides a simplified interface for interacting</span>
 <span class="sd">    with Amazon CloudFront services within a Python application.</span>
 
@@ -167,7 +167,7 @@
 <span class="sd">           of API calls. Default is False.</span>
 <span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
 <span class="sd">           will be passed to the low-level service client.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -188,16 +188,16 @@
             <span class="n">aws_session_token</span><span class="o">=</span><span class="n">aws_session_token</span><span class="p">,</span>
             <span class="n">caching</span><span class="o">=</span><span class="n">caching</span><span class="p">,</span>
             <span class="n">client_parameters</span><span class="o">=</span><span class="n">client_parameters</span><span class="p">,</span>
-            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">&quot;cloudfront&quot;</span><span class="p">,</span>
+            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">"cloudfront"</span><span class="p">,</span>
             <span class="n">exception_type</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">CloudFrontError</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="CloudFront.invalidate_distribution">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.cloud_front.html#carlogtt_python_library.aws_boto3.cloud_front.CloudFront.invalidate_distribution">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_distribution</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/*&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">distribution</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/*"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">type_defs</span><span class="o">.</span><span class="n">CreateInvalidationResultTypeDef</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a new invalidation.</span>
 
 <span class="sd">        :param distribution: The distribution ID where to create the</span>
@@ -207,18 +207,18 @@
 <span class="sd">        :param kwargs: Any other param passed to the underlying boto3.</span>
 <span class="sd">        :return: Invalidation response syntax.</span>
 <span class="sd">        :raise CloudFrontError: If operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">create_inv_payload</span><span class="p">:</span> <span class="n">type_defs</span><span class="o">.</span><span class="n">CreateInvalidationRequestTypeDef</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;DistributionId&#39;</span><span class="p">:</span> <span class="n">distribution</span><span class="p">,</span>
-            <span class="s1">&#39;InvalidationBatch&#39;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s1">&#39;Paths&#39;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;Quantity&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                    <span class="s1">&#39;Items&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">'DistributionId'</span><span class="p">:</span> <span class="n">distribution</span><span class="p">,</span>
+            <span class="s1">'InvalidationBatch'</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">'Paths'</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">'Quantity'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s1">'Items'</span><span class="p">:</span> <span class="p">[</span>
                         <span class="n">path</span><span class="p">,</span>
                     <span class="p">],</span>
                 <span class="p">},</span>
-                <span class="s1">&#39;CallerReference&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time_ns</span><span class="p">()),</span>
+                <span class="s1">'CallerReference'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time_ns</span><span class="p">()),</span>
             <span class="p">},</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="p">}</span>

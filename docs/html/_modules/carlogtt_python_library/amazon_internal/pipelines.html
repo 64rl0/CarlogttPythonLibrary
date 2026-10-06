@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/amazon_internal/pipelines.py</span>
 <span class="c1"># Created 4/7/25 - 8:43 AM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -119,8 +119,8 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Pipelines&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;TargetType&#39;</span><span class="p">,</span>
+    <span class="s1">'Pipelines'</span><span class="p">,</span>
+    <span class="s1">'TargetType'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -133,30 +133,30 @@
 <div class="viewcode-block" id="TargetType">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.pipelines.html#carlogtt_python_library.amazon_internal.pipelines.TargetType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TargetType</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Enum class for the different types of targets that can be used in</span>
 <span class="sd">    the PipelinesAPI.</span>
 
 <span class="sd">    Targets represent instances in underlying systems, like packages,</span>
 <span class="sd">    code deploy apps, etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">BATS</span> <span class="o">=</span> <span class="s1">&#39;BATS&#39;</span>
-    <span class="n">CD</span> <span class="o">=</span> <span class="s1">&#39;CD&#39;</span>
-    <span class="n">CF</span> <span class="o">=</span> <span class="s1">&#39;CF&#39;</span>
-    <span class="n">DG</span> <span class="o">=</span> <span class="s1">&#39;DG&#39;</span>
-    <span class="n">ENV</span> <span class="o">=</span> <span class="s1">&#39;ENV&#39;</span>
-    <span class="n">GEN</span> <span class="o">=</span> <span class="s1">&#39;GEN&#39;</span>
-    <span class="n">OS</span> <span class="o">=</span> <span class="s1">&#39;OS&#39;</span>
-    <span class="n">PKG</span> <span class="o">=</span> <span class="s1">&#39;PKG&#39;</span>
-    <span class="n">VS</span> <span class="o">=</span> <span class="s1">&#39;VS&#39;</span></div>
+    <span class="n">BATS</span> <span class="o">=</span> <span class="s1">'BATS'</span>
+    <span class="n">CD</span> <span class="o">=</span> <span class="s1">'CD'</span>
+    <span class="n">CF</span> <span class="o">=</span> <span class="s1">'CF'</span>
+    <span class="n">DG</span> <span class="o">=</span> <span class="s1">'DG'</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="s1">'ENV'</span>
+    <span class="n">GEN</span> <span class="o">=</span> <span class="s1">'GEN'</span>
+    <span class="n">OS</span> <span class="o">=</span> <span class="s1">'OS'</span>
+    <span class="n">PKG</span> <span class="o">=</span> <span class="s1">'PKG'</span>
+    <span class="n">VS</span> <span class="o">=</span> <span class="s1">'VS'</span></div>
 
 
 
 <div class="viewcode-block" id="Pipelines">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.pipelines.html#carlogtt_python_library.amazon_internal.pipelines.Pipelines">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Pipelines</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A handler class for the PipelinesAPI.</span>
 
 <span class="sd">    It includes an option to cache the client session to minimize</span>
@@ -191,7 +191,7 @@
 <span class="sd">           of API calls. Default is False.</span>
 <span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
 <span class="sd">           will be passed to the low-level service client.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -211,28 +211,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_aws_session_token</span> <span class="o">=</span> <span class="n">aws_session_token</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span> <span class="o">=</span> <span class="n">caching</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_pipelines_region_name</span> <span class="o">=</span> <span class="s2">&quot;us-west-2&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">&quot;pipelines-api&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">&quot;https://us-west-2.prod.pipelines-api.builder-tools.aws.dev&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_pipelines_region_name</span> <span class="o">=</span> <span class="s2">"us-west-2"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">"pipelines-api"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">"https://us-west-2.prod.pipelines-api.builder-tools.aws.dev"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client_parameters</span> <span class="o">=</span> <span class="n">client_parameters</span> <span class="k">if</span> <span class="n">client_parameters</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelinesClient</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;client&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pipelines_client</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">PipelinesClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'client'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pipelines_client</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">PipelinesClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pipelines_client</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_pipelines_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelinesClient</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a low level pipelines client.</span>
 
 <span class="sd">        :return: A PipelinesClient.</span>
 <span class="sd">        :raise: PipelinesError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">boto_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
@@ -261,14 +261,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_send_pipelines_api_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">request_method</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Make an HTTP request to the Pipelines API.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;X-Amz-Target&quot;</span><span class="p">:</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;com.amazon.pipelinesapinativeservice.PipelinesAPINativeService.</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="s2">"X-Amz-Target"</span><span class="p">:</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"com.amazon.pipelinesapinativeservice.PipelinesAPINativeService.</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">),</span>
         <span class="p">}</span>
 
@@ -291,26 +291,26 @@
 <div class="viewcode-block" id="Pipelines.invalidate_client_cache">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.pipelines.html#carlogtt_python_library.amazon_internal.pipelines.Pipelines.invalidate_client_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_client_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Clears the cached client, if caching is enabled.</span>
 
 <span class="sd">        This method allows manually invalidating the cached client,</span>
 <span class="sd">        forcing a new client instance to be created on the next access.</span>
-<span class="sd">        Useful if AWS credentials have changed or if there&#39;s a need to</span>
+<span class="sd">        Useful if AWS credentials have changed or if there's a need to</span>
 <span class="sd">        connect to a different region within the same instance</span>
 <span class="sd">        lifecycle.</span>
 
 <span class="sd">        :return: None.</span>
 <span class="sd">        :raise PipelinesError: Raises an error if caching is not enabled</span>
 <span class="sd">               for this instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PipelinesError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Pipelines.get_pipeline_structure">
@@ -318,26 +318,26 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_pipeline_structure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">pipeline_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pipeline_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a pipeline based on it’s name or ID.</span>
 
 <span class="sd">        :param pipeline_name: The name of the pipeline.</span>
 <span class="sd">        :param pipeline_id: The id of the pipeline.</span>
 <span class="sd">        :return: The pipeline structure.</span>
 <span class="sd">        :raise: PipelinesError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">pipeline_name</span> <span class="ow">and</span> <span class="n">pipeline_id</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PipelinesError</span><span class="p">(</span><span class="s2">&quot;Pipeline name and ID are mutually exclusive!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PipelinesError</span><span class="p">(</span><span class="s2">"Pipeline name and ID are mutually exclusive!"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">pipeline_name</span><span class="p">:</span>
-            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pipelineName&quot;</span><span class="p">:</span> <span class="n">pipeline_name</span><span class="p">}</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pipelineName"</span><span class="p">:</span> <span class="n">pipeline_name</span><span class="p">}</span>
         <span class="k">elif</span> <span class="n">pipeline_id</span><span class="p">:</span>
-            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pipelineId&quot;</span><span class="p">:</span> <span class="n">pipeline_id</span><span class="p">}</span>
+            <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pipelineId"</span><span class="p">:</span> <span class="n">pipeline_id</span><span class="p">}</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PipelinesError</span><span class="p">(</span><span class="s2">&quot;Pipeline name or ID is required!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PipelinesError</span><span class="p">(</span><span class="s2">"Pipeline name or ID is required!"</span><span class="p">)</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;GetPipelineStructure&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"GetPipelineStructure"</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_pipelines_api_request</span><span class="p">(</span>
             <span class="n">request_method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>
@@ -351,7 +351,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_pipelines_containing_target</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="n">TargetType</span><span class="p">,</span> <span class="n">in_primary_pipeline</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns a list of pipeline names which contain the provided</span>
 <span class="sd">        target.</span>
 
@@ -361,15 +361,15 @@
 <span class="sd">            pipeline.</span>
 <span class="sd">        :return: The list of pipelines containing the target.</span>
 <span class="sd">        :raise: PipelinesError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;targetName&quot;</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
-            <span class="s2">&quot;targetType&quot;</span><span class="p">:</span> <span class="n">target_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="s2">&quot;inPrimaryPipeline&quot;</span><span class="p">:</span> <span class="n">in_primary_pipeline</span><span class="p">,</span>
+            <span class="s2">"targetName"</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
+            <span class="s2">"targetType"</span><span class="p">:</span> <span class="n">target_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">"inPrimaryPipeline"</span><span class="p">:</span> <span class="n">in_primary_pipeline</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;GetPipelinesContainingTarget&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"GetPipelinesContainingTarget"</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_pipelines_api_request</span><span class="p">(</span>
             <span class="n">request_method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">payload</span>

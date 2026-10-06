@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/database/redis_cache_manager.py</span>
 <span class="c1"># Created 6/7/24 - 10:30 AM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -119,7 +119,7 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;RedisCacheManager&#39;</span><span class="p">,</span>
+    <span class="s1">'RedisCacheManager'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -132,13 +132,13 @@
 <div class="viewcode-block" id="RedisCacheManager">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RedisCacheManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Cache manager using Redis.</span>
 
 <span class="sd">    :param host: The Redis server host.</span>
 <span class="sd">    :param port: The Redis server port (default is 6379).</span>
 <span class="sd">    :param username: The username for Redis authentication</span>
-<span class="sd">        (default is &#39;default&#39;).</span>
+<span class="sd">        (default is 'default').</span>
 <span class="sd">    :param password: The password for Redis authentication (optional).</span>
 <span class="sd">    :param db: The Redis database number (default is 0).</span>
 <span class="sd">    :param ssl: Whether to use SSL for the Redis connection</span>
@@ -147,14 +147,14 @@
 <span class="sd">        (default is True).</span>
 <span class="sd">    :param category_keys: An iterable of strings representing the</span>
 <span class="sd">        valid cache categories.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6379</span><span class="p">,</span>
-        <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+        <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'default'</span><span class="p">,</span>
         <span class="n">password</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">db</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">ssl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -163,13 +163,13 @@
         <span class="o">**</span><span class="n">redis_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_redis_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span>
-            <span class="s1">&#39;ssl&#39;</span><span class="p">:</span> <span class="n">ssl</span><span class="p">,</span>
-            <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="n">port</span><span class="p">,</span>
-            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
-            <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
-            <span class="s1">&#39;db&#39;</span><span class="p">:</span> <span class="n">db</span><span class="p">,</span>
-            <span class="s1">&#39;decode_responses&#39;</span><span class="p">:</span> <span class="n">decode_responses</span><span class="p">,</span>
+            <span class="s1">'host'</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span>
+            <span class="s1">'ssl'</span><span class="p">:</span> <span class="n">ssl</span><span class="p">,</span>
+            <span class="s1">'port'</span><span class="p">:</span> <span class="n">port</span><span class="p">,</span>
+            <span class="s1">'username'</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+            <span class="s1">'password'</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s1">'db'</span><span class="p">:</span> <span class="n">db</span><span class="p">,</span>
+            <span class="s1">'decode_responses'</span><span class="p">:</span> <span class="n">decode_responses</span><span class="p">,</span>
             <span class="o">**</span><span class="n">redis_kwargs</span><span class="p">,</span>
         <span class="p">}</span>
 
@@ -179,12 +179,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_redis_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RedisClient</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Lazily initializes and returns the Redis client.</span>
 
 <span class="sd">        :return: The Redis client.</span>
 <span class="sd">        :raise: RedisCacheManagerError if unable to connect to Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redis_cached_client</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -192,14 +192,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_redis_cached_client</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redis_cached_client</span>
 
 <div class="viewcode-block" id="RedisCacheManager.invalidate_client_cache">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.invalidate_client_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_client_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Clears the cached client.</span>
 
 <span class="sd">        This method allows manually invalidating the cached client,</span>
@@ -208,11 +208,11 @@
 <span class="sd">        :return: None.</span>
 <span class="sd">        :raise RedisCacheManagerError: Raises an error if caching is not</span>
 <span class="sd">            enabled for this instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_redis_cached_client</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_redis_cached_client</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -222,7 +222,7 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.has">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if a key exists in the cache.</span>
 
 <span class="sd">        :param category: The cache category.</span>
@@ -230,10 +230,10 @@
 <span class="sd">        :return: True if the key exists, False otherwise.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">redis_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
@@ -246,14 +246,14 @@
             <span class="k">return</span> <span class="n">exists</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RedisCacheManager.get">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.get">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves a value from the cache.</span>
 
 <span class="sd">        :param category: The cache category.</span>
@@ -261,10 +261,10 @@
 <span class="sd">        :return: The cached value, or None if not found.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">redis_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
@@ -280,14 +280,14 @@
             <span class="k">return</span> <span class="n">response</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RedisCacheManager.set">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.set">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Sets a value in the cache.</span>
 
 <span class="sd">        :param category: The cache category.</span>
@@ -297,10 +297,10 @@
 <span class="sd">            otherwise.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">redis_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
@@ -313,14 +313,14 @@
             <span class="k">return</span> <span class="n">response</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RedisCacheManager.delete">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.delete">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Invalidates a specific key in the cache.</span>
 
 <span class="sd">        :param category: The cache category.</span>
@@ -329,10 +329,10 @@
 <span class="sd">            False otherwise.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">redis_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
@@ -345,13 +345,13 @@
             <span class="k">return</span> <span class="n">invalidated</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RedisCacheManager.clear">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.clear">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Clears all keys in the specified category, or all categories if</span>
 <span class="sd">        none is specified.</span>
 
@@ -360,10 +360,10 @@
 <span class="sd">            False otherwise.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">and</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">category</span><span class="p">:</span>
             <span class="n">categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">category</span><span class="p">}</span>
@@ -387,7 +387,7 @@
 <div class="viewcode-block" id="RedisCacheManager.keys_count">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.keys_count">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the total number of keys in the cache for the specified</span>
 <span class="sd">        category.</span>
 
@@ -398,10 +398,10 @@
 <span class="sd">            the cache for the specified category.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">and</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">category</span><span class="p">:</span>
             <span class="n">categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">category</span><span class="p">}</span>
@@ -420,17 +420,17 @@
 <div class="viewcode-block" id="RedisCacheManager.get_keys">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.get_keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves all keys in the specified cache category.</span>
 
 <span class="sd">        :param category: The cache category.</span>
 <span class="sd">        :return: An iterator of the cached keys.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">redis_key_pattern</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serializer</span><span class="o">.</span><span class="n">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
@@ -438,16 +438,16 @@
             <span class="k">with</span> <span class="n">utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">delay_secs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">as</span> <span class="n">retryer</span><span class="p">:</span>
                 <span class="n">redis_response</span> <span class="o">=</span> <span class="n">retryer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_redis_client</span><span class="o">.</span><span class="n">scan_iter</span><span class="p">,</span> <span class="n">match</span><span class="o">=</span><span class="n">redis_key_pattern</span><span class="p">)</span>
 
-            <span class="k">yield from</span> <span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">redis_response</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">redis_response</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Redis error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RedisCacheManager.get_values">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.get_values">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves all values in the specified cache category.</span>
 
 <span class="sd">        :param category: The cache category.</span>
@@ -455,10 +455,10 @@
 <span class="sd">            in cache.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">category</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[CACHE] - Category </span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2"> not recognized"</span><span class="p">)</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">redis_key</span><span class="p">)</span>
@@ -471,7 +471,7 @@
 <div class="viewcode-block" id="RedisCacheManager.get_category">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.redis_cache_manager.html#carlogtt_python_library.database.redis_cache_manager.RedisCacheManager.get_category">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_category</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Retrieves key-value pairs for all items in the specified cache</span>
 <span class="sd">        category.</span>
 
@@ -479,7 +479,7 @@
 <span class="sd">        :return: An iterator of the cached key-value pairs.</span>
 <span class="sd">        :raise: RedisCacheManagerError if an error occurs while</span>
 <span class="sd">            accessing Redis.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">redis_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_keys</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span>
         <span class="n">redis_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_values</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span>
@@ -492,13 +492,13 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_RedisEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    _RedisEncoder extends the JSONEncoder to support additional</span>
 <span class="sd">    data types.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Override the default method to handle additional data types.</span>
 
 <span class="sd">        A function that gets called for objects that can’t otherwise</span>
@@ -507,51 +507,51 @@
 
 <span class="sd">        :param obj: The object to be serialized.</span>
 <span class="sd">        :return: The serialized form of the object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">complex</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">RedisCacheManagerError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Object of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> for </span><span class="si">{</span><span class="n">obj</span><span class="si">!r}</span><span class="s2"> is not supported by Redis serialization.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Object of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> for </span><span class="si">{</span><span class="n">obj</span><span class="si">!r}</span><span class="s2"> is not supported by Redis serialization."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Custom method to handle serialization recursively of</span>
 <span class="sd">        specific types.</span>
 
 <span class="sd">        :param obj: The object to be serialized.</span>
 <span class="sd">        :return: The serialized form of the object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">'__sentinel_type__'</span><span class="p">:</span> <span class="s1">'set'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;bytes&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">'__sentinel_type__'</span><span class="p">:</span> <span class="s1">'bytes'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)}</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">complex</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;complex_num&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">imag</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">'__sentinel_type__'</span><span class="p">:</span> <span class="s1">'complex_num'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">:</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">imag</span><span class="p">]}</span>
 
         <span class="c1"># Note to future carlogtt, tuple does not call the default</span>
         <span class="c1"># function as they are not seen as unserializable obj, but</span>
         <span class="c1"># they are seen as list</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">'__sentinel_type__'</span><span class="p">:</span> <span class="s1">'tuple'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return a JSON string representation of a Python data</span>
 <span class="sd">        structure.</span>
 
 <span class="sd">        :param obj: The object to be serialized.</span>
 <span class="sd">        :return: The JSON string representation of the object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Handle tuples because JSON is converting them to lists</span>
         <span class="c1"># Note to future carlogtt, not sure set will ever get here</span>
@@ -561,12 +561,12 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">o</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Custom method to recursively encode tuple data type.</span>
 
 <span class="sd">        :param obj: The object to be serialized.</span>
 <span class="sd">        :return: The encoded form of the object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># The super encode method would convert tuples to lists, so</span>
         <span class="c1"># we need to intercept that and convert tuples to dict with</span>
@@ -579,7 +579,7 @@
             <span class="n">obj</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">:</span> <span class="s1">&#39;tuple&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'__sentinel_type__'</span><span class="p">:</span> <span class="s1">'tuple'</span><span class="p">,</span> <span class="s1">'data'</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]}</span>
 
         <span class="c1"># Note to future carlogtt, not sure set will ever get here</span>
         <span class="c1"># as they are converted to dict in the above default method</span>
@@ -590,18 +590,18 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_RedisDecoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    _RedisDecoder extends the JSONDecoder to support the</span>
 <span class="sd">    deserialization of additional data types encoded by the</span>
 <span class="sd">    _RedisEncoder.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">object_hook</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object_hook</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">object_hook</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        object_hook is an optional function that will be called with</span>
 <span class="sd">        the result of any object literal decoded (a dict).</span>
 <span class="sd">        The return value of object_hook will be used instead of the</span>
@@ -612,26 +612,26 @@
 
 <span class="sd">        :param dict_obj: The dictionary to be converted.</span>
 <span class="sd">        :return: The deserialized object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">if</span> <span class="s1">&#39;__sentinel_type__&#39;</span> <span class="ow">in</span> <span class="n">dict_obj</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;set&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s1">'__sentinel_type__'</span> <span class="ow">in</span> <span class="n">dict_obj</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'__sentinel_type__'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'set'</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">'data'</span><span class="p">])</span>
 
-            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;tuple&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'__sentinel_type__'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'tuple'</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">'data'</span><span class="p">])</span>
 
-            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bytes&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'__sentinel_type__'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'bytes'</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'data'</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;__sentinel_type__&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;complex&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">complex</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'__sentinel_type__'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'complex'</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">complex</span><span class="p">(</span><span class="n">dict_obj</span><span class="p">[</span><span class="s1">'data'</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">dict_obj</span><span class="p">[</span><span class="s1">'data'</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">dict_obj</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_RedisSerializer</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    RedisSerializer is a utility class for serializing and deserializing</span>
 <span class="sd">    complex Python data types to JSON format and back.</span>
 <span class="sd">    It extends the capabilities of the standard JSON encoder and decoder</span>
@@ -641,45 +641,45 @@
 <span class="sd">    This class is useful for storing Python objects in a Redis database,</span>
 <span class="sd">    where data needs to be converted to a JSON-compatible format for</span>
 <span class="sd">    storage and then back to Python objects when retrieved.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Serialize a Python object to a JSON string using the custom</span>
 <span class="sd">        encoder.</span>
 
 <span class="sd">        :param obj: The object to be serialized.</span>
 <span class="sd">        :return: The JSON string representation of the object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">_RedisEncoder</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Deserialize a JSON string back to a Python object using the</span>
 <span class="sd">        custom decoder.</span>
 
 <span class="sd">        :param s: The JSON string to be deserialized.</span>
 <span class="sd">        :return: The deserialized Python object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">_RedisDecoder</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">serialize_redis_key</span><span class="p">(</span><span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generates a Redis key with a prefix based on the category.</span>
 
 <span class="sd">        :param category: The cache category.</span>
 <span class="sd">        :param key: The specific key within the category (optional).</span>
 <span class="sd">        :return: The full Redis key with prefix.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">:*&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">:*"</span>
 </pre></div>
 
            </div>

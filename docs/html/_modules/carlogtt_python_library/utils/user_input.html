@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/utils/user_input.py</span>
 <span class="c1"># Created 7/20/23 - 3:12 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -110,7 +110,7 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;UserPrompter&#39;</span><span class="p">,</span>
+    <span class="s1">'UserPrompter'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -123,17 +123,17 @@
 <div class="viewcode-block" id="UserPrompter">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UserPrompter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A collection of CLI prompt utilities to get and validate user input.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="UserPrompter.get_user_input_and_validate_int">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter.get_user_input_and_validate_int">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_user_input_and_validate_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Enter a number: &quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_user_input_and_validate_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Enter a number: "</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Request the user for an int</span>
-<span class="sd">        question = &quot;question as a str&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        question = "question as a str"</span>
+<span class="sd">        """</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">input_value</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
@@ -142,24 +142,24 @@
                 <span class="nb">int</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is not an int&quot;</span><span class="p">)</span>
+                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is not an int"</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is an int&quot;</span><span class="p">)</span>
+                <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Valid input: </span><span class="si">{</span><span class="n">input_value</span><span class="si">}</span><span class="s2"> is an int"</span><span class="p">)</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UserPrompter.get_user_input_confirmation_y_n">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.user_input.html#carlogtt_python_library.utils.user_input.UserPrompter.get_user_input_confirmation_y_n">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_user_input_confirmation_y_n</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Continue: (y/n): &quot;</span><span class="p">,</span> <span class="n">true</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">false</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;n&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Continue: (y/n): "</span><span class="p">,</span> <span class="n">true</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"y"</span><span class="p">,</span> <span class="n">false</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"n"</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Request the user for a confirmation to continue</span>
-<span class="sd">        question = &quot;question as a str&quot;</span>
-<span class="sd">        true = &quot;character to be used as continue&quot;</span>
-<span class="sd">        false = &quot;character to be used to stop&quot;</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        question = "question as a str"</span>
+<span class="sd">        true = "character to be used as continue"</span>
+<span class="sd">        false = "character to be used to stop"</span>
+<span class="sd">        """</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">input_value</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>

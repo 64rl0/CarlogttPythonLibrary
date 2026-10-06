@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,13 +84,13 @@
 <span class="c1"># src/carlogtt_python_library/exceptions/exceptions.py</span>
 <span class="c1"># Created 9/25/23 - 6:34 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module provides a collection of custom exception classes that can</span>
 <span class="sd">be used to handle specific error scenarios in a more precise and</span>
 <span class="sd">controlled manner. These exceptions are tailored to the needs of the</span>
 <span class="sd">library and can be raised when certain exceptional conditions occur</span>
-<span class="sd">during the program&#39;s execution.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">during the program's execution.</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -116,28 +116,33 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;CarlogttLibraryError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;AwsSigV4SessionError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CryptographyError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SimTError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SimTHandlerError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MiradorError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PipelinesError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;BindleError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LoggerError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;RedisCacheManagerError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DatabaseError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SQLiteError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MySQLError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PostgresError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DynamoDBError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;DynamoDBConflictError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;S3Error&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SecretsManagerError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;KMSError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CloudFrontError&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;EC2Error&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LambdaError&#39;</span><span class="p">,</span>
+    <span class="s1">'AwsSigV4SessionError'</span><span class="p">,</span>
+    <span class="s1">'BindleError'</span><span class="p">,</span>
+    <span class="s1">'CarlogttLibraryError'</span><span class="p">,</span>
+    <span class="s1">'CloudFrontError'</span><span class="p">,</span>
+    <span class="s1">'CloudWatchError'</span><span class="p">,</span>
+    <span class="s1">'CoralRouterError'</span><span class="p">,</span>
+    <span class="s1">'CryptographyError'</span><span class="p">,</span>
+    <span class="s1">'DatabaseError'</span><span class="p">,</span>
+    <span class="s1">'DynamoDBConflictError'</span><span class="p">,</span>
+    <span class="s1">'DynamoDBError'</span><span class="p">,</span>
+    <span class="s1">'EC2Error'</span><span class="p">,</span>
+    <span class="s1">'KMSError'</span><span class="p">,</span>
+    <span class="s1">'LambdaError'</span><span class="p">,</span>
+    <span class="s1">'LoggerError'</span><span class="p">,</span>
+    <span class="s1">'McmError'</span><span class="p">,</span>
+    <span class="s1">'MiradorError'</span><span class="p">,</span>
+    <span class="s1">'MySQLError'</span><span class="p">,</span>
+    <span class="s1">'OnCallError'</span><span class="p">,</span>
+    <span class="s1">'PaginationError'</span><span class="p">,</span>
+    <span class="s1">'PipelinesError'</span><span class="p">,</span>
+    <span class="s1">'PostgresError'</span><span class="p">,</span>
+    <span class="s1">'RedisCacheManagerError'</span><span class="p">,</span>
+    <span class="s1">'S3Error'</span><span class="p">,</span>
+    <span class="s1">'SQLiteError'</span><span class="p">,</span>
+    <span class="s1">'SecretsManagerError'</span><span class="p">,</span>
+    <span class="s1">'SimTError'</span><span class="p">,</span>
+    <span class="s1">'SimTHandlerError'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -150,10 +155,10 @@
 <div class="viewcode-block" id="CarlogttLibraryError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CarlogttLibraryError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Custom exception class for CarlogttLibrary, providing enhanced</span>
 <span class="sd">    functionality for error handling and reporting.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -161,14 +166,14 @@
 <div class="viewcode-block" id="CarlogttLibraryError.to_dict">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Converts the exception to a dictionary.</span>
 
-<span class="sd">        :return: A dictionary with &#39;exception&#39; as a key and the string</span>
+<span class="sd">        :return: A dictionary with 'exception' as a key and the string</span>
 <span class="sd">                 representation of the exception as its value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;exception&#39;</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'exception'</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)}</span>
 
         <span class="k">return</span> <span class="n">response</span></div>
 
@@ -176,13 +181,13 @@
 <div class="viewcode-block" id="CarlogttLibraryError.to_json">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CarlogttLibraryError.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Converts the exception to a JSON string.</span>
 
 <span class="sd">        :return: A JSON string representation of the exception, making</span>
 <span class="sd">                 it suitable for logging or transmitting as part of an</span>
 <span class="sd">                 API response.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
@@ -194,25 +199,25 @@
 <div class="viewcode-block" id="SimTError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.SimTError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimTError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle SimTicket errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="SimTHandlerError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.SimTHandlerError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SimTHandlerError</span><span class="p">(</span><span class="n">SimTError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    DEPRECATED: Use SimTError instead.</span>
 <span class="sd">    This subclass only exists for backward compatibility.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="c1"># Issue a DeprecationWarning at runtime</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;[DEPRECATED] &#39;</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">&#39; class &#39;SimTHandlerError&#39; is deprecated. Use&quot;</span>
-            <span class="s2">&quot; &#39;SimTError&#39; instead.&quot;</span>
+            <span class="sa">f</span><span class="s2">"[DEPRECATED] '</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">' class 'SimTHandlerError' is deprecated. Use"</span>
+            <span class="s2">" 'SimTError' instead."</span>
         <span class="p">)</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -225,172 +230,218 @@
 <div class="viewcode-block" id="MiradorError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.MiradorError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MiradorError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Mirador errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
+
+
+
+<div class="viewcode-block" id="McmError">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.McmError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">McmError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    This is the base exception class to handle MCM</span>
+<span class="sd">    (ModeledCmApiService) errors.</span>
+<span class="sd">    """</span></div>
+
+
+
+<div class="viewcode-block" id="CoralRouterError">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CoralRouterError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoralRouterError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    This is the base exception class to handle CoralRouter errors.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="PipelinesError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.PipelinesError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PipelinesError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Pipelines errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="BindleError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.BindleError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BindleError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Bindle errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
+
+
+
+<div class="viewcode-block" id="OnCallError">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnCallError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    This is the base exception class to handle OnCall errors.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="AwsSigV4SessionError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.AwsSigV4SessionError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AwsSigV4SessionError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle AwsSigV4Session errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="CryptographyError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CryptographyError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CryptographyError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Cryptography errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="LoggerError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.LoggerError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoggerError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Logger errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
+
+
+
+<div class="viewcode-block" id="PaginationError">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.PaginationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PaginationError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    This is the base exception class to handle Paginator errors.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="RedisCacheManagerError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.RedisCacheManagerError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RedisCacheManagerError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle RedisCacheManager</span>
 <span class="sd">    errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="DatabaseError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.DatabaseError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatabaseError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Database errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="SQLiteError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.SQLiteError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SQLiteError</span><span class="p">(</span><span class="n">DatabaseError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle SQLite errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="MySQLError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.MySQLError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MySQLError</span><span class="p">(</span><span class="n">DatabaseError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle MySQL errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="PostgresError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.PostgresError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PostgresError</span><span class="p">(</span><span class="n">DatabaseError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle PostgreSQL errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="DynamoDBError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.DynamoDBError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamoDBError</span><span class="p">(</span><span class="n">DatabaseError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle DynamoDB errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="DynamoDBConflictError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.DynamoDBConflictError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DynamoDBConflictError</span><span class="p">(</span><span class="n">DynamoDBError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle DynamoDB Conflict errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="S3Error">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.S3Error">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">S3Error</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle S3 errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="SecretsManagerError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.SecretsManagerError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SecretsManagerError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle SecretsManager errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="KMSError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.KMSError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KMSError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle KMS errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="CloudFrontError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CloudFrontError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CloudFrontError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle CloudFront errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
+
+
+
+<div class="viewcode-block" id="CloudWatchError">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.CloudWatchError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudWatchError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    This is the base exception class to handle CloudWatch errors.</span>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="EC2Error">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.EC2Error">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EC2Error</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle EC2 errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 
 
 <div class="viewcode-block" id="LambdaError">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.LambdaError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LambdaError</span><span class="p">(</span><span class="n">CarlogttLibraryError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This is the base exception class to handle Lambda errors.</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+<span class="sd">    """</span></div>
 
 </pre></div>
 

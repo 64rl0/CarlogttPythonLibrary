@@ -1,0 +1,667 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.amazon_internal.oncall &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=30015795"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.amazon_internal.oncall</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for carlogtt_python_library.amazon_internal.oncall</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module's purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_python_library/amazon_internal/oncall.py</span>
+<span class="c1"># Created 4/8/25 - 1:31 PM UK Time (London) by carlogtt</span>
+
+<span class="sd">"""</span>
+<span class="sd">This module provides a client for the Amazon OnCall API.</span>
+
+<span class="sd">It wraps two services behind a single handler:</span>
+<span class="sd">- WhoIsOncall (WOCS): current / previous / next oncall shift lookups.</span>
+<span class="sd">- NornInterfaceService (NAPI): schedule queries for arbitrary datetimes.</span>
+<span class="sd">"""</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made code or quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="c1"># Third Party Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">botocore.exceptions</span>
+
+<span class="c1"># Local Folder (Relative) Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">utils</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'OnCall'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="n">OnCallClient</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4Session</span>
+
+
+<div class="viewcode-block" id="OnCall">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnCall</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A handler class for the OnCallAPI.</span>
+
+<span class="sd">    It includes an option to cache the client session to minimize</span>
+<span class="sd">    the number of AWS API call.</span>
+
+<span class="sd">    For an overview of the underlying Amazon OnCall services (WOCS for</span>
+<span class="sd">    current/prev/next shifts, NornInterfaceService / NAPI for arbitrary</span>
+<span class="sd">    schedule queries) and how to onboard your team, see:</span>
+<span class="sd">    https://w.amazon.com/bin/view/AmazonOncall/API</span>
+
+<span class="sd">    :param aws_region_name: The name of the AWS region where the</span>
+<span class="sd">           service is to be used. This parameter is required to</span>
+<span class="sd">           configure the AWS client.</span>
+<span class="sd">    :param aws_profile_name: The name of the AWS profile to use for</span>
+<span class="sd">           credentials. This is useful if you have multiple profiles</span>
+<span class="sd">           configured in your AWS credentials file.</span>
+<span class="sd">           Default is None, which means the default profile or</span>
+<span class="sd">           environment variables will be used if not provided.</span>
+<span class="sd">    :param aws_access_key_id: The AWS access key ID for</span>
+<span class="sd">           programmatically accessing AWS services. This parameter</span>
+<span class="sd">           is optional and only needed if not using a profile from</span>
+<span class="sd">           the AWS credentials file.</span>
+<span class="sd">    :param aws_secret_access_key: The AWS secret access key</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param aws_session_token: The AWS temporary session token</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param caching: Determines whether to enable caching for the</span>
+<span class="sd">           client session. If set to True, the client session will</span>
+<span class="sd">           be cached to improve performance and reduce the number</span>
+<span class="sd">           of API calls. Default is False.</span>
+<span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
+<span class="sd">           will be passed to the low-level service client.</span>
+<span class="sd">    """</span>
+
+    <span class="c1"># Buffer applied on both sides of the target datetime when querying</span>
+    <span class="c1"># the Schedule API. The API's from/to filter is date-only and its</span>
+    <span class="c1"># timezone semantics are not documented; 7 days safely covers</span>
+    <span class="c1"># weekly-or-shorter rotations and any timezone offset.</span>
+    <span class="n">_SCHEDULE_QUERY_BUFFER</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">aws_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">aws_profile_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_access_key_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_secret_access_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">client_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_region_name</span> <span class="o">=</span> <span class="n">aws_region_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_profile_name</span> <span class="o">=</span> <span class="n">aws_profile_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_access_key_id</span> <span class="o">=</span> <span class="n">aws_access_key_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_secret_access_key</span> <span class="o">=</span> <span class="n">aws_secret_access_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_session_token</span> <span class="o">=</span> <span class="n">aws_session_token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span> <span class="o">=</span> <span class="n">caching</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client_parameters</span> <span class="o">=</span> <span class="n">client_parameters</span> <span class="k">if</span> <span class="n">client_parameters</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="c1"># WhoIsOncall (WOCS) — current/prev/next shift lookups.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wocs_region_name</span> <span class="o">=</span> <span class="s2">"us-west-2"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wocs_host_name</span> <span class="o">=</span> <span class="s2">"who-is-oncall.us-west-2.amazonaws.com"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wocs_service_name</span> <span class="o">=</span> <span class="s2">"who-is-oncall-naws"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wocs_endpoint_url</span> <span class="o">=</span> <span class="s2">"https://who-is-oncall.us-west-2.amazonaws.com"</span>
+
+        <span class="c1"># NornInterfaceService (NAPI) — schedule queries.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_napi_region_name</span> <span class="o">=</span> <span class="s2">"us-west-2"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_napi_host_name</span> <span class="o">=</span> <span class="s2">"oncall-api.us-west-2.amazonaws.com"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_napi_service_name</span> <span class="o">=</span> <span class="s2">"oncall-api"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_napi_endpoint_url</span> <span class="o">=</span> <span class="s2">"https://oncall-api.us-west-2.amazonaws.com"</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wocs_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OnCallClient</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'wocs_client'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'wocs_client'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_oncall_client</span><span class="p">(</span>
+                    <span class="n">region_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_region_name</span><span class="p">,</span>
+                    <span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_service_name</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">OnCallClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'wocs_client'</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_oncall_client</span><span class="p">(</span>
+            <span class="n">region_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_region_name</span><span class="p">,</span>
+            <span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_service_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_napi_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OnCallClient</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'napi_client'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'napi_client'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_oncall_client</span><span class="p">(</span>
+                    <span class="n">region_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_region_name</span><span class="p">,</span>
+                    <span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_service_name</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">OnCallClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'napi_client'</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_oncall_client</span><span class="p">(</span>
+            <span class="n">region_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_region_name</span><span class="p">,</span>
+            <span class="n">service_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_service_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_oncall_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">service_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OnCallClient</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a low level SigV4-signed session for an OnCall service.</span>
+
+<span class="sd">        :param region_name: The AWS region of the target service.</span>
+<span class="sd">        :param service_name: The AWS service name used for SigV4</span>
+<span class="sd">            signing.</span>
+<span class="sd">        :return: A signed OnCallClient.</span>
+<span class="sd">        :raise OnCallError: If session construction fails.</span>
+<span class="sd">        """</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">boto_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
+                <span class="n">region_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_aws_region_name</span><span class="p">,</span>
+                <span class="n">profile_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_aws_profile_name</span><span class="p">,</span>
+                <span class="n">aws_access_key_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_aws_access_key_id</span><span class="p">,</span>
+                <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_aws_secret_access_key</span><span class="p">,</span>
+                <span class="n">aws_session_token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_aws_session_token</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">client</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4Session</span><span class="p">(</span>
+                <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">,</span>
+                <span class="n">service_name</span><span class="o">=</span><span class="n">service_name</span><span class="p">,</span>
+                <span class="n">boto_session</span><span class="o">=</span><span class="n">boto_session</span><span class="p">,</span>
+                <span class="n">protocol</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4Protocol</span><span class="o">.</span><span class="n">REST</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">client</span>
+
+        <span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ClientError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">response</span><span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_send_oncall_api_request</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">client</span><span class="p">:</span> <span class="n">OnCallClient</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Make a signed HTTP request to an OnCall service and return the</span>
+<span class="sd">        decoded JSON body.</span>
+
+<span class="sd">        :param client: The signed session to use.</span>
+<span class="sd">        :param host: Value for the Host header (service hostname).</span>
+<span class="sd">        :param method: HTTP method.</span>
+<span class="sd">        :param url: Fully-qualified request URL.</span>
+<span class="sd">        :param params: Optional query-string parameters.</span>
+<span class="sd">        :param data: Optional JSON body.</span>
+<span class="sd">        :return: The decoded JSON response (shape is endpoint-specific).</span>
+<span class="sd">        :raise OnCallError: If the request fails.</span>
+<span class="sd">        """</span>
+
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Host"</span><span class="p">:</span> <span class="n">host</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+                <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">response_obj</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="n">response_obj</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+<div class="viewcode-block" id="OnCall.invalidate_client_cache">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall.invalidate_client_cache">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_client_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Clears the cached clients, if caching is enabled.</span>
+
+<span class="sd">        This method allows manually invalidating the cached clients,</span>
+<span class="sd">        forcing new client instances to be created on the next access.</span>
+<span class="sd">        Useful if AWS credentials have changed or if there's a need to</span>
+<span class="sd">        connect to a different region within the same instance</span>
+<span class="sd">        lifecycle.</span>
+
+<span class="sd">        :return: None.</span>
+<span class="sd">        :raise OnCallError: Raises an error if caching is not enabled</span>
+<span class="sd">               for this instance.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'wocs_client'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'napi_client'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="OnCall.get_oncall_for_team">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_oncall_for_team</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Retrieve the current, previous, and next oncall shift for a</span>
+<span class="sd">        team.</span>
+
+<span class="sd">        Use this for teams whose oncall is driven by the default team</span>
+<span class="sd">        schedule. For teams that expose custom aliases (e.g. separate</span>
+<span class="sd">        primary/secondary), use :meth:`get_oncall_for_alias` instead —</span>
+<span class="sd">        the team endpoint can return incorrect shift information for</span>
+<span class="sd">        those.</span>
+
+<span class="sd">        :param team_name: The oncall team name.</span>
+<span class="sd">        :return: A dictionary with keys ``currOncalls``,</span>
+<span class="sd">            ``prevOncalls``, ``nextOncalls``, ``currStart``,</span>
+<span class="sd">            ``currEnd``, ``alsoNotifyList``, ``teamName``,</span>
+<span class="sd">            ``aliasName``,</span>
+<span class="sd">            ``aliasType``. ``aliasName`` and ``aliasType`` are ``None``</span>
+<span class="sd">            on this endpoint. ``currStart`` / ``currEnd`` are ISO</span>
+<span class="sd">            datetime strings (UTC, trailing ``Z``).</span>
+<span class="sd">        :raise OnCallError: If the request fails.</span>
+<span class="sd">        """</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"/teams/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">team_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_endpoint_url</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_oncall_api_request</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_client</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_host_name</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="OnCall.get_oncall_for_alias">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_oncall_for_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Retrieve the current, previous, and next oncall shift for a team</span>
+<span class="sd">        alias.</span>
+
+<span class="sd">        Required for teams using custom aliases — see</span>
+<span class="sd">        https://w.amazon.com/bin/view/CorpInfra/Tools/OncallProject/API/CustomAliasesTeamOncall</span>
+
+<span class="sd">        :param alias_name: The oncall alias name</span>
+<span class="sd">            (e.g. ``page-corpinfra-tools-primary``).</span>
+<span class="sd">        :return: A dictionary with keys ``currOncalls``,</span>
+<span class="sd">            ``prevOncalls``, ``nextOncalls``, ``currStart``,</span>
+<span class="sd">            ``currEnd``, ``alsoNotifyList``, ``teamName``,</span>
+<span class="sd">            ``aliasName``,</span>
+<span class="sd">            ``aliasType``. ``currStart`` / ``currEnd`` are ISO datetime</span>
+<span class="sd">            strings (UTC, trailing ``Z``).</span>
+<span class="sd">        :raise OnCallError: If the request fails.</span>
+<span class="sd">        """</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"/aliases/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">alias_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_endpoint_url</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_oncall_api_request</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_client</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_wocs_host_name</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="OnCall.get_oncall_at">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_oncall_at</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">team_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">alias_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">at_datetime_utc</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Find the oncall shift that covers a specific point in time.</span>
+
+<span class="sd">        Internally calls the NornInterfaceService Schedule API. For</span>
+<span class="sd">        current-oncall lookups prefer :meth:`get_oncall_for_team` or</span>
+<span class="sd">        :meth:`get_oncall_for_alias` — the Schedule API is not</span>
+<span class="sd">        recommended for critical paths by the Amazon OnCall team.</span>
+
+<span class="sd">        :param team_name: The oncall team name.</span>
+<span class="sd">        :param alias_name: The alias within that team to query.</span>
+<span class="sd">        :param at_datetime_utc: A timezone-aware datetime. Naive</span>
+<span class="sd">            datetimes are rejected because timezone is load-bearing for</span>
+<span class="sd">            shift boundary matching.</span>
+<span class="sd">        :return: The matching shift as a dict with ``startDateTime``,</span>
+<span class="sd">            ``endDateTime``, ``oncallMember`` (list of logins — empty</span>
+<span class="sd">            for gap shifts), ``alsoNotifyList``, and ``shiftType`` (e.g.</span>
+<span class="sd">            ``"historical"`` or ``None``). May also contain</span>
+<span class="sd">            ``contributors`` for shifts produced by post-processors</span>
+<span class="sd">            (e.g. fragmentation). An empty dict is returned if no shift</span>
+<span class="sd">            covers the requested instant.</span>
+<span class="sd">        :raise OnCallError: If ``at_datetime_utc`` is naive or the</span>
+<span class="sd">            request fails.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">at_datetime_utc</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span>
+                <span class="s2">"at_datetime_utc must be timezone-aware; received a naive datetime"</span>
+            <span class="p">)</span>
+
+        <span class="n">at_utc</span> <span class="o">=</span> <span class="n">at_datetime_utc</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+        <span class="n">from_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">at_utc</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SCHEDULE_QUERY_BUFFER</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">to_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">at_utc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SCHEDULE_QUERY_BUFFER</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"/sigv4/teams/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">team_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"/aliases_schedules/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">alias_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_endpoint_url</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"from"</span><span class="p">:</span> <span class="n">from_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">"to"</span><span class="p">:</span> <span class="n">to_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_oncall_api_request</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_client</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_host_name</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">shift</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">start_raw</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'startDateTime'</span><span class="p">)</span>
+            <span class="n">end_raw</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'endDateTime'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">start_raw</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">end_raw</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_utc_z</span><span class="p">(</span><span class="n">start_raw</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_utc_z</span><span class="p">(</span><span class="n">end_raw</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">at_utc</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shift</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="OnCall.get_oncall_between">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.oncall.html#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_between">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_oncall_between</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">team_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">alias_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">start_datetime_utc</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+        <span class="n">end_datetime_utc</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return every oncall shift overlapping the half-open interval</span>
+<span class="sd">        ``[start_datetime_utc, end_datetime_utc)``.</span>
+
+<span class="sd">        Internally calls the NornInterfaceService Schedule API and</span>
+<span class="sd">        filters the response down to shifts that intersect the requested</span>
+<span class="sd">        window. Edge shifts are clipped: a shift that started before</span>
+<span class="sd">        ``start_datetime_utc`` is returned with ``startDateTime`` set to</span>
+<span class="sd">        ``start_datetime_utc``, and a shift that ends after</span>
+<span class="sd">        ``end_datetime_utc`` is returned with ``endDateTime`` set to</span>
+<span class="sd">        ``end_datetime_utc``. Gap shifts (empty ``oncallMember``) are</span>
+<span class="sd">        preserved so callers can detect uncovered periods.</span>
+<span class="sd">        For current-oncall lookups prefer :meth:`get_oncall_for_team` or</span>
+<span class="sd">        :meth:`get_oncall_for_alias` — the Schedule API is not</span>
+<span class="sd">        recommended for critical paths by the Amazon OnCall team.</span>
+
+<span class="sd">        :param team_name: The oncall team name.</span>
+<span class="sd">        :param alias_name: The alias within that team to query.</span>
+<span class="sd">        :param start_datetime_utc: Inclusive lower bound.</span>
+<span class="sd">            Timezone-aware.</span>
+<span class="sd">        :param end_datetime_utc: Exclusive upper bound. Timezone-aware</span>
+<span class="sd">            and strictly greater than ``start_datetime_utc``.</span>
+<span class="sd">        :return: A list of shift dicts in API order, each with</span>
+<span class="sd">            ``startDateTime``, ``endDateTime``, ``oncallMember`` (list</span>
+<span class="sd">            of logins — empty for gap shifts), ``alsoNotifyList``, and</span>
+<span class="sd">            ``shiftType``. ``startDateTime`` / ``endDateTime`` are ISO</span>
+<span class="sd">            datetime strings in UTC with a trailing ``Z``. May also</span>
+<span class="sd">            contain ``contributors`` for shifts produced by</span>
+<span class="sd">            post-processors. Empty list if no shift overlaps the</span>
+<span class="sd">            interval.</span>
+<span class="sd">        :raise OnCallError: If either datetime is naive, the interval</span>
+<span class="sd">            is empty or inverted, or the request fails.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">start_datetime_utc</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">end_datetime_utc</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span>
+                <span class="s2">"start_datetime_utc and end_datetime_utc must be timezone-aware;"</span>
+                <span class="s2">" received a naive datetime"</span>
+            <span class="p">)</span>
+
+        <span class="n">start_utc</span> <span class="o">=</span> <span class="n">start_datetime_utc</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="n">end_utc</span> <span class="o">=</span> <span class="n">end_datetime_utc</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">end_utc</span> <span class="o">&lt;=</span> <span class="n">start_utc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">OnCallError</span><span class="p">(</span>
+                <span class="s2">"end_datetime_utc must be strictly greater than start_datetime_utc"</span>
+            <span class="p">)</span>
+
+        <span class="n">from_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_utc</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SCHEDULE_QUERY_BUFFER</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">to_date</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_utc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SCHEDULE_QUERY_BUFFER</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"/sigv4/teams/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">team_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"/aliases_schedules/</span><span class="si">{</span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">alias_name</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_endpoint_url</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"from"</span><span class="p">:</span> <span class="n">from_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="s2">"to"</span><span class="p">:</span> <span class="n">to_date</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_oncall_api_request</span><span class="p">(</span>
+            <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_client</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_napi_host_name</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="o">.</span><span class="n">GET</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">shift</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">start_raw</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'startDateTime'</span><span class="p">)</span>
+            <span class="n">end_raw</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'endDateTime'</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">start_raw</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">end_raw</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">shift_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_utc_z</span><span class="p">(</span><span class="n">start_raw</span><span class="p">)</span>
+            <span class="n">shift_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_utc_z</span><span class="p">(</span><span class="n">end_raw</span><span class="p">)</span>
+
+            <span class="c1"># Half-open overlap test on both interval bounds: a shift</span>
+            <span class="c1"># touching only the boundary contributes zero duration and</span>
+            <span class="c1"># is excluded.</span>
+            <span class="k">if</span> <span class="n">shift_end</span> <span class="o">&lt;=</span> <span class="n">start_utc</span> <span class="ow">or</span> <span class="n">shift_start</span> <span class="o">&gt;=</span> <span class="n">end_utc</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">clipped_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">shift_start</span><span class="p">,</span> <span class="n">start_utc</span><span class="p">)</span>
+            <span class="n">clipped_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">shift_end</span><span class="p">,</span> <span class="n">end_utc</span><span class="p">)</span>
+
+            <span class="n">clipped_shift</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">shift</span><span class="p">)</span>
+            <span class="n">clipped_shift</span><span class="p">[</span><span class="s1">'startDateTime'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_utc_z</span><span class="p">(</span><span class="n">clipped_start</span><span class="p">)</span>
+            <span class="n">clipped_shift</span><span class="p">[</span><span class="s1">'endDateTime'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_utc_z</span><span class="p">(</span><span class="n">clipped_end</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clipped_shift</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_utc_z</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Parse an ISO-8601 datetime string in the Schedule API's</span>
+<span class="sd">        ``...Z`` convention into a UTC-aware ``datetime``.</span>
+
+<span class="sd">        ``datetime.fromisoformat`` rejects a trailing ``Z`` on Python</span>
+<span class="sd">        3.10 (fixed in 3.11+), so the suffix is normalized to</span>
+<span class="sd">        ``+00:00`` before parsing. The result is always converted to</span>
+<span class="sd">        UTC for consistent comparisons even if the input carries a</span>
+<span class="sd">        non-UTC offset.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'Z'</span><span class="p">,</span> <span class="s1">'+00:00'</span><span class="p">))</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_utc_z</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Format a UTC datetime as an ISO-8601 string with a trailing</span>
+<span class="sd">        ``Z`` to match the Schedule API response convention.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%SZ'</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

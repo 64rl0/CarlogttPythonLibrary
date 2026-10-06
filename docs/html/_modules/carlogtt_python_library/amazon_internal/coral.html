@@ -1,0 +1,359 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.amazon_internal.coral &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=30015795"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.amazon_internal.coral</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for carlogtt_python_library.amazon_internal.coral</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module's purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_python_library/amazon_internal/coral.py</span>
+<span class="c1"># Created 12/3/25 - 9:59 AM UK Time (London) by carlogtt</span>
+
+<span class="sd">"""</span>
+<span class="sd">This module contains a lightweight router to expose a Coral RPC</span>
+<span class="sd">service as REST-style routes on AWS Lambda behind API Gateway.</span>
+<span class="sd">"""</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made code or quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="c1"># Local Folder (Relative) Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"CoralRouter"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="n">AnyCallableT</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="CoralRouter">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoralRouter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A lightweight router that registers REST-style routes with</span>
+<span class="sd">    decorators and rewrites Coral RPC-style requests (POST to /</span>
+<span class="sd">    with an X-Amz-Target header) into REST-style API Gateway</span>
+<span class="sd">    events so they can be dispatched to the registered routes.</span>
+
+<span class="sd">    :param prefix: The path prefix applied to every registered</span>
+<span class="sd">           route (e.g. "/api/v1"). Defaults to no prefix.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_ALLOWED_METHODS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"GET"</span><span class="p">,</span> <span class="s2">"POST"</span><span class="p">,</span> <span class="s2">"PUT"</span><span class="p">,</span> <span class="s2">"DELETE"</span><span class="p">,</span> <span class="s2">"PATCH"</span><span class="p">,</span> <span class="s2">"HEAD"</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">operations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the operations dictionary.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span>
+
+<div class="viewcode-block" id="CoralRouter.transform_rpc_to_rest">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.transform_rpc_to_rest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_rpc_to_rest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Transform an RPC-style request to a REST-style request.</span>
+
+<span class="sd">        Extracts the operation name from the X-Amz-Target header and</span>
+<span class="sd">        converts the RPC request (POST to /) into a REST request</span>
+<span class="sd">        with proper HTTP method, path, and parameters. i.e. an event</span>
+<span class="sd">        with X-Amz-Target "com.example.Service.GetUser" and body</span>
+<span class="sd">        {"userId": "123"} transforms to GET /users/123.</span>
+
+<span class="sd">        :param event: The API Gateway event containing the RPC-style</span>
+<span class="sd">               request.</span>
+<span class="sd">        :return: The transformed event with REST-style routing</span>
+<span class="sd">                 (httpMethod, path, pathParameters, resource).</span>
+<span class="sd">        :raise CoralRouterError: If the operation is not found, the</span>
+<span class="sd">               request body is not valid JSON, or required path</span>
+<span class="sd">               parameters are missing.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># Extract operation from X-Amz-Target header</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"headers"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"X-Amz-Target"</span><span class="p">,</span> <span class="s2">"com.amazon.NoOp"</span><span class="p">)</span>
+
+        <span class="c1"># Parse operation name:</span>
+        <span class="c1"># "com.amazon.domain.CoralService.Operation"</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">operation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Operation </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
+
+        <span class="c1"># Extract params from body and map to path</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"body"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">"</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid JSON body: </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'body'</span><span class="p">)</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+
+        <span class="n">method</span><span class="p">,</span> <span class="n">resource</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span><span class="p">[</span><span class="n">operation</span><span class="p">]</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">resource</span>
+
+        <span class="k">if</span> <span class="s2">"{"</span> <span class="ow">in</span> <span class="n">resource</span> <span class="ow">and</span> <span class="s2">"}"</span> <span class="ow">in</span> <span class="n">resource</span><span class="p">:</span>
+            <span class="c1"># Replace resource params (e.g., {siteId} with actual value)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">{{</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="se">}}</span><span class="s2">"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s2">"{"</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="s2">"}"</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Operation </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> is missing path parameter values in </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Rewrite event</span>
+        <span class="n">event</span><span class="p">[</span><span class="s2">"resource"</span><span class="p">]</span> <span class="o">=</span> <span class="n">resource</span>
+        <span class="n">event</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="n">event</span><span class="p">[</span><span class="s2">"pathParameters"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">event</span><span class="p">[</span><span class="s2">"httpMethod"</span><span class="p">]</span> <span class="o">=</span> <span class="n">method</span>
+
+        <span class="k">return</span> <span class="n">event</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.route">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.route">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">route</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Register a route with the specified method and path.</span>
+
+<span class="sd">        :param operation: The Coral operation name (e.g. "Echo").</span>
+<span class="sd">        :param path: The path for the route (e.g. "/api/v1/sites").</span>
+<span class="sd">        :param method: The HTTP method for the route (e.g. "GET",</span>
+<span class="sd">               "POST").</span>
+<span class="sd">        :return: A decorator function that registers the route.</span>
+<span class="sd">        :raise CoralRouterError: If the method is not a valid HTTP</span>
+<span class="sd">               method or the route/operation is already registered.</span>
+<span class="sd">        """</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">AnyCallableT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyCallableT</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">"""</span>
+<span class="sd">            Decorator function to register a route.</span>
+<span class="sd">            """</span>
+
+            <span class="n">method_nor</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">path_nor</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">operation_nor</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">key_nor</span> <span class="o">=</span> <span class="p">(</span><span class="n">method_nor</span><span class="p">,</span> <span class="n">path_nor</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">method_nor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ALLOWED_METHODS</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid HTTP method </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key_nor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Route </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> already registered"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">operation_nor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CoralRouterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Operation </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> already registered"</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_routes</span><span class="p">[</span><span class="n">key_nor</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_operations</span><span class="p">[</span><span class="n">operation_nor</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_nor</span>
+
+            <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">                </span><span class="sd">"""</span>
+<span class="sd">                Wrapper function to handle the route logic.</span>
+<span class="sd">                This function is called when the route is invoked.</span>
+<span class="sd">                """</span>
+
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">wrapper</span>
+
+        <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.get">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get route decorator with GET `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"GET"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.post">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.post">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Post route decorator with POST `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"POST"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.put">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.put">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Put route decorator with PUT `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"PUT"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.delete">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.delete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Delete route decorator with DELETE `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"DELETE"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.patch">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.patch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Patch route decorator with PATCH `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"PATCH"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoralRouter.head">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.coral.html#carlogtt_python_library.amazon_internal.coral.CoralRouter.head">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">AnyCallableT</span><span class="p">],</span> <span class="n">AnyCallableT</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Head route decorator with HEAD `method`</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="s2">"HEAD"</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

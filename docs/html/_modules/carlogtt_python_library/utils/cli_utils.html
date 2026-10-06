@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/utils/cli_utils.py</span>
 <span class="c1"># Created 12/22/23 - 6:57 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -112,8 +112,8 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;CLIStyle&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LoadingBar&#39;</span><span class="p">,</span>
+    <span class="s1">'CLIStyle'</span><span class="p">,</span>
+    <span class="s1">'LoadingBar'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -126,82 +126,82 @@
 <div class="viewcode-block" id="CLIStyle">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.cli_utils.html#carlogtt_python_library.utils.cli_utils.CLIStyle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CLIStyle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A collection of ANSI escape codes and emojis for styling CLI output.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Basic Foreground Colors</span>
-    <span class="n">CLI_BLACK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[30m&quot;</span>
-    <span class="n">CLI_RED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span>
-    <span class="n">CLI_GREEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[32m&quot;</span>
-    <span class="n">CLI_YELLOW</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span>
-    <span class="n">CLI_BLUE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34m&quot;</span>
-    <span class="n">CLI_MAGENTA</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[35m&quot;</span>
-    <span class="n">CLI_CYAN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[36m&quot;</span>
-    <span class="n">CLI_WHITE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[37m&quot;</span>
+    <span class="n">CLI_BLACK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[30m"</span>
+    <span class="n">CLI_RED</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[31m"</span>
+    <span class="n">CLI_GREEN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[32m"</span>
+    <span class="n">CLI_YELLOW</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[33m"</span>
+    <span class="n">CLI_BLUE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[34m"</span>
+    <span class="n">CLI_MAGENTA</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[35m"</span>
+    <span class="n">CLI_CYAN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[36m"</span>
+    <span class="n">CLI_WHITE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[37m"</span>
 
     <span class="c1"># Bold/Bright Foreground Colors</span>
-    <span class="n">CLI_BOLD_BLACK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;30m&quot;</span>
-    <span class="n">CLI_BOLD_RED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;31m&quot;</span>
-    <span class="n">CLI_BOLD_GREEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;32m&quot;</span>
-    <span class="n">CLI_BOLD_YELLOW</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;33m&quot;</span>
-    <span class="n">CLI_BOLD_BLUE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;34m&quot;</span>
-    <span class="n">CLI_BOLD_MAGENTA</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;35m&quot;</span>
-    <span class="n">CLI_BOLD_CYAN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;36m&quot;</span>
-    <span class="n">CLI_BOLD_WHITE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1;37m&quot;</span>
+    <span class="n">CLI_BOLD_BLACK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;30m"</span>
+    <span class="n">CLI_BOLD_RED</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;31m"</span>
+    <span class="n">CLI_BOLD_GREEN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;32m"</span>
+    <span class="n">CLI_BOLD_YELLOW</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;33m"</span>
+    <span class="n">CLI_BOLD_BLUE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;34m"</span>
+    <span class="n">CLI_BOLD_MAGENTA</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;35m"</span>
+    <span class="n">CLI_BOLD_CYAN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;36m"</span>
+    <span class="n">CLI_BOLD_WHITE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1;37m"</span>
 
     <span class="c1"># Basic Background Colors</span>
-    <span class="n">CLI_BG_BLACK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[40m&quot;</span>
-    <span class="n">CLI_BG_RED</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[41m&quot;</span>
-    <span class="n">CLI_BG_GREEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[42m&quot;</span>
-    <span class="n">CLI_BG_YELLOW</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[43m&quot;</span>
-    <span class="n">CLI_BG_BLUE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[44m&quot;</span>
-    <span class="n">CLI_BG_MAGENTA</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[45m&quot;</span>
-    <span class="n">CLI_BG_CYAN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[46m&quot;</span>
-    <span class="n">CLI_BG_WHITE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[47m&quot;</span>
+    <span class="n">CLI_BG_BLACK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[40m"</span>
+    <span class="n">CLI_BG_RED</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[41m"</span>
+    <span class="n">CLI_BG_GREEN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[42m"</span>
+    <span class="n">CLI_BG_YELLOW</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[43m"</span>
+    <span class="n">CLI_BG_BLUE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[44m"</span>
+    <span class="n">CLI_BG_MAGENTA</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[45m"</span>
+    <span class="n">CLI_BG_CYAN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[46m"</span>
+    <span class="n">CLI_BG_WHITE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[47m"</span>
 
     <span class="c1"># Text Formatting</span>
-    <span class="n">CLI_BOLD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1m&quot;</span>
-    <span class="n">CLI_DIM</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[2m&quot;</span>
-    <span class="n">CLI_ITALIC</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[3m&quot;</span>
-    <span class="n">CLI_UNDERLINE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[4m&quot;</span>
-    <span class="n">CLI_INVERT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[7m&quot;</span>
-    <span class="n">CLI_HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[8m&quot;</span>
+    <span class="n">CLI_BOLD</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[1m"</span>
+    <span class="n">CLI_DIM</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[2m"</span>
+    <span class="n">CLI_ITALIC</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[3m"</span>
+    <span class="n">CLI_UNDERLINE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[4m"</span>
+    <span class="n">CLI_INVERT</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[7m"</span>
+    <span class="n">CLI_HIDDEN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[8m"</span>
 
     <span class="c1"># Reset Specific Formatting</span>
-    <span class="n">CLI_END</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
-    <span class="n">CLI_END_BOLD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[21m&quot;</span>
-    <span class="n">CLI_END_DIM</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[22m&quot;</span>
-    <span class="n">CLI_END_ITALIC_UNDERLINE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[23m&quot;</span>
-    <span class="n">CLI_END_INVERT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[27m&quot;</span>
-    <span class="n">CLI_END_HIDDEN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[28m&quot;</span>
+    <span class="n">CLI_END</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[0m"</span>
+    <span class="n">CLI_END_BOLD</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[21m"</span>
+    <span class="n">CLI_END_DIM</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[22m"</span>
+    <span class="n">CLI_END_ITALIC_UNDERLINE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[23m"</span>
+    <span class="n">CLI_END_INVERT</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[27m"</span>
+    <span class="n">CLI_END_HIDDEN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\033</span><span class="s2">[28m"</span>
 
     <span class="c1"># Emoji</span>
-    <span class="n">EMOJI_GREEN_CHECK_MARK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xe2\x9c\x85</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_HAMMER_AND_WRENCH</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x9b\xa0</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_CLOCK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xe2\x8f\xb0</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_SPARKLES</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xe2\x9c\xa8</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_STOP_SIGN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x9b\x91</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_WARNING_SIGN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xe2\x9a\xa0\xef\xb8\x8f</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_KEY</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x94\x91</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_CIRCLE_ARROWS</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x94\x84</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_BROOM</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\xa7\xb9</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_LINK</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x94\x97</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_PACKAGE</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x93\xa6</span><span class="s2">&quot;</span>
-    <span class="n">EMOJI_NETWORK_WORLD</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\xf0\x9f\x8c\x90</span><span class="s2">&quot;</span></div>
+    <span class="n">EMOJI_GREEN_CHECK_MARK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xe2\x9c\x85</span><span class="s2">"</span>
+    <span class="n">EMOJI_HAMMER_AND_WRENCH</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x9b\xa0</span><span class="s2">"</span>
+    <span class="n">EMOJI_CLOCK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xe2\x8f\xb0</span><span class="s2">"</span>
+    <span class="n">EMOJI_SPARKLES</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xe2\x9c\xa8</span><span class="s2">"</span>
+    <span class="n">EMOJI_STOP_SIGN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x9b\x91</span><span class="s2">"</span>
+    <span class="n">EMOJI_WARNING_SIGN</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xe2\x9a\xa0\xef\xb8\x8f</span><span class="s2">"</span>
+    <span class="n">EMOJI_KEY</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x94\x91</span><span class="s2">"</span>
+    <span class="n">EMOJI_CIRCLE_ARROWS</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x94\x84</span><span class="s2">"</span>
+    <span class="n">EMOJI_BROOM</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\xa7\xb9</span><span class="s2">"</span>
+    <span class="n">EMOJI_LINK</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x94\x97</span><span class="s2">"</span>
+    <span class="n">EMOJI_PACKAGE</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x93\xa6</span><span class="s2">"</span>
+    <span class="n">EMOJI_NETWORK_WORLD</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\xf0\x9f\x8c\x90</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="LoadingBar">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.cli_utils.html#carlogtt_python_library.utils.cli_utils.LoadingBar">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoadingBar</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class that represents a simple loading bar animation running in</span>
 <span class="sd">    a separate thread.</span>
 
 <span class="sd">    :param secs: The total duration in seconds for the loading bar</span>
 <span class="sd">           to complete.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -211,35 +211,35 @@
 <div class="viewcode-block" id="LoadingBar.run">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.cli_utils.html#carlogtt_python_library.utils.cli_utils.LoadingBar.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Overrides the Thread.run() method; generates and displays a</span>
 <span class="sd">        loading bar animation.</span>
 <span class="sd">        The animation progresses over the specified duration</span>
 <span class="sd">        (self._secs) unless stop() is called.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
                 <span class="n">ii</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">2</span>
-                <span class="n">bar</span> <span class="o">=</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">50</span> <span class="o">-</span> <span class="n">ii</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;%&quot;</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">bar</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">bar</span> <span class="o">=</span> <span class="s2">"["</span> <span class="o">+</span> <span class="s2">"#"</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">*</span> <span class="p">(</span><span class="mi">50</span> <span class="o">-</span> <span class="n">ii</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"]"</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"%"</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">" "</span> <span class="o">+</span> <span class="n">bar</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">value</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'</span><span class="se">\r</span><span class="s1">'</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_secs</span> <span class="o">/</span> <span class="mi">101</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">break</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="LoadingBar.stop">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.utils.cli_utils.html#carlogtt_python_library.utils.cli_utils.LoadingBar.stop">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stops the loading bar animation by setting the _stop_event.</span>
 <span class="sd">        Once called, it signals the run method to terminate the</span>
 <span class="sd">        animation loop.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
 </div>

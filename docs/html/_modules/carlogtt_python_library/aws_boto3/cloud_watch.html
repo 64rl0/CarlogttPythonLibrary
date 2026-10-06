@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.aws_boto3.cloud_watch &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=30015795"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_apidoc/modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.aws_boto3.cloud_watch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for carlogtt_python_library.aws_boto3.cloud_watch</h1><div class="highlight"><pre>
+<span></span><span class="c1"># ======================================================================</span>
+<span class="c1"># MODULE DETAILS</span>
+<span class="c1"># This section provides metadata about the module, including its</span>
+<span class="c1"># creation date, author, copyright information, and a brief description</span>
+<span class="c1"># of the module's purpose and functionality.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
+<span class="c1">#  (      _ \     /  |     (   | (_ |    |      |</span>
+<span class="c1"># \___| _/  _\ _|_\ ____| \___/ \___|   _|     _|</span>
+
+<span class="c1"># src/carlogtt_python_library/aws_boto3/cloud_watch.py</span>
+<span class="c1"># Created 7/9/26 - 4:27 PM UK Time (London) by carlogtt</span>
+
+<span class="sd">"""</span>
+<span class="sd">This module ...</span>
+<span class="sd">"""</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># EXCEPTIONS</span>
+<span class="c1"># This section documents any exceptions made code or quality rules.</span>
+<span class="c1"># These exceptions may be necessary due to specific coding requirements</span>
+<span class="c1"># or to bypass false positives.</span>
+<span class="c1"># ======================================================================</span>
+<span class="c1">#</span>
+
+<span class="c1"># ======================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># Importing required libraries and modules for the application.</span>
+<span class="c1"># ======================================================================</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="c1"># Third Party Library Imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">botocore.exceptions</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mypy_boto3_cloudwatch</span>
+
+<span class="c1"># Local Folder (Relative) Imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">aws_service_base</span>
+
+<span class="c1"># END IMPORTS</span>
+<span class="c1"># ======================================================================</span>
+
+
+<span class="c1"># List of public names in the module</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'CloudWatch'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># Setting up logger for current module</span>
+<span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Type aliases</span>
+<span class="n">CloudWatchClient</span> <span class="o">=</span> <span class="n">mypy_boto3_cloudwatch</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">CloudWatchClient</span>
+
+
+<div class="viewcode-block" id="CloudWatch">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.cloud_watch.html#carlogtt_python_library.aws_boto3.cloud_watch.CloudWatch">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudWatch</span><span class="p">(</span><span class="n">aws_service_base</span><span class="o">.</span><span class="n">AwsServiceBase</span><span class="p">[</span><span class="n">CloudWatchClient</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    The CloudWatch class provides a simplified interface for interacting</span>
+<span class="sd">    with Amazon CloudWatch services within a Python application.</span>
+
+<span class="sd">    It includes an option to cache the client session to minimize</span>
+<span class="sd">    the number of AWS API call.</span>
+
+<span class="sd">    :param aws_region_name: The name of the AWS region where the</span>
+<span class="sd">           service is to be used. This parameter is required to</span>
+<span class="sd">           configure the AWS client.</span>
+<span class="sd">    :param aws_profile_name: The name of the AWS profile to use for</span>
+<span class="sd">           credentials. This is useful if you have multiple profiles</span>
+<span class="sd">           configured in your AWS credentials file.</span>
+<span class="sd">           Default is None, which means the default profile or</span>
+<span class="sd">           environment variables will be used if not provided.</span>
+<span class="sd">    :param aws_access_key_id: The AWS access key ID for</span>
+<span class="sd">           programmatically accessing AWS services. This parameter</span>
+<span class="sd">           is optional and only needed if not using a profile from</span>
+<span class="sd">           the AWS credentials file.</span>
+<span class="sd">    :param aws_secret_access_key: The AWS secret access key</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param aws_session_token: The AWS temporary session token</span>
+<span class="sd">           corresponding to the provided access key ID. Like the</span>
+<span class="sd">           access key ID, this parameter is optional and only needed</span>
+<span class="sd">           if not using a profile.</span>
+<span class="sd">    :param caching: Determines whether to enable caching for the</span>
+<span class="sd">           client session. If set to True, the client session will</span>
+<span class="sd">           be cached to improve performance and reduce the number</span>
+<span class="sd">           of API calls. Default is False.</span>
+<span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
+<span class="sd">           will be passed to the low-level service client.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">aws_region_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">aws_profile_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_access_key_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_secret_access_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aws_session_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">client_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">aws_region_name</span><span class="o">=</span><span class="n">aws_region_name</span><span class="p">,</span>
+            <span class="n">aws_profile_name</span><span class="o">=</span><span class="n">aws_profile_name</span><span class="p">,</span>
+            <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">aws_access_key_id</span><span class="p">,</span>
+            <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">aws_secret_access_key</span><span class="p">,</span>
+            <span class="n">aws_session_token</span><span class="o">=</span><span class="n">aws_session_token</span><span class="p">,</span>
+            <span class="n">caching</span><span class="o">=</span><span class="n">caching</span><span class="p">,</span>
+            <span class="n">client_parameters</span><span class="o">=</span><span class="n">client_parameters</span><span class="p">,</span>
+            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">"cloudwatch"</span><span class="p">,</span>
+            <span class="n">exception_type</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="CloudWatch.get_alarm_state_by_arn">
+<a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.cloud_watch.html#carlogtt_python_library.aws_boto3.cloud_watch.CloudWatch.get_alarm_state_by_arn">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_alarm_state_by_arn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alarm_arn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return the current state of a CloudWatch alarm given its ARN.</span>
+
+<span class="sd">        CloudWatch has no API to look up an alarm directly by ARN, so</span>
+<span class="sd">        the alarm name is parsed out of the ARN and used to query</span>
+<span class="sd">        `describe_alarms`. Both metric and composite alarms are</span>
+<span class="sd">        requested, then the returned alarm whose ARN matches the</span>
+<span class="sd">        supplied one is selected. Matching on the returned ARN (rather</span>
+<span class="sd">        than trusting the name alone) guards against a name collision</span>
+<span class="sd">        between a metric and a composite alarm.</span>
+
+<span class="sd">        The returned state is one of the CloudWatch alarm state values:</span>
+<span class="sd">        'OK', 'ALARM', or 'INSUFFICIENT_DATA'.</span>
+
+<span class="sd">        :param alarm_arn: The Amazon Resource Name (ARN) of the alarm,</span>
+<span class="sd">               e.g. 'arn:aws:cloudwatch:&lt;region&gt;:&lt;acct&gt;:alarm:&lt;name&gt;'.</span>
+<span class="sd">        :return: The alarm state value as a string.</span>
+<span class="sd">        :raise CloudWatchError: If the ARN is malformed, no alarm</span>
+<span class="sd">               matches the ARN, or the underlying API call fails.</span>
+<span class="sd">        """</span>
+
+        <span class="n">alarm_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_alarm_name</span><span class="p">(</span><span class="n">alarm_arn</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">describe_alarms</span><span class="p">(</span>
+                <span class="n">AlarmNames</span><span class="o">=</span><span class="p">[</span><span class="n">alarm_name</span><span class="p">],</span>
+                <span class="n">AlarmTypes</span><span class="o">=</span><span class="p">[</span><span class="s1">'CompositeAlarm'</span><span class="p">,</span> <span class="s1">'MetricAlarm'</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="n">alarms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="o">*</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'MetricAlarms'</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="o">*</span><span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'CompositeAlarms'</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">alarm</span> <span class="ow">in</span> <span class="n">alarms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">alarm</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'AlarmArn'</span><span class="p">)</span> <span class="o">==</span> <span class="n">alarm_arn</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">alarm</span><span class="p">[</span><span class="s1">'StateValue'</span><span class="p">])</span>
+
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No CloudWatch alarm found for ARN '</span><span class="si">{</span><span class="n">alarm_arn</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+        <span class="k">except</span> <span class="n">botocore</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ClientError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">response</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_alarm_name</span><span class="p">(</span><span class="n">alarm_arn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Extract the alarm name from a CloudWatch alarm ARN.</span>
+
+<span class="sd">        The alarm ARN format is</span>
+<span class="sd">        'arn:aws:cloudwatch:&lt;region&gt;:&lt;account-id&gt;:alarm:&lt;alarm-name&gt;'.</span>
+<span class="sd">        The alarm name is everything following the ':alarm:' segment and</span>
+<span class="sd">        may itself contain colons.</span>
+
+<span class="sd">        :param alarm_arn: The alarm ARN to parse.</span>
+<span class="sd">        :return: The alarm name.</span>
+<span class="sd">        :raise CloudWatchError: If the ARN does not contain an ':alarm:'</span>
+<span class="sd">               segment or the name is empty.</span>
+<span class="sd">        """</span>
+
+        <span class="n">marker</span> <span class="o">=</span> <span class="s1">':alarm:'</span>
+        <span class="n">marker_index</span> <span class="o">=</span> <span class="n">alarm_arn</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">marker_index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Invalid CloudWatch alarm ARN '</span><span class="si">{</span><span class="n">alarm_arn</span><span class="si">}</span><span class="s2">': missing '</span><span class="si">{</span><span class="n">marker</span><span class="si">}</span><span class="s2">' segment."</span>
+            <span class="p">)</span>
+
+        <span class="n">alarm_name</span> <span class="o">=</span> <span class="n">alarm_arn</span><span class="p">[</span><span class="n">marker_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="p">:]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">alarm_name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">CloudWatchError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Invalid CloudWatch alarm ARN '</span><span class="si">{</span><span class="n">alarm_arn</span><span class="si">}</span><span class="s2">': empty alarm name."</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">alarm_name</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

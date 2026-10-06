@@ -18,6 +18,7 @@ Submodules
    carlogtt_python_library.utils.decorators
    carlogtt_python_library.utils.encryption
    carlogtt_python_library.utils.miscs
+   carlogtt_python_library.utils.pagination
    carlogtt_python_library.utils.string_tools
    carlogtt_python_library.utils.user_input
    carlogtt_python_library.utils.validators

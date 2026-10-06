@@ -173,8 +173,8 @@ manager, using an exponential backoff multiplier.</p>
 </div>
 <p>Context-manager usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">retry</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">tries</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="k">as</span> <span class="n">retryer</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">retryer</span><span class="p">(</span><span class="n">load_csv</span><span class="p">,</span> <span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
-    <span class="n">retryer</span><span class="p">(</span><span class="n">save_report</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;out.pdf&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">retryer</span><span class="p">(</span><span class="n">load_csv</span><span class="p">,</span> <span class="s2">"data.csv"</span><span class="p">)</span>
+    <span class="n">retryer</span><span class="p">(</span><span class="n">save_report</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">"out.pdf"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">

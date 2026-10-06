@@ -15,6 +15,7 @@ Submodules
    carlogtt_python_library.aws_boto3.aws_lambda
    carlogtt_python_library.aws_boto3.aws_service_base
    carlogtt_python_library.aws_boto3.cloud_front
+   carlogtt_python_library.aws_boto3.cloud_watch
    carlogtt_python_library.aws_boto3.ec2
    carlogtt_python_library.aws_boto3.kms
    carlogtt_python_library.aws_boto3.s3

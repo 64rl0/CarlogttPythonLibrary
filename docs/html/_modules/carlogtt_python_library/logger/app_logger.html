@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,7 +84,7 @@
 <span class="c1"># src/carlogtt_python_library/logger/app_logger.py</span>
 <span class="c1"># Created 9/29/23 - 1:44 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module contains the application logger class.</span>
 <span class="sd">Guidelines for the application logger class are as follows:</span>
 
@@ -102,7 +102,7 @@
 
 <span class="sd">50 - CRITICAL: A serious error, indicating that the program itself may</span>
 <span class="sd">be unable to continue running.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -135,8 +135,8 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Logger&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;LoggerLevel&#39;</span><span class="p">,</span>
+    <span class="s1">'Logger'</span><span class="p">,</span>
+    <span class="s1">'LoggerLevel'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -147,12 +147,12 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_ColoredFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A custom logging formatter to add color codes to log messages.</span>
 <span class="sd">    This formatter extends the standard logging</span>
 <span class="sd">    Formatter class, adding color to log messages for terminal output</span>
 <span class="sd">    that supports ANSI color codes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_COLOR_RESET</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_END</span>
 
@@ -161,19 +161,19 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Formats a log record and adds color codes to the message.</span>
 
 <span class="sd">        :param record: The log record to be formatted.</span>
 <span class="sd">        :return: A color-coded log message string.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Inject a UUID if not already present</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">&#39;log_id&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="s1">'log_id'</span><span class="p">):</span>
             <span class="n">record</span><span class="o">.</span><span class="n">log_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
 
         <span class="n">log_message</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
-        <span class="n">log_formatted</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_color</span><span class="si">}{</span><span class="n">log_message</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLOR_RESET</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">log_formatted</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_color</span><span class="si">}{</span><span class="n">log_message</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLOR_RESET</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">log_formatted</span>
 
@@ -192,7 +192,7 @@
 <div class="viewcode-block" id="Logger">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Logger</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Custom logger class for application-wide logging with support for</span>
 <span class="sd">    file, console, and StringIO logging. Provides colored formatting</span>
 <span class="sd">    and hierarchical logging capabilities.</span>
@@ -203,33 +203,33 @@
 <span class="sd">           below this level will not be logged.</span>
 <span class="sd">    :param log_color: Specifies the color of the log messages. This is</span>
 <span class="sd">           used to set the initial color for all log messages handled</span>
-<span class="sd">           by this logger. The default color is &#39;default&#39;, which</span>
+<span class="sd">           by this logger. The default color is 'default', which</span>
 <span class="sd">           applies no additional color formatting. Available colors</span>
-<span class="sd">           include &#39;red&#39;, &#39;green&#39;, &#39;yellow&#39;, &#39;blue&#39;, &#39;magenta&#39;, &#39;cyan&#39;.</span>
+<span class="sd">           include 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan'.</span>
 <span class="sd">    :param log_fmt: The log format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_LOG_COLORS</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_END</span><span class="p">,</span>
-        <span class="s1">&#39;red&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_RED</span><span class="p">,</span>
-        <span class="s1">&#39;green&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_GREEN</span><span class="p">,</span>
-        <span class="s1">&#39;yellow&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_YELLOW</span><span class="p">,</span>
-        <span class="s1">&#39;blue&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_BLUE</span><span class="p">,</span>
-        <span class="s1">&#39;magenta&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_MAGENTA</span><span class="p">,</span>
-        <span class="s1">&#39;cyan&#39;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_CYAN</span><span class="p">,</span>
+        <span class="s1">'default'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_END</span><span class="p">,</span>
+        <span class="s1">'red'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_RED</span><span class="p">,</span>
+        <span class="s1">'green'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_GREEN</span><span class="p">,</span>
+        <span class="s1">'yellow'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_YELLOW</span><span class="p">,</span>
+        <span class="s1">'blue'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_BLUE</span><span class="p">,</span>
+        <span class="s1">'magenta'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_MAGENTA</span><span class="p">,</span>
+        <span class="s1">'cyan'</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">CLIStyle</span><span class="o">.</span><span class="n">CLI_CYAN</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">_LOG_FMT</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(levelname)-8s</span><span class="s1"> | </span><span class="si">%(asctime)s</span><span class="s1"> | </span><span class="si">%(log_id)s</span><span class="s1"> | </span><span class="si">%(pathname)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="s1"> | </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+    <span class="n">_LOG_FMT</span> <span class="o">=</span> <span class="s1">'</span><span class="si">%(levelname)-8s</span><span class="s1"> | </span><span class="si">%(asctime)s</span><span class="s1"> | </span><span class="si">%(log_id)s</span><span class="s1"> | </span><span class="si">%(pathname)s</span><span class="s1">:</span><span class="si">%(lineno)d</span><span class="s1"> | </span><span class="si">%(message)s</span><span class="s1">'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">log_level</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LoggerLevel</span><span class="p">],</span>
-        <span class="n">log_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+        <span class="n">log_color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'default'</span><span class="p">,</span>
         <span class="n">log_fmt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">log_color</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOG_COLORS</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LoggerError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;log_color must be one of the following values: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_LOG_COLORS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"log_color must be one of the following values: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_LOG_COLORS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_level_enum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_log_level</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
@@ -239,9 +239,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">_ColoredFormatter</span><span class="p">(</span>
             <span class="n">log_color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_LOG_COLORS</span><span class="p">[</span><span class="n">log_color</span><span class="p">],</span>
-            <span class="n">style</span><span class="o">=</span><span class="s1">&#39;%&#39;</span><span class="p">,</span>
+            <span class="n">style</span><span class="o">=</span><span class="s1">'%'</span><span class="p">,</span>
             <span class="n">fmt</span><span class="o">=</span><span class="n">log_fmt</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_LOG_FMT</span><span class="p">,</span>
-            <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">,</span>
+            <span class="n">datefmt</span><span class="o">=</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S'</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
@@ -250,14 +250,14 @@
 <div class="viewcode-block" id="Logger.attach_root_logger">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.attach_root_logger">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">attach_root_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Attach the current handlers and logging level of &#39;app_logger&#39;</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Attach the current handlers and logging level of 'app_logger'</span>
 <span class="sd">        to the root logger.</span>
 
 <span class="sd">        This ensures that calls to the Python root logger</span>
 <span class="sd">        (e.g. logging.info(), logging.debug()) will produce output</span>
-<span class="sd">        that matches the configuration of &#39;app_logger&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        that matches the configuration of 'app_logger'.</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Copy app_logger level to root_logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app_logger</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
@@ -270,14 +270,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">app_logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Mark root logger as active</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;root_logger attached to module_logger&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"root_logger attached to module_logger"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_logger_attached</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="Logger.detach_root_logger">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.detach_root_logger">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">detach_root_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Detach custom handlers from the root logger and revert to a</span>
 <span class="sd">        higher-level filter (WARNING).</span>
 
@@ -285,7 +285,7 @@
 <span class="sd">        Any modules still calling logging.info() or logging.debug()</span>
 <span class="sd">        against the root logger will no longer produce output</span>
 <span class="sd">        (or be limited to WARNING+).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Copy root_logger level to app_logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_logger</span><span class="o">.</span><span class="n">level</span><span class="p">)</span>
@@ -301,21 +301,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Mark root logger as disabled</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;root_logger detached from module_logger&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"root_logger detached from module_logger"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_logger_attached</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="Logger.add_file_handler">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.add_file_handler">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_file_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds a file handler to log messages to a file.</span>
 
 <span class="sd">        :param logger_file_path: The path to the log file. Can be a</span>
 <span class="sd">               string or a pathlib.Path object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">logger_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a+&#39;</span><span class="p">)</span>
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">logger_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'a+'</span><span class="p">)</span>
         <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span></div>
 
@@ -323,13 +323,13 @@
 <div class="viewcode-block" id="Logger.add_console_handler">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.add_console_handler">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_console_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_console_stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TextIO</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds a console handler to log messages to the console.</span>
 
 <span class="sd">        :param logger_console_stream: The stream to log messages to.</span>
 <span class="sd">               Typically, sys.stdout or sys.stderr.</span>
 <span class="sd">               If not specified, sys.stderr is used.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">logger_console_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger_console_stream</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
@@ -342,13 +342,13 @@
 <div class="viewcode-block" id="Logger.add_stringio_handler">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.add_stringio_handler">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_stringio_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger_stringio_stream</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TextIO</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adds a StringIO handler to log messages to a StringIO stream.</span>
 
 <span class="sd">        :param logger_stringio_stream: The StringIO stream to log</span>
 <span class="sd">               messages to.</span>
 <span class="sd">               If not specified, io.StringIO is used.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">logger_stringio_stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger_stringio_stream</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
@@ -361,13 +361,13 @@
 <div class="viewcode-block" id="Logger.get_child_logger">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.get_child_logger">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_child_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Creates and returns a child logger with a specific name.</span>
 
 <span class="sd">        :param log_name: The name of the child logger. This name is</span>
-<span class="sd">               appended to the parent logger&#39;s name.</span>
+<span class="sd">               appended to the parent logger's name.</span>
 <span class="sd">        :return: A new child logger instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">new_child_logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="n">log_name</span><span class="p">)</span>
 
@@ -377,21 +377,21 @@
 <div class="viewcode-block" id="Logger.change_logger_level">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.logger.app_logger.html#carlogtt_python_library.logger.app_logger.Logger.change_logger_level">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">change_logger_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LoggerLevel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Change the logger&#39;s effective level at runtime.</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Change the logger's effective level at runtime.</span>
 
-<span class="sd">        This method updates both the logger instance&#39;s level and all</span>
-<span class="sd">        registered handlers&#39; levels to the newly specified value.</span>
+<span class="sd">        This method updates both the logger instance's level and all</span>
+<span class="sd">        registered handlers' levels to the newly specified value.</span>
 
 <span class="sd">        :param log_level: The desired new log level. It can be either:</span>
 <span class="sd">            - A :class:`LoggerLevel` enum member</span>
 <span class="sd">            (e.g. ``LoggerLevel.DEBUG``)</span>
 <span class="sd">            - A string representing one of the valid log level names</span>
-<span class="sd">            (e.g. ``&quot;DEBUG&quot;``, ``&quot;INFO&quot;``)</span>
+<span class="sd">            (e.g. ``"DEBUG"``, ``"INFO"``)</span>
 <span class="sd">        :raises LoggerError: If the provided string does not match any</span>
 <span class="sd">            :class:`LoggerLevel` member.</span>
 <span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Update instance value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_level_enum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_log_level</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
@@ -411,14 +411,14 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_log_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LoggerLevel</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LoggerLevel</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert a string or LoggerLevel enum into a valid LoggerLevel.</span>
 
-<span class="sd">        :param log_level: A string (e.g., &#39;INFO&#39;) or a LoggerLevel enum.</span>
+<span class="sd">        :param log_level: A string (e.g., 'INFO') or a LoggerLevel enum.</span>
 <span class="sd">        :return: A LoggerLevel enum member.</span>
 <span class="sd">        :raises LoggerError: If log_level is an invalid strig or if</span>
-<span class="sd">            it&#39;s neither a string nor a LoggerLevel.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            it's neither a string nor a LoggerLevel.</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_level</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
@@ -426,15 +426,15 @@
 
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LoggerError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Invalid log_level &#39;</span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">&#39;. Valid options:&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lvl</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">lvl</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">LoggerLevel</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Invalid log_level '</span><span class="si">{</span><span class="n">log_level</span><span class="si">}</span><span class="s2">'. Valid options:"</span>
+                    <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lvl</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">lvl</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">LoggerLevel</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_level</span><span class="p">,</span> <span class="n">LoggerLevel</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_level_enum</span> <span class="o">=</span> <span class="n">log_level</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LoggerError</span><span class="p">(</span><span class="s2">&quot;log_level must be either a string or LoggerLevel.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LoggerError</span><span class="p">(</span><span class="s2">"log_level must be either a string or LoggerLevel."</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_level_enum</span></div>
 

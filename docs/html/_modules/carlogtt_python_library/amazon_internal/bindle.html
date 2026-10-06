@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/amazon_internal/bindle.py</span>
 <span class="c1"># Created 4/8/25 - 1:31 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -118,7 +118,7 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Bindle&#39;</span><span class="p">,</span>
+    <span class="s1">'Bindle'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -131,7 +131,7 @@
 <div class="viewcode-block" id="Bindle">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bindle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A handler class for the BindleAPI.</span>
 
 <span class="sd">    It includes an option to cache the client session to minimize</span>
@@ -166,7 +166,7 @@
 <span class="sd">           of API calls. Default is False.</span>
 <span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
 <span class="sd">           will be passed to the low-level service client.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -186,28 +186,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_aws_session_token</span> <span class="o">=</span> <span class="n">aws_session_token</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span> <span class="o">=</span> <span class="n">caching</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_bindle_region_name</span> <span class="o">=</span> <span class="s2">&quot;us-east-1&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">&quot;BindleService&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">&quot;https://bindle-service-awsauth.us-east-1.amazonaws.com&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_bindle_region_name</span> <span class="o">=</span> <span class="s2">"us-east-1"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_service_name</span> <span class="o">=</span> <span class="s2">"BindleService"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aws_endpoint_url</span> <span class="o">=</span> <span class="s2">"https://bindle-service-awsauth.us-east-1.amazonaws.com"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client_parameters</span> <span class="o">=</span> <span class="n">client_parameters</span> <span class="k">if</span> <span class="n">client_parameters</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BindleClient</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_caching</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;client&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bindle_client</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">BindleClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'client'</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bindle_client</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">BindleClient</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bindle_client</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_bindle_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BindleClient</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create a low level bindle client.</span>
 
 <span class="sd">        :return: A BindleClient.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">boto_session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span>
@@ -236,12 +236,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_send_bindle_api_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">request_method</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">AwsSigV4RequestMethod</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Make an HTTP request to the Bindle API.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;X-Amz-Target&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls.BindleService.</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">"X-Amz-Target"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls.BindleService.</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -263,46 +263,46 @@
 <div class="viewcode-block" id="Bindle.invalidate_client_cache">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.invalidate_client_cache">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">invalidate_client_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Clears the cached client, if caching is enabled.</span>
 
 <span class="sd">        This method allows manually invalidating the cached client,</span>
 <span class="sd">        forcing a new client instance to be created on the next access.</span>
-<span class="sd">        Useful if AWS credentials have changed or if there&#39;s a need to</span>
+<span class="sd">        Useful if AWS credentials have changed or if there's a need to</span>
 <span class="sd">        connect to a different region within the same instance</span>
 <span class="sd">        lifecycle.</span>
 
 <span class="sd">        :return: None.</span>
 <span class="sd">        :raise BindleError: Raises an error if caching is not enabled</span>
 <span class="sd">               for this instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">BindleError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Session caching is not enabled for this instance of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">&#39;client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="s1">'client'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Bindle.describe_resource">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.describe_resource">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resource_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a resource based on its ID.</span>
 
 <span class="sd">        :param resource_id: The id of the resource.</span>
 <span class="sd">        :return: The resource structure.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;DescribeResource&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"DescribeResource"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;resourceId&quot;</span><span class="p">:</span> <span class="n">resource_id</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"resourceId"</span><span class="p">:</span> <span class="n">resource_id</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -316,24 +316,24 @@
 <div class="viewcode-block" id="Bindle.describe_package">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.describe_package">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe_package</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a package based on its name.</span>
 
 <span class="sd">        :param package_name: The name of the package.</span>
 <span class="sd">        :return: The package structure.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;DescribeResource&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"DescribeResource"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;resourceName&quot;</span><span class="p">:</span> <span class="n">package_name</span><span class="p">,</span>
-                <span class="s2">&quot;resourceType&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;namespaceName&quot;</span><span class="p">:</span> <span class="s2">&quot;builder-tools&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;resourceTypeName&quot;</span><span class="p">:</span> <span class="s2">&quot;package&quot;</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"resourceName"</span><span class="p">:</span> <span class="n">package_name</span><span class="p">,</span>
+                <span class="s2">"resourceType"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"namespaceName"</span><span class="p">:</span> <span class="s2">"builder-tools"</span><span class="p">,</span>
+                    <span class="s2">"resourceTypeName"</span><span class="p">:</span> <span class="s2">"package"</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">}</span>
@@ -348,24 +348,24 @@
 <div class="viewcode-block" id="Bindle.describe_versionset_group">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.describe_versionset_group">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe_versionset_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">versionset_group_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a versionset group based on its name.</span>
 
 <span class="sd">        :param versionset_group_name: The name of the versionset group.</span>
 <span class="sd">        :return: The versionset group structure.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;DescribeResource&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"DescribeResource"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;resourceName&quot;</span><span class="p">:</span> <span class="n">versionset_group_name</span><span class="p">,</span>
-                <span class="s2">&quot;resourceType&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;namespaceName&quot;</span><span class="p">:</span> <span class="s2">&quot;brazil&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;resourceTypeName&quot;</span><span class="p">:</span> <span class="s2">&quot;version-set-group&quot;</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"resourceName"</span><span class="p">:</span> <span class="n">versionset_group_name</span><span class="p">,</span>
+                <span class="s2">"resourceType"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"namespaceName"</span><span class="p">:</span> <span class="s2">"brazil"</span><span class="p">,</span>
+                    <span class="s2">"resourceTypeName"</span><span class="p">:</span> <span class="s2">"version-set-group"</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">}</span>
@@ -380,24 +380,24 @@
 <div class="viewcode-block" id="Bindle.describe_material_set">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.describe_material_set">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe_material_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">material_set_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a material set based on its name.</span>
 
 <span class="sd">        :param material_set_name: The name of the material set.</span>
 <span class="sd">        :return: The material set structure.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;DescribeResource&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"DescribeResource"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;resourceName&quot;</span><span class="p">:</span> <span class="n">material_set_name</span><span class="p">,</span>
-                <span class="s2">&quot;resourceType&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;namespaceName&quot;</span><span class="p">:</span> <span class="s2">&quot;odin&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;resourceTypeName&quot;</span><span class="p">:</span> <span class="s2">&quot;materialset&quot;</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"resourceName"</span><span class="p">:</span> <span class="n">material_set_name</span><span class="p">,</span>
+                <span class="s2">"resourceType"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"namespaceName"</span><span class="p">:</span> <span class="s2">"odin"</span><span class="p">,</span>
+                    <span class="s2">"resourceTypeName"</span><span class="p">:</span> <span class="s2">"materialset"</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">}</span>
@@ -412,7 +412,7 @@
 <div class="viewcode-block" id="Bindle.describe_software_application">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.describe_software_application">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">describe_software_application</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">software_application_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the structure of a software application based on its</span>
 <span class="sd">        name.</span>
 
@@ -420,18 +420,18 @@
 <span class="sd">            application.</span>
 <span class="sd">        :return: The software application structure.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;DescribeResource&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"DescribeResource"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;resourceName&quot;</span><span class="p">:</span> <span class="n">software_application_name</span><span class="p">,</span>
-                <span class="s2">&quot;resourceType&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;namespaceName&quot;</span><span class="p">:</span> <span class="s2">&quot;Bindle&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;resourceTypeName&quot;</span><span class="p">:</span> <span class="s2">&quot;SoftwareApp&quot;</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"resourceName"</span><span class="p">:</span> <span class="n">software_application_name</span><span class="p">,</span>
+                <span class="s2">"resourceType"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"namespaceName"</span><span class="p">:</span> <span class="s2">"Bindle"</span><span class="p">,</span>
+                    <span class="s2">"resourceTypeName"</span><span class="p">:</span> <span class="s2">"SoftwareApp"</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">}</span>
@@ -446,27 +446,27 @@
 <div class="viewcode-block" id="Bindle.find_bindles_by_owner_with_team_id">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.find_bindles_by_owner_with_team_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_bindles_by_owner_with_team_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">team_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns all the bindles owned by a team.</span>
 
 <span class="sd">        :param team_id: The id of the team.</span>
 <span class="sd">        :return: The bindles owned by the team.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;FindBindlesByOwner&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"FindBindlesByOwner"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;__type&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.types#TeamId&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">team_id</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"identifier"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"__type"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.types#TeamId"</span><span class="p">,</span>
+                    <span class="s2">"identifier"</span><span class="p">:</span> <span class="n">team_id</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;pagination&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
-                <span class="s2">&quot;includePersonalBindles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;allowUnsortedResults&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">"includePersonalBindles"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"allowUnsortedResults"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 
@@ -480,27 +480,27 @@
 <div class="viewcode-block" id="Bindle.find_bindles_by_owner_with_alias">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.amazon_internal.bindle.html#carlogtt_python_library.amazon_internal.bindle.Bindle.find_bindles_by_owner_with_alias">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_bindles_by_owner_with_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns all the bindles owned by a user.</span>
 
 <span class="sd">        :param alias: The alias of the user.</span>
 <span class="sd">        :return: The bindles owned by the user.</span>
 <span class="sd">        :raise: BindleError if function call fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;FindBindlesByOwner&quot;</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="s2">"FindBindlesByOwner"</span>
 
         <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Service&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.calls#BindleService&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Operation&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;__type&quot;</span><span class="p">:</span> <span class="s2">&quot;com.amazon.bindle.coral.types#Username&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">alias</span><span class="p">,</span>
+            <span class="s2">"Service"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.calls#BindleService"</span><span class="p">,</span>
+            <span class="s2">"Operation"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"com.amazon.bindle.coral.calls#</span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="s2">"Input"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"identifier"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"__type"</span><span class="p">:</span> <span class="s2">"com.amazon.bindle.coral.types#Username"</span><span class="p">,</span>
+                    <span class="s2">"identifier"</span><span class="p">:</span> <span class="n">alias</span><span class="p">,</span>
                 <span class="p">},</span>
-                <span class="s2">&quot;pagination&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
-                <span class="s2">&quot;includePersonalBindles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;allowUnsortedResults&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                <span class="s2">"pagination"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">200</span><span class="p">},</span>
+                <span class="s2">"includePersonalBindles"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"allowUnsortedResults"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">}</span>
 

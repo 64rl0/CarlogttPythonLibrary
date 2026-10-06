@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="carlogtt_python_library.utils.user_input module" href="carlogtt_python_library.utils.user_input.html" />
-    <link rel="prev" title="carlogtt_python_library.utils.miscs module" href="carlogtt_python_library.utils.miscs.html" /> 
+    <link rel="prev" title="carlogtt_python_library.utils.pagination module" href="carlogtt_python_library.utils.pagination.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -99,9 +99,42 @@
 <p>A collection of string utility functions including string
 normalization and random string generation.</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.string_tools.StringUtils.camel_case">
+<span class="sig-name descname"><span class="pre">camel_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/string_tools.html#StringUtils.camel_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.string_tools.StringUtils.camel_case" title="Link to this definition"></a></dt>
+<dd><p>Normalize the given string to camelCase. The string is first
+normalized to snake_case and then each word, except the first
+one, is capitalized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string_to_normalize</strong> – The original string that needs to be
+normalized.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized camelCase string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="carlogtt_python_library.utils.string_tools.StringUtils.get_random_string">
 <span class="sig-name descname"><span class="pre">get_random_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/string_tools.html#StringUtils.get_random_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.string_tools.StringUtils.get_random_string" title="Link to this definition"></a></dt>
 <dd><p>Generate a random string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.utils.string_tools.StringUtils.pascal_case">
+<span class="sig-name descname"><span class="pre">pascal_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_to_normalize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/utils/string_tools.html#StringUtils.pascal_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.utils.string_tools.StringUtils.pascal_case" title="Link to this definition"></a></dt>
+<dd><p>Normalize the given string to PascalCase. The string is first
+normalized to snake_case and then each word is capitalized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string_to_normalize</strong> – The original string that needs to be
+normalized.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized PascalCase string.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -149,7 +182,7 @@ normalized.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="carlogtt_python_library.utils.miscs.html" class="btn btn-neutral float-left" title="carlogtt_python_library.utils.miscs module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="carlogtt_python_library.utils.pagination.html" class="btn btn-neutral float-left" title="carlogtt_python_library.utils.pagination module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="carlogtt_python_library.utils.user_input.html" class="btn btn-neutral float-right" title="carlogtt_python_library.utils.user_input module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

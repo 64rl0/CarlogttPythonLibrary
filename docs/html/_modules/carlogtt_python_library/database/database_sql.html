@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/database/database_sql.py</span>
 <span class="c1"># Created 9/25/23 - 2:34 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -126,7 +126,7 @@
 <span class="c1"># to gracefully handle environments where psycopg2 is not installed</span>
 <span class="c1"># (e.g., on older systems or when Postgres support is not needed).</span>
 <span class="c1"># If you do need Postgres support, run:</span>
-<span class="c1">#     pip install &quot;carlogtt-python-library[postgres]&quot;</span>
+<span class="c1">#     pip install "carlogtt-python-library[postgres]"</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">psycopg2</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">psycopg2.extensions</span>
@@ -136,8 +136,8 @@
     <span class="c1"># Setting up logger for current module</span>
     <span class="n">module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-        <span class="s2">&quot;psycopg2 is not installed. Please install manually or use &#39;pip install&quot;</span>
-        <span class="s2">&quot; </span><span class="se">\&quot;</span><span class="s2">carlogtt-python-library[postgres]</span><span class="se">\&quot;</span><span class="s2">&#39;.&quot;</span>
+        <span class="s2">"psycopg2 is not installed. Please install manually or use 'pip install"</span>
+        <span class="s2">" </span><span class="se">\"</span><span class="s2">carlogtt-python-library[postgres]</span><span class="se">\"</span><span class="s2">'."</span>
     <span class="p">)</span>
 
     <span class="n">psycopg2</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
@@ -148,10 +148,10 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Database&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;MySQL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;PostgreSQL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;SQLite&#39;</span><span class="p">,</span>
+    <span class="s1">'Database'</span><span class="p">,</span>
+    <span class="s1">'MySQL'</span><span class="p">,</span>
+    <span class="s1">'PostgreSQL'</span><span class="p">,</span>
+    <span class="s1">'SQLite'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -164,7 +164,7 @@
 <span class="k">else</span><span class="p">:</span>
     <span class="n">PostgreSQLConn</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
 <span class="n">SQLiteConn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Connection</span>
-<span class="n">ConnT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ConnT&quot;</span><span class="p">,</span> <span class="n">MySQLConn</span><span class="p">,</span> <span class="n">PostgreSQLConn</span><span class="p">,</span> <span class="n">SQLiteConn</span><span class="p">)</span>
+<span class="n">ConnT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ConnT"</span><span class="p">,</span> <span class="n">MySQLConn</span><span class="p">,</span> <span class="n">PostgreSQLConn</span><span class="p">,</span> <span class="n">SQLiteConn</span><span class="p">)</span>
 <span class="n">SQLValueType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
     <span class="nb">bool</span><span class="p">,</span>
     <span class="nb">bytes</span><span class="p">,</span>
@@ -238,7 +238,7 @@
 <div class="viewcode-block" id="MySQL">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.MySQL">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MySQL</span><span class="p">(</span><span class="n">Database</span><span class="p">[</span><span class="n">MySQLConn</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Handles MySQL database connections.</span>
 
 <span class="sd">    :param host: Hostname or IP address of the MySQL server.</span>
@@ -252,7 +252,7 @@
 <span class="sd">    ``db_utils``</span>
 <span class="sd">        Instance of :class:`~database_utils.DatabaseUtils`</span>
 <span class="sd">        (helper for reading external SQL files, etc.).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_schema</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
@@ -265,17 +265,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MySQLConn</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the active db connection. If there is not an active</span>
 <span class="sd">        connection it creates one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">open_db_connection</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">,</span> <span class="n">MySQLConnectionAbstract</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">,</span> <span class="n">PooledMySQLConnection</span>
-        <span class="p">),</span> <span class="s2">&quot;Expected self._db_connection to be type MySQLConn&quot;</span>
+        <span class="p">),</span> <span class="s2">"Expected self._db_connection to be type MySQLConn"</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span>
 
@@ -283,12 +283,12 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.MySQL.open_db_connection">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">open_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Open a MySQL db connection.</span>
 <span class="sd">        Auto retry up to 4 times on connection error.</span>
 
 <span class="sd">        :raise MySQLError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
@@ -301,7 +301,7 @@
 
         <span class="k">except</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
@@ -311,12 +311,12 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.MySQL.close_db_connection">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">close_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the MySQL db connection.</span>
 <span class="sd">        Auto retry up to 4 times on connection error.</span>
 
 <span class="sd">        :raise MySQLError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
@@ -324,7 +324,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">except</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
@@ -332,13 +332,13 @@
 <div class="viewcode-block" id="MySQL.send_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.MySQL.send_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Send data to MySQL database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
 <span class="sd">        :param sql_values: Values to be substituted in the SQL query.</span>
 <span class="sd">        :raise MySQLError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">prepared</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -347,12 +347,12 @@
                 <span class="n">retryer</span><span class="p">(</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
                 <span class="n">retryer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">)</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!"</span>
+                <span class="sa">f</span><span class="s2">" traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -365,7 +365,7 @@
 <div class="viewcode-block" id="MySQL.send_many_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.MySQL.send_many_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_many_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Execute the same SQL statement many times in a single</span>
 <span class="sd">        ACID‑compliant transaction. Commit only if every execution</span>
 <span class="sd">        succeeds, otherwise roll back.</span>
@@ -374,7 +374,7 @@
 <span class="sd">        :param sql_values: Any iterable yielding values to be</span>
 <span class="sd">            substituted in the SQL query.</span>
 <span class="sd">        :raise MySQLError: (after rollback) If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">prepared</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -386,8 +386,8 @@
                 <span class="n">retryer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">)</span>
 
             <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Database atomic batch executed and committed successfully: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">&quot;</span>
+                <span class="s2">"Database atomic batch executed and committed successfully: "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
@@ -395,8 +395,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
 
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">]. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">]. "</span>
+                <span class="sa">f</span><span class="s2">"Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -412,7 +412,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch_from_db</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="n">fetch_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Fetch data from MySQL database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
@@ -420,7 +420,7 @@
 <span class="sd">        :param fetch_one: If True, only fetch the first row.</span>
 <span class="sd">        :return: Generator of dictionaries containing the fetched rows.</span>
 <span class="sd">        :raise MySQLError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">prepared</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dictionary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db_cursor</span><span class="p">,</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">MySQLCursorDict</span><span class="p">)</span>
@@ -428,7 +428,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">db_cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">fetch_one</span><span class="p">:</span>
                 <span class="n">next_row</span> <span class="o">=</span> <span class="n">db_cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
@@ -451,8 +451,8 @@
 
         <span class="k">except</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!"</span>
+                <span class="sa">f</span><span class="s2">" traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">MySQLError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -467,7 +467,7 @@
 <div class="viewcode-block" id="PostgreSQL">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.PostgreSQL">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PostgreSQL</span><span class="p">(</span><span class="n">Database</span><span class="p">[</span><span class="n">PostgreSQLConn</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Handles PostgreSQL database connections.</span>
 
 <span class="sd">    :param host: Hostname or IP address of the Postgres server.</span>
@@ -481,7 +481,7 @@
 <span class="sd">    ``db_utils``</span>
 <span class="sd">        Instance of :class:`~database_utils.DatabaseUtils`</span>
 <span class="sd">        (helper for reading external SQL files, etc.).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_schema</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_host</span> <span class="o">=</span> <span class="n">host</span>
@@ -494,17 +494,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PostgreSQLConn</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the active db connection. If there is not an active</span>
 <span class="sd">        connection it creates one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">open_db_connection</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">,</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">connection</span>
-        <span class="p">),</span> <span class="s2">&quot;Expected self._db_connection to be type psycopg2.extensions.connection&quot;</span>
+        <span class="p">),</span> <span class="s2">"Expected self._db_connection to be type psycopg2.extensions.connection"</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span>
 
@@ -512,12 +512,12 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.PostgreSQL.open_db_connection">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">open_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Open a PostgreSQL db connection.</span>
 <span class="sd">        Auto retry up to 4 times on connection error.</span>
 
 <span class="sd">        :raise PostgresError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
@@ -530,7 +530,7 @@
 
         <span class="k">except</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
@@ -540,12 +540,12 @@
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.PostgreSQL.close_db_connection">[docs]</a>
     <span class="nd">@utils</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span><span class="n">exception_to_check</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">close_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the PostgreSQL db connection.</span>
 <span class="sd">        Auto retry up to 4 times on connection error.</span>
 
 <span class="sd">        :raise PostgresError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
@@ -553,7 +553,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">except</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
@@ -561,13 +561,13 @@
 <div class="viewcode-block" id="PostgreSQL.send_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.PostgreSQL.send_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Send data to PostgreSQL database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
 <span class="sd">        :param sql_values: Values to be substituted in the SQL query.</span>
 <span class="sd">        :raise PostgresError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -576,12 +576,12 @@
                 <span class="n">retryer</span><span class="p">(</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
                 <span class="n">retryer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">)</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] "</span>
+                <span class="sa">f</span><span class="s2">"operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -594,7 +594,7 @@
 <div class="viewcode-block" id="PostgreSQL.send_many_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.PostgreSQL.send_many_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_many_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Execute the same SQL statement many times in a single</span>
 <span class="sd">        ACID‑compliant transaction. Commit only if every execution</span>
 <span class="sd">        succeeds, otherwise roll back.</span>
@@ -603,7 +603,7 @@
 <span class="sd">        :param sql_values: Any iterable yielding values to be</span>
 <span class="sd">            substituted in the SQL query.</span>
 <span class="sd">        :raise PostgresError: (after rollback) If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -615,8 +615,8 @@
                 <span class="n">retryer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">)</span>
 
             <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Database atomic batch executed and committed successfully: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">&quot;</span>
+                <span class="s2">"Database atomic batch executed and committed successfully: "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
@@ -624,8 +624,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
 
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">]. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">]. "</span>
+                <span class="sa">f</span><span class="s2">"Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -641,7 +641,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch_from_db</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="n">fetch_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Fetch data from PostgreSQL database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
@@ -649,7 +649,7 @@
 <span class="sd">        :param fetch_one: If True, only fetch the first row.</span>
 <span class="sd">        :return: Generator of dictionaries containing the fetched rows.</span>
 <span class="sd">        :raise PostgresError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Create a cursor that returns rows as dictionaries</span>
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">cursor_factory</span><span class="o">=</span><span class="n">psycopg2</span><span class="o">.</span><span class="n">extras</span><span class="o">.</span><span class="n">DictCursor</span><span class="p">)</span>
@@ -657,7 +657,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">db_cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">fetch_one</span><span class="p">:</span>
                 <span class="n">next_row</span> <span class="o">=</span> <span class="n">db_cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
@@ -679,8 +679,8 @@
 
         <span class="k">except</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_host</span><span class="si">}</span><span class="s2">] operation failed!"</span>
+                <span class="sa">f</span><span class="s2">" traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">PostgresError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -695,7 +695,7 @@
 <div class="viewcode-block" id="SQLite">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.SQLite">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SQLite</span><span class="p">(</span><span class="n">Database</span><span class="p">[</span><span class="n">SQLiteConn</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Handles SQLite database connections.</span>
 
 <span class="sd">    :param sqlite_db_path: Fullpath to the SQLite database file.</span>
@@ -706,7 +706,7 @@
 <span class="sd">    ``db_utils``</span>
 <span class="sd">        Instance of :class:`~database_utils.DatabaseUtils`</span>
 <span class="sd">        (helper for reading external SQL files, etc.).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sqlite_db_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sqlite_db_path</span> <span class="o">=</span> <span class="n">sqlite_db_path</span>
@@ -716,48 +716,48 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SQLiteConn</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the active db connection. If there is not an active</span>
 <span class="sd">        connection it creates one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">open_db_connection</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">,</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Connection</span>
-        <span class="p">),</span> <span class="s2">&quot;Expected self._db_connection to be type SQLiteConn&quot;</span>
+        <span class="p">),</span> <span class="s2">"Expected self._db_connection to be type SQLiteConn"</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span>
 
 <div class="viewcode-block" id="SQLite.open_db_connection">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.SQLite.open_db_connection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Open a SQLite db connection and cache it for quick access.</span>
 <span class="sd">        To equal the style of MySQL it enables some features by default:</span>
 <span class="sd">        - Set the cursor to return dictionary instead of tuples.</span>
 <span class="sd">        - Enable foreign key constraint.</span>
 
 <span class="sd">        :raise SQLiteError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sqlite_db_path</span><span class="p">)</span>
 
             <span class="c1"># Row to the row_factory of connection creates what some</span>
-            <span class="c1"># people call a &#39;dictionary cursor&#39;. Instead of tuples,</span>
-            <span class="c1"># it starts returning &#39;dictionary&#39;</span>
+            <span class="c1"># people call a 'dictionary cursor'. Instead of tuples,</span>
+            <span class="c1"># it starts returning 'dictionary'</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="o">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Row</span>
 
             <span class="c1"># Foreign key constraint must be enabled by the application</span>
             <span class="c1"># at runtime using the PRAGMA command</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys = ON;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"PRAGMA foreign_keys = ON;"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation failed! traceback:&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While connecting to host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation failed! traceback:"</span>
+                <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SQLiteError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
@@ -766,11 +766,11 @@
 <div class="viewcode-block" id="SQLite.close_db_connection">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.SQLite.close_db_connection">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close_db_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the SQLite db connection.</span>
 
 <span class="sd">        :raise SQLiteError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span><span class="p">:</span>
@@ -778,7 +778,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_db_connection</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"While closing [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SQLiteError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
 
@@ -786,13 +786,13 @@
 <div class="viewcode-block" id="SQLite.send_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.SQLite.send_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Send data to SQLite database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
 <span class="sd">        :param sql_values: Values to be substituted in the SQL query.</span>
 <span class="sd">        :raise SQLiteError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -801,12 +801,12 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation"</span>
+                <span class="sa">f</span><span class="s2">" failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SQLiteError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -819,7 +819,7 @@
 <div class="viewcode-block" id="SQLite.send_many_to_db">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_sql.html#carlogtt_python_library.database.database_sql.SQLite.send_many_to_db">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">send_many_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Execute the same SQL statement many times in a single</span>
 <span class="sd">        ACID‑compliant transaction. Commit only if every execution</span>
 <span class="sd">        succeeds, otherwise roll back.</span>
@@ -828,7 +828,7 @@
 <span class="sd">        :param sql_values: Any iterable yielding values to be</span>
 <span class="sd">            substituted in the SQL query.</span>
 <span class="sd">        :raise SQLiteError: (after rollback) If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -840,8 +840,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
             <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Database atomic batch executed and committed successfully: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">&quot;</span>
+                <span class="s2">"Database atomic batch executed and committed successfully: "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_cursor</span><span class="o">.</span><span class="n">rowcount</span><span class="si">}</span><span class="s2"> rows affected by SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
@@ -849,8 +849,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
 
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">]. Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Database atomic batch for SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">}</span><span class="s2"> failed on host"</span>
+                <span class="sa">f</span><span class="s2">" [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">]. Rolled back the entire transaction. Traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SQLiteError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -865,7 +865,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch_from_db</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sql_query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">SQLValueType</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span> <span class="o">*</span><span class="p">,</span> <span class="n">fetch_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Fetch data from SQLite database.</span>
 
 <span class="sd">        :param sql_query: SQL query to be executed.</span>
@@ -873,14 +873,14 @@
 <span class="sd">        :param fetch_one: If True, only fetch the first row.</span>
 <span class="sd">        :return: Generator of dictionaries containing the fetched rows.</span>
 <span class="sd">        :raise SQLiteError: If the operation fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">db_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">db_cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_query</span><span class="p">,</span> <span class="n">sql_values</span><span class="p">)</span>
 
-            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully&quot;</span><span class="p">)</span>
+            <span class="n">module_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> executed successfully"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">fetch_one</span><span class="p">:</span>
                 <span class="n">next_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_row_dict</span><span class="p">(</span><span class="n">db_cursor</span><span class="o">=</span><span class="n">db_cursor</span><span class="p">)</span>
@@ -903,8 +903,8 @@
 
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot; failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"While executing SQL query </span><span class="si">{</span><span class="n">sql_query</span><span class="si">=}</span><span class="s2"> on host [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="si">}</span><span class="s2">] operation"</span>
+                <span class="sa">f</span><span class="s2">" failed! traceback: </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
             <span class="n">module_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">SQLiteError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
@@ -915,12 +915,12 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_next_row_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_cursor</span><span class="p">:</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Cursor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Returns the next row as a dictionary or None if no</span>
 <span class="sd">        more rows.</span>
 
 <span class="sd">        :return: The next row as a dictionary or None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">row_fetched</span> <span class="o">=</span> <span class="n">db_cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">row_fetched</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

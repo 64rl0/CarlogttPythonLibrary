@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="carlogtt_python_library.amazon_internal.midway_selenium module" href="carlogtt_python_library.amazon_internal.midway_selenium.html" />
-    <link rel="prev" title="carlogtt_python_library.amazon_internal.bindle module" href="carlogtt_python_library.amazon_internal.bindle.html" /> 
+    <link rel="prev" title="carlogtt_python_library.amazon_internal.mcm module" href="carlogtt_python_library.amazon_internal.mcm.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -89,61 +89,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-carlogtt_python_library.amazon_internal.midway">
-<span id="carlogtt-python-library-amazon-internal-midway-module"></span><h1>carlogtt_python_library.amazon_internal.midway module<a class="headerlink" href="#module-carlogtt_python_library.amazon_internal.midway" title="Link to this heading"></a></h1>
-<p>This module …</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.midway.MidwayUtils">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.midway.</span></span><span class="sig-name descname"><span class="pre">MidwayUtils</span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/midway.html#MidwayUtils"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.midway.MidwayUtils" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A handler class for Midway utilities.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.midway.MidwayUtils.cli_midway_auth">
-<span class="sig-name descname"><span class="pre">cli_midway_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'-s'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/midway.html#MidwayUtils.cli_midway_auth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.midway.MidwayUtils.cli_midway_auth" title="Link to this definition"></a></dt>
-<dd><p>Run mwinit -s as bash command.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>max_retries</strong> – The maximum number of total attempts.
-Default is 3.</p></li>
-<li><p><strong>options</strong> – The options to pass to the mwinit command.
-Default is -s</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.midway.MidwayUtils.extract_valid_cookies">
-<span class="sig-name descname"><span class="pre">extract_valid_cookies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cookie_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'~/.midway/cookie'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/midway.html#MidwayUtils.extract_valid_cookies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.midway.MidwayUtils.extract_valid_cookies" title="Link to this definition"></a></dt>
-<dd><p>Retrieves valid cookies from a specified cookie file, filtering
-based on cookie that start with #Http and valid cookie
-expiration time.
-Return a dictionary of cookie names and their values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cookie_filepath</strong> – The file path to the cookie file.
-Defaults to “~/.midway/cookie”.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dictionary where each key-value pair corresponds to a
-cookie name and its value extracted from the file.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="carlogtt-python-library-amazon-internal-midway-module">
+<h1>carlogtt_python_library.amazon_internal.midway module<a class="headerlink" href="#carlogtt-python-library-amazon-internal-midway-module" title="Link to this heading"></a></h1>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="carlogtt_python_library.amazon_internal.bindle.html" class="btn btn-neutral float-left" title="carlogtt_python_library.amazon_internal.bindle module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="carlogtt_python_library.amazon_internal.mcm.html" class="btn btn-neutral float-left" title="carlogtt_python_library.amazon_internal.mcm module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="carlogtt_python_library.amazon_internal.midway_selenium.html" class="btn btn-neutral float-right" title="carlogtt_python_library.amazon_internal.midway_selenium module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

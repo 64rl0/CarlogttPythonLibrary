@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/aws_boto3/kms.py</span>
 <span class="c1"># Created 4/10/24 - 7:48 AM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -118,7 +118,7 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;KMS&#39;</span><span class="p">,</span>
+    <span class="s1">'KMS'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -131,7 +131,7 @@
 <div class="viewcode-block" id="KMS">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.aws_boto3.kms.html#carlogtt_python_library.aws_boto3.kms.KMS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">KMS</span><span class="p">(</span><span class="n">aws_service_base</span><span class="o">.</span><span class="n">AwsServiceBase</span><span class="p">[</span><span class="n">KMSClient</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The KMS class provides a simplified interface for interacting with</span>
 <span class="sd">    Amazon Key Management Service (KMS) services within a</span>
 <span class="sd">    Python application.</span>
@@ -165,7 +165,7 @@
 <span class="sd">           of API calls. Default is False.</span>
 <span class="sd">    :param client_parameters: A key-value pair object of parameters that</span>
 <span class="sd">           will be passed to the low-level service client.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -186,7 +186,7 @@
             <span class="n">aws_session_token</span><span class="o">=</span><span class="n">aws_session_token</span><span class="p">,</span>
             <span class="n">caching</span><span class="o">=</span><span class="n">caching</span><span class="p">,</span>
             <span class="n">client_parameters</span><span class="o">=</span><span class="n">client_parameters</span><span class="p">,</span>
-            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">&quot;kms&quot;</span><span class="p">,</span>
+            <span class="n">aws_service_name</span><span class="o">=</span><span class="s2">"kms"</span><span class="p">,</span>
             <span class="n">exception_type</span><span class="o">=</span><span class="n">exceptions</span><span class="o">.</span><span class="n">KMSError</span><span class="p">,</span>
         <span class="p">)</span></div>
 

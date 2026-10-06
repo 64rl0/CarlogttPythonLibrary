@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>carlogtt_python_library.amazon_internal.oncall module &mdash; CarlogttPythonLibrary r. documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=30015795"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="carlogtt_python_library.amazon_internal.phone_tool module" href="carlogtt_python_library.amazon_internal.phone_tool.html" />
+    <link rel="prev" title="carlogtt_python_library.amazon_internal.mirador module" href="carlogtt_python_library.amazon_internal.mirador.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CarlogttPythonLibrary
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="carlogtt_python_library.html">carlogtt_python_library package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="carlogtt_python_library.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.aws_boto3.html">carlogtt_python_library.aws_boto3 package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.database.html">carlogtt_python_library.database package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.exceptions.html">carlogtt_python_library.exceptions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.logger.html">carlogtt_python_library.logger package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="carlogtt_python_library.utils.html">carlogtt_python_library.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CarlogttPythonLibrary</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+          <li class="breadcrumb-item"><a href="carlogtt_python_library.html">carlogtt_python_library package</a></li>
+          <li class="breadcrumb-item"><a href="carlogtt_python_library.amazon_internal.html">carlogtt_python_library.amazon_internal package</a></li>
+      <li class="breadcrumb-item active">carlogtt_python_library.amazon_internal.oncall module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_apidoc/carlogtt_python_library.amazon_internal.oncall.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-carlogtt_python_library.amazon_internal.oncall">
+<span id="carlogtt-python-library-amazon-internal-oncall-module"></span><h1>carlogtt_python_library.amazon_internal.oncall module<a class="headerlink" href="#module-carlogtt_python_library.amazon_internal.oncall" title="Link to this heading"></a></h1>
+<p>This module provides a client for the Amazon OnCall API.</p>
+<p>It wraps two services behind a single handler:
+- WhoIsOncall (WOCS): current / previous / next oncall shift lookups.
+- NornInterfaceService (NAPI): schedule queries for arbitrary datetimes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">carlogtt_python_library.amazon_internal.oncall.</span></span><span class="sig-name descname"><span class="pre">OnCall</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aws_region_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_profile_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caching</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A handler class for the OnCallAPI.</p>
+<p>It includes an option to cache the client session to minimize
+the number of AWS API call.</p>
+<p>For an overview of the underlying Amazon OnCall services (WOCS for
+current/prev/next shifts, NornInterfaceService / NAPI for arbitrary
+schedule queries) and how to onboard your team, see:
+<a class="reference external" href="https://w.amazon.com/bin/view/AmazonOncall/API">https://w.amazon.com/bin/view/AmazonOncall/API</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>aws_region_name</strong> – The name of the AWS region where the
+service is to be used. This parameter is required to
+configure the AWS client.</p></li>
+<li><p><strong>aws_profile_name</strong> – The name of the AWS profile to use for
+credentials. This is useful if you have multiple profiles
+configured in your AWS credentials file.
+Default is None, which means the default profile or
+environment variables will be used if not provided.</p></li>
+<li><p><strong>aws_access_key_id</strong> – The AWS access key ID for
+programmatically accessing AWS services. This parameter
+is optional and only needed if not using a profile from
+the AWS credentials file.</p></li>
+<li><p><strong>aws_secret_access_key</strong> – The AWS secret access key
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>aws_session_token</strong> – The AWS temporary session token
+corresponding to the provided access key ID. Like the
+access key ID, this parameter is optional and only needed
+if not using a profile.</p></li>
+<li><p><strong>caching</strong> – Determines whether to enable caching for the
+client session. If set to True, the client session will
+be cached to improve performance and reduce the number
+of API calls. Default is False.</p></li>
+<li><p><strong>client_parameters</strong> – A key-value pair object of parameters that
+will be passed to the low-level service client.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_at">
+<span class="sig-name descname"><span class="pre">get_oncall_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">team_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alias_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_datetime_utc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall.get_oncall_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_at" title="Link to this definition"></a></dt>
+<dd><p>Find the oncall shift that covers a specific point in time.</p>
+<p>Internally calls the NornInterfaceService Schedule API. For
+current-oncall lookups prefer <a class="reference internal" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team" title="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_oncall_for_team()</span></code></a> or
+<a class="reference internal" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias" title="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_oncall_for_alias()</span></code></a> — the Schedule API is not
+recommended for critical paths by the Amazon OnCall team.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_name</strong> – The oncall team name.</p></li>
+<li><p><strong>alias_name</strong> – The alias within that team to query.</p></li>
+<li><p><strong>at_datetime_utc</strong> – A timezone-aware datetime. Naive
+datetimes are rejected because timezone is load-bearing for
+shift boundary matching.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The matching shift as a dict with <code class="docutils literal notranslate"><span class="pre">startDateTime</span></code>,
+<code class="docutils literal notranslate"><span class="pre">endDateTime</span></code>, <code class="docutils literal notranslate"><span class="pre">oncallMember</span></code> (list of logins — empty
+for gap shifts), <code class="docutils literal notranslate"><span class="pre">alsoNotifyList</span></code>, and <code class="docutils literal notranslate"><span class="pre">shiftType</span></code> (e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;historical&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code>). May also contain
+<code class="docutils literal notranslate"><span class="pre">contributors</span></code> for shifts produced by post-processors
+(e.g. fragmentation). An empty dict is returned if no shift
+covers the requested instant.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError" title="carlogtt_python_library.exceptions.exceptions.OnCallError"><strong>OnCallError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">at_datetime_utc</span></code> is naive or the
+request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_between">
+<span class="sig-name descname"><span class="pre">get_oncall_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">team_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alias_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_datetime_utc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_datetime_utc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall.get_oncall_between"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_between" title="Link to this definition"></a></dt>
+<dd><p>Return every oncall shift overlapping the half-open interval
+<code class="docutils literal notranslate"><span class="pre">[start_datetime_utc,</span> <span class="pre">end_datetime_utc)</span></code>.</p>
+<p>Internally calls the NornInterfaceService Schedule API and
+filters the response down to shifts that intersect the requested
+window. Edge shifts are clipped: a shift that started before
+<code class="docutils literal notranslate"><span class="pre">start_datetime_utc</span></code> is returned with <code class="docutils literal notranslate"><span class="pre">startDateTime</span></code> set to
+<code class="docutils literal notranslate"><span class="pre">start_datetime_utc</span></code>, and a shift that ends after
+<code class="docutils literal notranslate"><span class="pre">end_datetime_utc</span></code> is returned with <code class="docutils literal notranslate"><span class="pre">endDateTime</span></code> set to
+<code class="docutils literal notranslate"><span class="pre">end_datetime_utc</span></code>. Gap shifts (empty <code class="docutils literal notranslate"><span class="pre">oncallMember</span></code>) are
+preserved so callers can detect uncovered periods.
+For current-oncall lookups prefer <a class="reference internal" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team" title="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_oncall_for_team()</span></code></a> or
+<a class="reference internal" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias" title="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_oncall_for_alias()</span></code></a> — the Schedule API is not
+recommended for critical paths by the Amazon OnCall team.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>team_name</strong> – The oncall team name.</p></li>
+<li><p><strong>alias_name</strong> – The alias within that team to query.</p></li>
+<li><p><strong>start_datetime_utc</strong> – Inclusive lower bound.
+Timezone-aware.</p></li>
+<li><p><strong>end_datetime_utc</strong> – Exclusive upper bound. Timezone-aware
+and strictly greater than <code class="docutils literal notranslate"><span class="pre">start_datetime_utc</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of shift dicts in API order, each with
+<code class="docutils literal notranslate"><span class="pre">startDateTime</span></code>, <code class="docutils literal notranslate"><span class="pre">endDateTime</span></code>, <code class="docutils literal notranslate"><span class="pre">oncallMember</span></code> (list
+of logins — empty for gap shifts), <code class="docutils literal notranslate"><span class="pre">alsoNotifyList</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">shiftType</span></code>. <code class="docutils literal notranslate"><span class="pre">startDateTime</span></code> / <code class="docutils literal notranslate"><span class="pre">endDateTime</span></code> are ISO
+datetime strings in UTC with a trailing <code class="docutils literal notranslate"><span class="pre">Z</span></code>. May also
+contain <code class="docutils literal notranslate"><span class="pre">contributors</span></code> for shifts produced by
+post-processors. Empty list if no shift overlaps the
+interval.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError" title="carlogtt_python_library.exceptions.exceptions.OnCallError"><strong>OnCallError</strong></a> – If either datetime is naive, the interval
+is empty or inverted, or the request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias">
+<span class="sig-name descname"><span class="pre">get_oncall_for_alias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alias_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall.get_oncall_for_alias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the current, previous, and next oncall shift for a team
+alias.</p>
+<p>Required for teams using custom aliases — see
+<a class="reference external" href="https://w.amazon.com/bin/view/CorpInfra/Tools/OncallProject/API/CustomAliasesTeamOncall">https://w.amazon.com/bin/view/CorpInfra/Tools/OncallProject/API/CustomAliasesTeamOncall</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>alias_name</strong> – The oncall alias name
+(e.g. <code class="docutils literal notranslate"><span class="pre">page-corpinfra-tools-primary</span></code>).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with keys <code class="docutils literal notranslate"><span class="pre">currOncalls</span></code>,
+<code class="docutils literal notranslate"><span class="pre">prevOncalls</span></code>, <code class="docutils literal notranslate"><span class="pre">nextOncalls</span></code>, <code class="docutils literal notranslate"><span class="pre">currStart</span></code>,
+<code class="docutils literal notranslate"><span class="pre">currEnd</span></code>, <code class="docutils literal notranslate"><span class="pre">alsoNotifyList</span></code>, <code class="docutils literal notranslate"><span class="pre">teamName</span></code>,
+<code class="docutils literal notranslate"><span class="pre">aliasName</span></code>,
+<code class="docutils literal notranslate"><span class="pre">aliasType</span></code>. <code class="docutils literal notranslate"><span class="pre">currStart</span></code> / <code class="docutils literal notranslate"><span class="pre">currEnd</span></code> are ISO datetime
+strings (UTC, trailing <code class="docutils literal notranslate"><span class="pre">Z</span></code>).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError" title="carlogtt_python_library.exceptions.exceptions.OnCallError"><strong>OnCallError</strong></a> – If the request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team">
+<span class="sig-name descname"><span class="pre">get_oncall_for_team</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">team_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall.get_oncall_for_team"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_team" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the current, previous, and next oncall shift for a
+team.</p>
+<p>Use this for teams whose oncall is driven by the default team
+schedule. For teams that expose custom aliases (e.g. separate
+primary/secondary), use <a class="reference internal" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias" title="carlogtt_python_library.amazon_internal.oncall.OnCall.get_oncall_for_alias"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_oncall_for_alias()</span></code></a> instead —
+the team endpoint can return incorrect shift information for
+those.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>team_name</strong> – The oncall team name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with keys <code class="docutils literal notranslate"><span class="pre">currOncalls</span></code>,
+<code class="docutils literal notranslate"><span class="pre">prevOncalls</span></code>, <code class="docutils literal notranslate"><span class="pre">nextOncalls</span></code>, <code class="docutils literal notranslate"><span class="pre">currStart</span></code>,
+<code class="docutils literal notranslate"><span class="pre">currEnd</span></code>, <code class="docutils literal notranslate"><span class="pre">alsoNotifyList</span></code>, <code class="docutils literal notranslate"><span class="pre">teamName</span></code>,
+<code class="docutils literal notranslate"><span class="pre">aliasName</span></code>,
+<code class="docutils literal notranslate"><span class="pre">aliasType</span></code>. <code class="docutils literal notranslate"><span class="pre">aliasName</span></code> and <code class="docutils literal notranslate"><span class="pre">aliasType</span></code> are <code class="docutils literal notranslate"><span class="pre">None</span></code>
+on this endpoint. <code class="docutils literal notranslate"><span class="pre">currStart</span></code> / <code class="docutils literal notranslate"><span class="pre">currEnd</span></code> are ISO
+datetime strings (UTC, trailing <code class="docutils literal notranslate"><span class="pre">Z</span></code>).</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError" title="carlogtt_python_library.exceptions.exceptions.OnCallError"><strong>OnCallError</strong></a> – If the request fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="carlogtt_python_library.amazon_internal.oncall.OnCall.invalidate_client_cache">
+<span class="sig-name descname"><span class="pre">invalidate_client_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/carlogtt_python_library/amazon_internal/oncall.html#OnCall.invalidate_client_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#carlogtt_python_library.amazon_internal.oncall.OnCall.invalidate_client_cache" title="Link to this definition"></a></dt>
+<dd><p>Clears the cached clients, if caching is enabled.</p>
+<p>This method allows manually invalidating the cached clients,
+forcing new client instances to be created on the next access.
+Useful if AWS credentials have changed or if there’s a need to
+connect to a different region within the same instance
+lifecycle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="carlogtt_python_library.exceptions.exceptions.html#carlogtt_python_library.exceptions.exceptions.OnCallError" title="carlogtt_python_library.exceptions.exceptions.OnCallError"><strong>OnCallError</strong></a> – Raises an error if caching is not enabled
+for this instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="carlogtt_python_library.amazon_internal.mirador.html" class="btn btn-neutral float-left" title="carlogtt_python_library.amazon_internal.mirador module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="carlogtt_python_library.amazon_internal.phone_tool.html" class="btn btn-neutral float-right" title="carlogtt_python_library.amazon_internal.phone_tool module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Carlo Gatti.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

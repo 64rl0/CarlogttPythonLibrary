@@ -74,7 +74,7 @@
 <span class="c1"># MODULE DETAILS</span>
 <span class="c1"># This section provides metadata about the module, including its</span>
 <span class="c1"># creation date, author, copyright information, and a brief description</span>
-<span class="c1"># of the module&#39;s purpose and functionality.</span>
+<span class="c1"># of the module's purpose and functionality.</span>
 <span class="c1"># ======================================================================</span>
 
 <span class="c1">#   __|    \    _ \  |      _ \   __| __ __| __ __|</span>
@@ -84,9 +84,9 @@
 <span class="c1"># src/carlogtt_python_library/database/database_utils.py</span>
 <span class="c1"># Created 9/25/23 - 1:49 PM UK Time (London) by carlogtt</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">This module ...</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="c1"># ======================================================================</span>
 <span class="c1"># EXCEPTIONS</span>
@@ -113,9 +113,9 @@
 
 <span class="c1"># List of public names in the module</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;DatabaseUtils&#39;</span><span class="p">,</span>
+    <span class="s1">'DatabaseUtils'</span><span class="p">,</span>
     <span class="c1"># Deprecated</span>
-    <span class="s1">&#39;sql_query_reader&#39;</span><span class="p">,</span>
+    <span class="s1">'sql_query_reader'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="c1"># Setting up logger for current module</span>
@@ -128,14 +128,14 @@
 <div class="viewcode-block" id="DatabaseUtils">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_utils.html#carlogtt_python_library.database.database_utils.DatabaseUtils">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatabaseUtils</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A utility class for handling various database-related operations.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="DatabaseUtils.sql_query_reader">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_utils.html#carlogtt_python_library.database.database_utils.DatabaseUtils.sql_query_reader">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sql_query_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reads an SQL query from a file and returns it as a string.</span>
 
 <span class="sd">        This function simplifies the process of loading SQL queries</span>
@@ -145,7 +145,7 @@
 <span class="sd">        :param file_path: The path to the SQL file. This can be a string</span>
 <span class="sd">               or a Pathlib Path object.</span>
 <span class="sd">        :return: The content of the SQL file as a string.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">query</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
 
@@ -157,7 +157,7 @@
 <div class="viewcode-block" id="sql_query_reader">
 <a class="viewcode-back" href="../../../_apidoc/carlogtt_python_library.database.database_utils.html#carlogtt_python_library.database.database_utils.sql_query_reader">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sql_query_reader</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Reads an SQL query from a file and returns it as a string.</span>
 
 <span class="sd">    This function simplifies the process of loading SQL queries</span>
@@ -167,11 +167,11 @@
 <span class="sd">    :param file_path: The path to the SQL file. This can be a string</span>
 <span class="sd">           or a Pathlib Path object.</span>
 <span class="sd">    :return: The content of the SQL file as a string.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;[DEPRECATED] &#39;</span><span class="si">{</span><span class="n">sql_query_reader</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; is deprecated in package &#39;</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">&#39;. Use&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot; the parent class &#39;</span><span class="si">{</span><span class="n">DatabaseUtils</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">()&#39; instead.&quot;</span>
+        <span class="sa">f</span><span class="s2">"[DEPRECATED] '</span><span class="si">{</span><span class="n">sql_query_reader</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' is deprecated in package '</span><span class="si">{</span><span class="n">__package__</span><span class="si">}</span><span class="s2">'. Use"</span>
+        <span class="sa">f</span><span class="s2">" the parent class '</span><span class="si">{</span><span class="n">DatabaseUtils</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">()' instead."</span>
     <span class="p">)</span>
 
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>

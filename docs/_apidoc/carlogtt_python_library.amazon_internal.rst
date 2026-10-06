@@ -14,9 +14,12 @@ Submodules
 
    carlogtt_python_library.amazon_internal.apollo
    carlogtt_python_library.amazon_internal.bindle
+   carlogtt_python_library.amazon_internal.coral
+   carlogtt_python_library.amazon_internal.mcm
    carlogtt_python_library.amazon_internal.midway
    carlogtt_python_library.amazon_internal.midway_selenium
    carlogtt_python_library.amazon_internal.mirador
+   carlogtt_python_library.amazon_internal.oncall
    carlogtt_python_library.amazon_internal.phone_tool
    carlogtt_python_library.amazon_internal.pipelines
    carlogtt_python_library.amazon_internal.simt
