@@ -33,6 +33,8 @@ Utilities for authenticated encryption and password hashing.
 import ast
 import base64
 import enum
+import hashlib
+import hmac as hmac_stdlib
 import logging
 import os
 import secrets
@@ -49,7 +51,6 @@ import cryptography.hazmat.primitives.ciphers.modes
 import cryptography.hazmat.primitives.hashes
 import cryptography.hazmat.primitives.hmac
 import cryptography.hazmat.primitives.kdf.hkdf
-import cryptography.hazmat.primitives.kdf.scrypt
 import cryptography.hazmat.primitives.padding
 
 # Local Folder (Relative) Imports
@@ -274,16 +275,21 @@ class Cryptography:
 
         salt = self._rand_bytes(16)
 
-        kdf = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
+        # maxmem must be set explicitly because the default is
+        # 32 MiB, which is insufficient for n=2^17, r=8 (~128 MiB).
+        # scrypt allocates (N + p + 2) blocks of 128*r bytes each:
+        # N for the ROMix table (V), p for the input buffer (B), and
+        # 2 for the X/Y mixing scratch. +1024 adds defensive headroom.
+        maxmem = 128 * scrypt_params['r'] * (scrypt_params['n'] + scrypt_params['p'] + 2) + 1024
+        dk = hashlib.scrypt(
+            password=raw_string.encode(),
             salt=salt,
-            length=scrypt_params['length'],
             n=scrypt_params['n'],
             r=scrypt_params['r'],
             p=scrypt_params['p'],
+            maxmem=maxmem,
+            dklen=scrypt_params['length'],
         )
-
-        # Derive the key
-        dk = kdf.derive(raw_string.encode())
 
         self.logger.debug("Scrypt key derived successfully")
 
@@ -353,16 +359,25 @@ class Cryptography:
 
             length = len(expected)
 
-            kdf = cryptography.hazmat.primitives.kdf.scrypt.Scrypt(
-                salt=salt, length=length, n=n, r=r, p=p
+            # See hash_string_v2 for the (N + p + 2) block derivation.
+            maxmem = 128 * r * (n + p + 2) + 1024
+            dk = hashlib.scrypt(
+                password=raw_string.encode(),
+                salt=salt,
+                n=n,
+                r=r,
+                p=p,
+                maxmem=maxmem,
+                dklen=length,
             )
 
-            # Attempt to verify the derived key
-            kdf.verify(raw_string.encode(), expected)
-
-            self.logger.debug("Scrypt key verified successfully")
-
-            return True
+            # Constant-time comparison to prevent timing attacks
+            if hmac_stdlib.compare_digest(dk, expected):
+                self.logger.debug("Scrypt key verified successfully")
+                return True
+            else:
+                self.logger.warning("Hash validation failed: digest mismatch")
+                return False
 
         except Exception as ex:
             self.logger.warning(f"Hash validation failed w/ error: {ex}")

@@ -31,12 +31,15 @@ This module ...
 
 # Standard Library Imports
 import logging
-import os
-import re
 import shlex
 import subprocess
 import sys
-import time
+import warnings
+from typing import Optional
+
+# Third Party Library Imports
+import requests
+from requests_midway import RequestsMidway
 
 # Local Folder (Relative) Imports
 from .. import utils
@@ -61,6 +64,15 @@ class MidwayUtils:
     """
     A handler class for Midway utilities.
     """
+
+    def __init__(self) -> None:
+        self._auth: Optional[RequestsMidway] = None
+
+    def _get_auth(self) -> RequestsMidway:
+        """Get or create the shared RequestsMidway auth object."""
+        if self._auth is None:
+            self._auth = RequestsMidway()
+        return self._auth
 
     def cli_midway_auth(self, max_retries: int = 3, options: str = "-s"):
         """
@@ -122,51 +134,66 @@ class MidwayUtils:
 
     def extract_valid_cookies(self, cookie_filepath: str = "~/.midway/cookie") -> dict[str, str]:
         """
-        Retrieves valid cookies from a specified cookie file, filtering
-        based on cookie that start with #Http and valid cookie
-        expiration time.
+        Retrieves valid Midway cookies using MCS (RequestsMidway)
+        authentication.
         Return a dictionary of cookie names and their values.
 
-        :param cookie_filepath: The file path to the cookie file.
-               Defaults to "~/.midway/cookie".
+        .. deprecated:: 1.0
+           Use RequestsMidway authentication instead. This method is
+           maintained for backward compatibility but will be removed in
+           a future version.
+
+        :param cookie_filepath: Retained for backward compatibility only
+               and ignored; MCS (RequestsMidway) now owns the Midway
+               session and cookie state.
         :return: A dictionary where each key-value pair corresponds to a
-                 cookie name and its value extracted from the file.
+                 cookie name and its value returned by Midway.
         """
+        warnings.warn(
+            "extract_valid_cookies() is deprecated. "
+            "Use requests_midway.RequestsMidway() for authentication instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
-        real_cookie_filepath = os.path.realpath(os.path.expanduser(cookie_filepath))
+        del cookie_filepath
 
-        if not os.path.exists(real_cookie_filepath) or not os.path.isfile(real_cookie_filepath):
-            raise ValueError(f"cookie_filepath: {real_cookie_filepath} not found!")
+        response = requests.get(
+            "https://midway-auth.amazon.com/robots.txt", auth=self._get_auth(), timeout=10
+        )
 
-        cookies: dict[str, str] = {}
+        cookies: dict[str, str] = {
+            cookie_name: cookie_value for cookie_name, cookie_value in response.cookies.items()
+        }
 
-        search_pattern = re.compile("^#Http", re.IGNORECASE)
-
-        with open(real_cookie_filepath, 'r') as cookie_file:
-            for cookie in cookie_file:
-                if not search_pattern.match(cookie):
-                    continue
-
-                cookie_fields = cookie.split()
-
-                # Cookie fields
-                # 0 - Domain
-                # 1 - Flag
-                # 2 - Path
-                # 3 - Secure
-                # 4 - Expiration Time
-                # 5 - Name
-                # 6 - Value
-
-                if len(cookie_fields) != 7:
-                    continue
-
-                if int(cookie_fields[4]) <= time.time():
-                    continue
-
-                cookies.update({cookie_fields[5]: cookie_fields[6]})
-
-            if not cookies:
-                raise ValueError(f"No valid cookies found in {real_cookie_filepath}")
+        if not cookies:
+            raise ValueError("No valid cookies found from Midway authentication")
 
         return cookies
+
+    def validate_midway_session(self) -> bool:
+        """
+        Validate that Midway session token is not expired using MCS.
+
+        :return: True if session is valid, False if expired.
+        :raises: SystemExit if MCS library is not available.
+        """
+        try:
+            # MCS library doesn't have type stubs, ignore mypy error
+            from midway_client_suite_library_python.mcs_lib import (  # type: ignore[import-untyped]  # noqa: E501
+                McsLib,
+            )
+
+            mcs = McsLib()
+            result = mcs.get_session_token_expiration("midway-auth.amazon.com")
+            return not result.is_expired
+
+        except ImportError:
+            print(
+                utils.CLIStyle.CLI_BOLD_RED
+                + "\n[ERROR] MCS library not available. "
+                "Please ensure MidwayClientSuiteLibraryPython is installed.\n"
+                + utils.CLIStyle.CLI_END,
+                flush=True,
+            )
+            sys.exit(1)

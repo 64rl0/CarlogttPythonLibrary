@@ -32,6 +32,7 @@ This module ...
 
 # Standard Library Imports
 import os
+import sys
 import tempfile
 import time
 from unittest.mock import MagicMock, patch
@@ -122,123 +123,117 @@ def test_cli_midway_auth_command_not_found(midway_utils):
 # ----------------------------------------------------------------------
 # Tests for extract_valid_cookies
 # ----------------------------------------------------------------------
-def test_extract_valid_cookies_success(midway_utils):
-    future_time = str(int(time.time()) + 3600)
-    cookie_content = (
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tcookie_name\tcookie_value\n"
+@patch("carlogtt_python_library.amazon_internal.midway.RequestsMidway")
+@patch("carlogtt_python_library.amazon_internal.midway.requests.get")
+def test_extract_valid_cookies_success(mock_get, mock_auth, midway_utils):
+    mock_response = MagicMock()
+    mock_response.cookies.items.return_value = {"cookie_name": "cookie_value"}.items()
+    mock_get.return_value = mock_response
+
+    cookies = midway_utils.extract_valid_cookies()
+    assert cookies == {"cookie_name": "cookie_value"}
+    mock_get.assert_called_once_with(
+        "https://midway-auth.amazon.com/robots.txt", auth=mock_auth.return_value, timeout=10
     )
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
 
-    try:
-        cookies = midway_utils.extract_valid_cookies(temp_path)
-        assert cookies == {"cookie_name": "cookie_value"}
-    finally:
-        os.unlink(temp_path)
+@patch("carlogtt_python_library.amazon_internal.midway.RequestsMidway")
+@patch("carlogtt_python_library.amazon_internal.midway.requests.get")
+def test_extract_valid_cookies_multiple_cookies(mock_get, mock_auth, midway_utils):
+    mock_response = MagicMock()
+    mock_response.cookies.items.return_value = {
+        "cookie1": "value1",
+        "cookie2": "value2",
+    }.items()
+    mock_get.return_value = mock_response
 
-
-def test_extract_valid_cookies_multiple_cookies(midway_utils):
-    future_time = str(int(time.time()) + 3600)
-    cookie_content = (
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tcookie1\tvalue1\n"
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tcookie2\tvalue2\n"
-    )
-
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
-
-    try:
-        cookies = midway_utils.extract_valid_cookies(temp_path)
-        assert cookies == {"cookie1": "value1", "cookie2": "value2"}
-    finally:
-        os.unlink(temp_path)
+    cookies = midway_utils.extract_valid_cookies()
+    assert cookies == {"cookie1": "value1", "cookie2": "value2"}
 
 
-def test_extract_valid_cookies_expired_cookie(midway_utils):
-    past_time = str(int(time.time()) - 3600)
-    future_time = str(int(time.time()) + 3600)
-    cookie_content = (
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{past_time}\texpired\tvalue\n"
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tvalid\tvalue\n"
-    )
+@patch("carlogtt_python_library.amazon_internal.midway.RequestsMidway")
+@patch("carlogtt_python_library.amazon_internal.midway.requests.get")
+def test_extract_valid_cookies_reuses_auth(mock_get, mock_auth, midway_utils):
+    mock_response = MagicMock()
+    mock_response.cookies.items.return_value = {"cookie_name": "cookie_value"}.items()
+    mock_get.return_value = mock_response
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
+    midway_utils.extract_valid_cookies()
+    midway_utils.extract_valid_cookies()
 
-    try:
-        cookies = midway_utils.extract_valid_cookies(temp_path)
-        assert cookies == {"valid": "value"}
-    finally:
-        os.unlink(temp_path)
+    # RequestsMidway is expensive; it must be created once and reused.
+    mock_auth.assert_called_once()
 
 
-def test_extract_valid_cookies_skip_non_http_lines(midway_utils):
-    future_time = str(int(time.time()) + 3600)
-    cookie_content = (
-        "# Comment line\n"
-        "some random text\n"
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tcookie_name\tcookie_value\n"
-    )
+@patch("carlogtt_python_library.amazon_internal.midway.RequestsMidway")
+@patch("carlogtt_python_library.amazon_internal.midway.requests.get")
+def test_extract_valid_cookies_no_valid_cookies(mock_get, mock_auth, midway_utils):
+    mock_response = MagicMock()
+    mock_response.cookies.items.return_value = {}.items()
+    mock_get.return_value = mock_response
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
-
-    try:
-        cookies = midway_utils.extract_valid_cookies(temp_path)
-        assert cookies == {"cookie_name": "cookie_value"}
-    finally:
-        os.unlink(temp_path)
+    with pytest.raises(ValueError, match="No valid cookies found"):
+        midway_utils.extract_valid_cookies()
 
 
-def test_extract_valid_cookies_skip_malformed_lines(midway_utils):
-    future_time = str(int(time.time()) + 3600)
-    cookie_content = (
-        "#HttpOnly_.amazon.com\tTRUE\t/\n"  # Too few fields
-        f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{future_time}\tcookie_name\tcookie_value\n"
-    )
+@patch("carlogtt_python_library.amazon_internal.midway.RequestsMidway")
+@patch("carlogtt_python_library.amazon_internal.midway.requests.get")
+def test_extract_valid_cookies_deprecation_warning(mock_get, mock_auth, midway_utils):
+    mock_response = MagicMock()
+    mock_response.cookies.items.return_value = {"cookie_name": "cookie_value"}.items()
+    mock_get.return_value = mock_response
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
-
-    try:
-        cookies = midway_utils.extract_valid_cookies(temp_path)
-        assert cookies == {"cookie_name": "cookie_value"}
-    finally:
-        os.unlink(temp_path)
+    with pytest.warns(DeprecationWarning, match="extract_valid_cookies"):
+        midway_utils.extract_valid_cookies()
 
 
-def test_extract_valid_cookies_file_not_found(midway_utils):
-    with pytest.raises(ValueError, match="not found"):
-        midway_utils.extract_valid_cookies("/nonexistent/path/cookie")
+# ----------------------------------------------------------------------
+# Tests for validate_midway_session (MCS integration)
+# ----------------------------------------------------------------------
+@patch('midway_client_suite_library_python.mcs_lib.McsLib')
+def test_validate_midway_session_valid(mock_mcs_lib_cls, midway_utils):
+    """Test validate_midway_session returns True when session is not expired."""
+    # Setup mocks
+    mock_result = MagicMock()
+    mock_result.is_expired = False
+
+    mock_mcs_instance = MagicMock()
+    mock_mcs_instance.get_session_token_expiration.return_value = mock_result
+    mock_mcs_lib_cls.return_value = mock_mcs_instance
+
+    # Test
+    result = midway_utils.validate_midway_session()
+
+    # Verify
+    assert result is True
+    mock_mcs_lib_cls.assert_called_once()
+    mock_mcs_instance.get_session_token_expiration.assert_called_once_with("midway-auth.amazon.com")
 
 
-def test_extract_valid_cookies_no_valid_cookies(midway_utils):
-    past_time = str(int(time.time()) - 3600)
-    cookie_content = f"#HttpOnly_.amazon.com\tTRUE\t/\tTRUE\t{past_time}\texpired\tvalue\n"
+@patch('midway_client_suite_library_python.mcs_lib.McsLib')
+def test_validate_midway_session_expired(mock_mcs_lib_cls, midway_utils):
+    """Test validate_midway_session returns False when session is expired."""
+    # Setup mocks
+    mock_result = MagicMock()
+    mock_result.is_expired = True
 
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        f.write(cookie_content)
-        temp_path = f.name
+    mock_mcs_instance = MagicMock()
+    mock_mcs_instance.get_session_token_expiration.return_value = mock_result
+    mock_mcs_lib_cls.return_value = mock_mcs_instance
 
-    try:
-        with pytest.raises(ValueError, match="No valid cookies found"):
-            midway_utils.extract_valid_cookies(temp_path)
-    finally:
-        os.unlink(temp_path)
+    # Test
+    result = midway_utils.validate_midway_session()
+
+    # Verify
+    assert result is False
+    mock_mcs_lib_cls.assert_called_once()
+    mock_mcs_instance.get_session_token_expiration.assert_called_once_with("midway-auth.amazon.com")
 
 
-def test_extract_valid_cookies_empty_file(midway_utils):
-    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.cookie') as f:
-        temp_path = f.name
-
-    try:
-        with pytest.raises(ValueError, match="No valid cookies found"):
-            midway_utils.extract_valid_cookies(temp_path)
-    finally:
-        os.unlink(temp_path)
+def test_validate_midway_session_import_error(midway_utils):
+    """Test validate_midway_session exits when MCS library is not available."""
+    # Mock the import to raise ImportError
+    with patch.dict(sys.modules, {'midway_client_suite_library_python.mcs_lib': None}):
+        with pytest.raises(SystemExit) as exc_info:
+            midway_utils.validate_midway_session()
+        assert exc_info.value.code == 1

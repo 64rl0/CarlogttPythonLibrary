@@ -55,6 +55,7 @@ module_logger = logging.getLogger(__name__)
 AwsServiceClient = TypeVar('AwsServiceClient', bound=botocore.client.BaseClient)
 AwsServiceName = Literal[
     'cloudfront',
+    'cloudwatch',
     'dynamodb',
     'ec2',
     'kms',

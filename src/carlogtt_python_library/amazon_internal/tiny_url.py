@@ -34,9 +34,7 @@ import logging
 
 # Third Party Library Imports
 import requests
-
-# Local Folder (Relative) Imports
-from . import midway
+from requests_midway import RequestsMidway
 
 # END IMPORTS
 # ======================================================================
@@ -60,28 +58,29 @@ class AmazonTinyUrl:
     """
 
     def __init__(self):
-        self.midway_utils = midway.MidwayUtils()
+        # Lazy initialization to avoid network calls at import time
+        self._auth = None
 
-    def create_amazon_tiny_url(
-        self, long_url: str, cookie_filepath: str = "~/.midway/cookie"
-    ) -> str:
+    def _get_auth(self):
+        """Get or create the RequestsMidway auth object."""
+        if self._auth is None:
+            self._auth = RequestsMidway()
+        return self._auth
+
+    def create_amazon_tiny_url(self, long_url: str) -> str:
         """
         Create a tiny url.
         Using Amazon backend service https://tiny.amazon.com
 
         :param long_url: The url to convert to tiny.
-        :param cookie_filepath: The file path to the cookie file.
-               Defaults to "~/.midway/cookie".
         :return: The tiny url for the agenda preview.
         """
-
-        cookies = self.midway_utils.extract_valid_cookies(cookie_filepath)
 
         response = requests.post(
             url='https://tiny.amazon.com/submit/url',
             headers={'Accept': 'application/json'},
             params=[('name', long_url), ('opaque', 1)],
-            cookies=cookies,
+            auth=self._get_auth(),
         )
 
         try:

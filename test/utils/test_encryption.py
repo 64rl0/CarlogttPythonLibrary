@@ -39,9 +39,6 @@ import time
 import pytest
 from cryptography.fernet import Fernet
 
-# My Library Imports
-import carlogtt_python_library as mylib
-
 # END IMPORTS
 # ======================================================================
 
@@ -56,8 +53,17 @@ import carlogtt_python_library as mylib
 #
 
 
+@pytest.fixture(scope="session")
+def mylib():
+    # Imported lazily (never at module level) so this file is collected
+    # via the conftest session-start alias.
+    import carlogtt_python_library as mylib
+
+    return mylib
+
+
 @pytest.fixture(scope="module")
-def crypto():
+def crypto(mylib):
     """Shared Cryptography helper."""
     return mylib.Cryptography()
 
@@ -77,27 +83,32 @@ def fernet_key():
 # ----------------------------------------------------------------------
 # create_key
 # ----------------------------------------------------------------------
+# KeyType members are named by string here because the library cannot
+# be imported at module level (parametrize args are evaluated at
+# collection); tests resolve them via the mylib fixture.
 @pytest.mark.parametrize(
-    "kt,expected_len",
+    "kt_name,expected_len",
     [
-        (mylib.KeyType.AES128, 16),
-        (mylib.KeyType.AES256, 32),
-        (mylib.KeyType.INITIALIZATION_VECTOR, 16),
+        ("AES128", 16),
+        ("AES256", 32),
+        ("INITIALIZATION_VECTOR", 16),
     ],
 )
-def test_create_key_bytes_length(crypto, kt, expected_len):
+def test_create_key_bytes_length(crypto, mylib, kt_name, expected_len):
+    kt = mylib.KeyType[kt_name]
     key = crypto.create_key(kt, mylib.KeyOutputType.BYTES)
     assert isinstance(key, bytes) and len(key) == expected_len
 
 
-@pytest.mark.parametrize("kt", [mylib.KeyType.AES128, mylib.KeyType.AES256])
-def test_create_key_base64_roundtrip(crypto, kt):
+@pytest.mark.parametrize("kt_name", ["AES128", "AES256"])
+def test_create_key_base64_roundtrip(crypto, mylib, kt_name):
+    kt = mylib.KeyType[kt_name]
     key_b64 = crypto.create_key(kt, mylib.KeyOutputType.BASE64)
     raw = base64.urlsafe_b64decode(key_b64)
     assert len(raw) == kt.value
 
 
-def test_create_key_invalid_type_raises(crypto):
+def test_create_key_invalid_type_raises(crypto, mylib):
     with pytest.raises(mylib.CryptographyError):
         crypto.create_key("SORRY", mylib.KeyOutputType.BYTES)  # type: ignore[arg-type]
 
@@ -114,14 +125,14 @@ def test_serialize_deserialize_roundtrip(crypto, aes256_key):
 # ----------------------------------------------------------------------
 # AES-128 (Fernet) path
 # ----------------------------------------------------------------------
-def test_encrypt_decrypt_aes128_roundtrip(crypto, fernet_key):
+def test_encrypt_decrypt_aes128_roundtrip(crypto, mylib, fernet_key):
     plaintext = "secret text æøå"
     ct = crypto.encrypt_string(plaintext, fernet_key, mylib.EncryptionAlgorithm.AES_128)
     pt = crypto.decrypt_string(ct, fernet_key, mylib.EncryptionAlgorithm.AES_128)
     assert pt == plaintext
 
 
-def test_encrypt_string_wrong_key_len_aes128_raises(crypto):
+def test_encrypt_string_wrong_key_len_aes128_raises(crypto, mylib):
     with pytest.raises(ValueError):
         crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_128)
 
@@ -129,14 +140,14 @@ def test_encrypt_string_wrong_key_len_aes128_raises(crypto):
 # ----------------------------------------------------------------------
 # AES-256 path
 # ----------------------------------------------------------------------
-def test_encrypt_decrypt_aes256_roundtrip(crypto, aes256_key):
+def test_encrypt_decrypt_aes256_roundtrip(crypto, mylib, aes256_key):
     plaintext = "προσωπικό μυστικό"
     ct = crypto.encrypt_string(plaintext, aes256_key, mylib.EncryptionAlgorithm.AES_256)
     pt = crypto.decrypt_string(ct, aes256_key, mylib.EncryptionAlgorithm.AES_256)
     assert pt == plaintext
 
 
-def test_encrypt_string_wrong_key_len_aes256_raises(crypto):
+def test_encrypt_string_wrong_key_len_aes256_raises(crypto, mylib):
     with pytest.raises(ValueError):
         crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_256)
 
@@ -144,14 +155,14 @@ def test_encrypt_string_wrong_key_len_aes256_raises(crypto):
 # ----------------------------------------------------------------------
 # AES-GCS path
 # ----------------------------------------------------------------------
-def test_encrypt_decrypt_aes_gcm_roundtrip(crypto, aes256_key):
+def test_encrypt_decrypt_aes_gcm_roundtrip(crypto, mylib, aes256_key):
     plaintext = "προσωπικό μυστικό"
     ct = crypto.encrypt_string(plaintext, aes256_key, mylib.EncryptionAlgorithm.AES_GCM)
     pt = crypto.decrypt_string(ct, aes256_key, mylib.EncryptionAlgorithm.AES_GCM)
     assert pt == plaintext
 
 
-def test_encrypt_string_wrong_key_len_aes_gcm_raises(crypto):
+def test_encrypt_string_wrong_key_len_aes_gcm_raises(crypto, mylib):
     with pytest.raises(ValueError):
         crypto.encrypt_string("oops", b"short_key", mylib.EncryptionAlgorithm.AES_GCM)
 

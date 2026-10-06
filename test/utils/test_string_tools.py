@@ -126,3 +126,83 @@ def test_snake_case(su, input_str, expected):
 )
 def test_snake_case_v2(su, input_str, expected):
     assert su.snake_case_v2(input_str) == expected
+
+
+# ----------------------------------------------------------------------
+# camel_case -----------------------------------------------------------
+# ----------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "input_str, expected",
+    [
+        ("simpleTest", "simpleTest"),
+        ("simple-Test", "simpleTest"),
+        ("simple test", "simpleTest"),
+        ("easy", "easy"),
+        ("easy-easy", "easyEasy"),
+        ("HTML", "html"),
+        ("simpleXML", "simpleXml"),
+        ("PDFLoad", "pdfLoad"),
+        ("startMIDDLELast", "startMiddleLast"),
+        ("AString", "aString"),
+        ("UserID", "userId"),
+        ("Test123", "test123"),
+        ("Some4Numbers234", "some4Numbers234"),
+        ("TEST123String", "test123String"),
+        ("TEST-123String", "test123String"),
+        ("_TestString", "testString"),
+        ("TestString_", "testString"),
+        ("-TestString", "testString"),
+        ("TestString-", "testString"),
+        ("__TestString", "testString"),
+        ("TestString__", "testString"),
+        ("--TestString", "testString"),
+        ("TestString--", "testString"),
+        ("-_TestString", "testString"),
+        ("TestString_-", "testString"),
+        ("snake_case_string", "snakeCaseString"),
+        ("", ""),
+        ("_", ""),
+    ],
+)
+def test_camel_case(su, input_str, expected):
+    assert su.camel_case(input_str) == expected
+
+
+# ----------------------------------------------------------------------
+# pascal_case ----------------------------------------------------------
+# ----------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "input_str, expected",
+    [
+        ("simpleTest", "SimpleTest"),
+        ("simple-Test", "SimpleTest"),
+        ("simple test", "SimpleTest"),
+        ("easy", "Easy"),
+        ("easy-easy", "EasyEasy"),
+        ("HTML", "Html"),
+        ("simpleXML", "SimpleXml"),
+        ("PDFLoad", "PdfLoad"),
+        ("startMIDDLELast", "StartMiddleLast"),
+        ("AString", "AString"),
+        ("UserID", "UserId"),
+        ("Test123", "Test123"),
+        ("Some4Numbers234", "Some4Numbers234"),
+        ("TEST123String", "Test123String"),
+        ("TEST-123String", "Test123String"),
+        ("_TestString", "TestString"),
+        ("TestString_", "TestString"),
+        ("-TestString", "TestString"),
+        ("TestString-", "TestString"),
+        ("__TestString", "TestString"),
+        ("TestString__", "TestString"),
+        ("--TestString", "TestString"),
+        ("TestString--", "TestString"),
+        ("-_TestString", "TestString"),
+        ("TestString_-", "TestString"),
+        ("snake_case_string", "SnakeCaseString"),
+        ("", ""),
+        ("_", ""),
+    ],
+)
+def test_pascal_case(su, input_str, expected):
+    assert su.pascal_case(input_str) == expected

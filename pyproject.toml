@@ -26,6 +26,7 @@ dependencies = [
     "boto3-stubs",
     "mypy-boto3",
     "mypy-boto3-cloudfront",
+    "mypy-boto3-cloudwatch",
     "mypy-boto3-dynamodb",
     "mypy-boto3-ec2",
     "mypy-boto3-kms",

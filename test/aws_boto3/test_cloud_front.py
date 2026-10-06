@@ -37,10 +37,6 @@ from typing import Any, Dict
 import botocore.exceptions
 import pytest
 
-# My Library Imports
-from carlogtt_python_library import exceptions as lib_exc
-from carlogtt_python_library.aws_boto3.cloud_front import CloudFront
-
 # END IMPORTS
 # ======================================================================
 
@@ -94,10 +90,23 @@ def _patch_boto(monkeypatch):
     yield
 
 
-class _CF(CloudFront):
-    @property
-    def client(self):
-        return self._client
+@pytest.fixture
+def lib_exc():
+    from carlogtt_python_library import exceptions as lib_exc
+
+    return lib_exc
+
+
+@pytest.fixture
+def cf_cls():
+    from carlogtt_python_library.aws_boto3.cloud_front import CloudFront
+
+    class _CF(CloudFront):
+        @property
+        def client(self):
+            return self._client
+
+    return _CF
 
 
 @pytest.mark.parametrize(
@@ -107,8 +116,8 @@ class _CF(CloudFront):
         True,
     ],
 )
-def test_client_caching(caching):
-    cf = _CF("us-east-1", caching=caching)
+def test_client_caching(caching, cf_cls):
+    cf = cf_cls("us-east-1", caching=caching)
     first = cf.client
     second = cf.client
     if caching:
@@ -117,8 +126,8 @@ def test_client_caching(caching):
         assert first is not second
 
 
-def test_invalidate_distribution_success():
-    cf = _CF("eu-west-1", caching=True)
+def test_invalidate_distribution_success(cf_cls):
+    cf = cf_cls("eu-west-1", caching=True)
     resp = cf.invalidate_distribution("DISTRIB123", path="/foo*")
 
     # response bubbled back
@@ -129,8 +138,8 @@ def test_invalidate_distribution_success():
     assert payload["InvalidationBatch"]["Paths"]["Items"] == ["/foo*"]
 
 
-def test_invalidate_distribution_client_error_raises_custom():
-    cf = _CF("eu-west-1", caching=False)
+def test_invalidate_distribution_client_error_raises_custom(cf_cls, lib_exc):
+    cf = cf_cls("eu-west-1", caching=False)
     #  force the fake boto session to explode with ClientError
     cf._aws_service_name = "RAISE_CLIENT_ERROR"
 
@@ -138,8 +147,8 @@ def test_invalidate_distribution_client_error_raises_custom():
         cf.invalidate_distribution("BADID")
 
 
-def test_invalidate_distribution_generic_error_raises_custom():
-    cf = _CF("eu-west-1", caching=False)
+def test_invalidate_distribution_generic_error_raises_custom(cf_cls, lib_exc):
+    cf = cf_cls("eu-west-1", caching=False)
     cf._aws_service_name = "RAISE_GENERIC"
 
     with pytest.raises(lib_exc.CloudFrontError):

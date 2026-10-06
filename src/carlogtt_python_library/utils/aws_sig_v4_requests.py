@@ -71,6 +71,7 @@ class AwsSigV4Protocol(enum.Enum):
 
     RPCv0 = enum.auto()
     RPCv1 = enum.auto()
+    REST = enum.auto()
 
 
 class AwsSigV4RequestMethod(enum.Enum):
@@ -134,13 +135,16 @@ class AwsSigV4Session(requests.Session):
 
         module_logger.debug("Preparing request headers")
 
-        if self._protocol == AwsSigV4Protocol.RPCv0:
+        if self._protocol is AwsSigV4Protocol.RPCv0:
             headers_protocol: dict[str, str] = {}
 
-        elif self._protocol == AwsSigV4Protocol.RPCv1:
+        elif self._protocol is AwsSigV4Protocol.RPCv1:
             headers_protocol = {
                 "Content-Encoding": "amz-1.0",
             }
+
+        elif self._protocol is AwsSigV4Protocol.REST:
+            headers_protocol = {}
 
         else:
             raise exceptions.AwsSigV4SessionError(f"Unsupported protocol: {self._protocol}")

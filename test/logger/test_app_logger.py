@@ -38,9 +38,6 @@ import pathlib
 # Third Party Library Imports
 import pytest
 
-# My Library Imports
-import carlogtt_python_library as mylib
-
 # END IMPORTS
 # ======================================================================
 
@@ -55,15 +52,24 @@ import carlogtt_python_library as mylib
 #
 
 
+@pytest.fixture(scope="session")
+def mylib():
+    # Imported lazily (never at module level) so this file is collected
+    # via the conftest session-start alias.
+    import carlogtt_python_library as mylib
+
+    return mylib
+
+
 # ----------------------------------------------------------------------
 # 1.  Validation errors
 # ----------------------------------------------------------------------
-def test_invalid_colour_raises():
+def test_invalid_colour_raises(mylib):
     with pytest.raises(mylib.LoggerError):
         mylib.Logger("x", "INFO", log_color="not_a_colour")
 
 
-def test_invalid_level_string_raises():
+def test_invalid_level_string_raises(mylib):
     with pytest.raises(mylib.LoggerError):
         mylib.Logger("x", "NOT_A_LEVEL")
 
@@ -71,7 +77,7 @@ def test_invalid_level_string_raises():
 # ----------------------------------------------------------------------
 # 2.  Handler basics — StringIO
 # ----------------------------------------------------------------------
-def test_stringio_handler_captures_output():
+def test_stringio_handler_captures_output(mylib):
     sio = io.StringIO()
     lg = mylib.Logger("demo", "INFO", log_color="yellow")
     lg.add_stringio_handler(sio)
@@ -88,7 +94,7 @@ def test_stringio_handler_captures_output():
 # ----------------------------------------------------------------------
 # 3.  change_logger_level updates logger + handlers
 # ----------------------------------------------------------------------
-def test_change_level_propagates_to_handlers():
+def test_change_level_propagates_to_handlers(mylib):
     sio = io.StringIO()
     lg = mylib.Logger("lvl", "INFO")
     lg.add_stringio_handler(sio)
@@ -104,7 +110,7 @@ def test_change_level_propagates_to_handlers():
 # ----------------------------------------------------------------------
 # 4.  File handler (uses pytest tmp_path)
 # ----------------------------------------------------------------------
-def test_file_handler_writes(tmp_path: pathlib.Path):
+def test_file_handler_writes(mylib, tmp_path: pathlib.Path):
     log_path = tmp_path / "app.log"
     lg = mylib.Logger("file", mylib.LoggerLevel.INFO)
     lg.add_file_handler(log_path)
@@ -118,7 +124,7 @@ def test_file_handler_writes(tmp_path: pathlib.Path):
 # ----------------------------------------------------------------------
 # 5.  Console handler to an arbitrary stream
 # ----------------------------------------------------------------------
-def test_console_handler_custom_stream():
+def test_console_handler_custom_stream(mylib):
     buf = io.StringIO()
     lg = mylib.Logger("con", "INFO", log_color="cyan")
     lg.add_console_handler(buf)  # stream instead of sys.stderr
@@ -130,7 +136,7 @@ def test_console_handler_custom_stream():
 # ----------------------------------------------------------------------
 # 6.  attach_root_logger / detach_root_logger
 # ----------------------------------------------------------------------
-def test_attach_and_detach_root_logger():
+def test_attach_and_detach_root_logger(mylib):
     stream = io.StringIO()
     lg = mylib.Logger("rooty", "INFO")
     lg.add_console_handler(stream)
@@ -151,7 +157,7 @@ def test_attach_and_detach_root_logger():
 # ----------------------------------------------------------------------
 # 7.  Child logger inherits formatting
 # ----------------------------------------------------------------------
-def test_get_child_logger_inherits_parent_formatter():
+def test_get_child_logger_inherits_parent_formatter(mylib):
     buf = io.StringIO()
     parent = mylib.Logger("parent", "INFO", log_color="green")
     parent.add_stringio_handler(buf)

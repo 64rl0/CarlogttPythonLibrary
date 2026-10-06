@@ -33,11 +33,10 @@ This module contains the package imports for the current package.
 
 # Local Folder (Relative) Imports
 from .bindle import *
-from .midway import *
-from .midway_selenium import *
+from .coral import *
+from .oncall import *
 from .pipelines import *
 from .simt import *
-from .tiny_url import *
 
 # These imports rely on internal Amazon Brazil packages that are not
 # publicly available. If you're running this code outside of Amazon's
@@ -46,8 +45,12 @@ from .tiny_url import *
 # won't be available externally.
 try:
     from .apollo import *
+    from .mcm import *
+    from .midway import *
+    from .midway_selenium import *
     from .mirador import *
     from .phone_tool import *
+    from .tiny_url import *
 
 except ImportError:
     import logging as _logging

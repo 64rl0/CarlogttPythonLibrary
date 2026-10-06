@@ -115,15 +115,15 @@ class _CompatibilityProxy:
         'validate_non_empty_strings': InputValidator,
         'validate_username_requirements': InputValidator,
         'validate_password_requirements': InputValidator,
-        'create_amazon_tiny_url': AmazonTinyUrl,
-        'cli_midway_auth': MidwayUtils,
-        'extract_valid_cookies': MidwayUtils,
     }
 
     try:
         DEPRECATED_NAMES_AMAZON_INTERNAL = {
             'get_application_root': Apollo,
             'phone_tool_lookup': PhoneTool,
+            'create_amazon_tiny_url': AmazonTinyUrl,
+            'cli_midway_auth': MidwayUtils,
+            'extract_valid_cookies': MidwayUtils,
         }
 
         DEPRECATED_NAMES = {**DEPRECATED_NAMES_PUBLIC, **DEPRECATED_NAMES_AMAZON_INTERNAL}

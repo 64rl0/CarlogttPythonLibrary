@@ -48,6 +48,51 @@ import sys
 #
 
 
+# ----------------------------------------------------------------------
+# Exclude test files whose target module sits behind the optional
+# amazon_internal import guard (see amazon_internal/__init__.py).
+# On machines without the Amazon-internal dependencies (e.g. a PyPI
+# install outside Amazon) those modules cannot be imported, so their
+# test files must not be collected at all. Each module is probed
+# individually because the guard aborts at the FIRST failing import,
+# leaving earlier modules importable. Keep the map in sync with the
+# guarded imports.
+# ----------------------------------------------------------------------
+try:
+    importlib.import_module("carlogtt_python_library")
+    _base_pkg = "carlogtt_python_library"
+except (ImportError, ModuleNotFoundError):
+    # In Brazil the library is only importable under its Brazil name
+    # (the carlogtt_python_library alias is created at session start).
+    _base_pkg = "carlogtt_library"
+
+_GUARDED_TEST_FILES = {
+    "amazon_internal/test_apollo.py": ".amazon_internal.apollo",
+    "amazon_internal/test_mcm.py": ".amazon_internal.mcm",
+    "amazon_internal/test_midway.py": ".amazon_internal.midway",
+    "amazon_internal/test_midway_selenium.py": ".amazon_internal.midway_selenium",
+    "amazon_internal/test_mirador.py": ".amazon_internal.mirador",
+    "amazon_internal/test_phone_tool.py": ".amazon_internal.phone_tool",
+    "amazon_internal/test_tiny_url.py": ".amazon_internal.tiny_url",
+}
+
+collect_ignore = []
+for _test_file, _module in _GUARDED_TEST_FILES.items():
+    try:
+        importlib.import_module(f"{_base_pkg}{_module}")
+    except (ImportError, ModuleNotFoundError):
+        collect_ignore.append(_test_file)
+
+
+def pytest_report_header(config):
+    if collect_ignore:
+        return (
+            "amazon_internal tests excluded (optional deps not installed): "
+            f"{', '.join(sorted(collect_ignore))}"
+        )
+    return None
+
+
 class _NoopRetry:
     def __init__(self, *a, **kw):
         self.a = a
@@ -99,8 +144,11 @@ def pytest_sessionstart(session):
         carlogtt_library.utils.decorators.retry = _NoopRetry
 
         # Reload all the modules that use the retry decorator to use
-        # the patched one
+        # the patched one. `.amazon_internal.mcm` lives behind the
+        # Brazil-only import guard, so it is only reloadable here in the
+        # Brazil branch (the PyPI branch above can't import it at all).
         to_reload = [
+            '.amazon_internal.mcm',
             '.amazon_internal.simt',
             '.database.database_dynamo',
             '.database.database_sql',
@@ -108,7 +156,12 @@ def pytest_sessionstart(session):
             '.utils.aws_sig_v4_requests',
         ]
         for name in to_reload:
-            importlib.reload(sys.modules[f"carlogtt_library{name}"])
+            # `.amazon_internal.mcm` is behind the optional Brazil-only
+            # import guard; if its deps are absent it won't be in
+            # sys.modules. Skip rather than fail the whole session.
+            module = sys.modules.get(f"carlogtt_library{name}")
+            if module is not None:
+                importlib.reload(module)
 
         # Because all the unit tests import the library as
         # `carlogtt_python_library` we need to alias the Amazon Brazil
@@ -120,8 +173,10 @@ def pytest_sessionstart(session):
             ".amazon_internal",
             ".amazon_internal.apollo",
             ".amazon_internal.bindle",
+            ".amazon_internal.coral",
             ".amazon_internal.midway",
             ".amazon_internal.midway_selenium",
+            ".amazon_internal.mcm",
             ".amazon_internal.mirador",
             ".amazon_internal.phone_tool",
             ".amazon_internal.pipelines",
@@ -151,6 +206,7 @@ def pytest_sessionstart(session):
             ".utils.decorators",
             ".utils.encryption",
             ".utils.miscs",
+            ".utils.pagination",
             ".utils.string_tools",
             ".utils.user_input",
             ".utils.validators",

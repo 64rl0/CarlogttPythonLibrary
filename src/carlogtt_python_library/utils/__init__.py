@@ -38,6 +38,7 @@ from .context_managers import *
 from .decorators import *
 from .encryption import *
 from .miscs import *
+from .pagination import *
 from .string_tools import *
 from .user_input import *
 from .validators import *

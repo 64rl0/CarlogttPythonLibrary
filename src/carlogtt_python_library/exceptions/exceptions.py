@@ -44,28 +44,33 @@ import warnings
 
 # List of public names in the module
 __all__ = [
-    'CarlogttLibraryError',
     'AwsSigV4SessionError',
+    'BindleError',
+    'CarlogttLibraryError',
+    'CloudFrontError',
+    'CloudWatchError',
+    'CoralRouterError',
     'CryptographyError',
+    'DatabaseError',
+    'DynamoDBConflictError',
+    'DynamoDBError',
+    'EC2Error',
+    'KMSError',
+    'LambdaError',
+    'LoggerError',
+    'McmError',
+    'MiradorError',
+    'MySQLError',
+    'OnCallError',
+    'PaginationError',
+    'PipelinesError',
+    'PostgresError',
+    'RedisCacheManagerError',
+    'S3Error',
+    'SQLiteError',
+    'SecretsManagerError',
     'SimTError',
     'SimTHandlerError',
-    'MiradorError',
-    'PipelinesError',
-    'BindleError',
-    'LoggerError',
-    'RedisCacheManagerError',
-    'DatabaseError',
-    'SQLiteError',
-    'MySQLError',
-    'PostgresError',
-    'DynamoDBError',
-    'DynamoDBConflictError',
-    'S3Error',
-    'SecretsManagerError',
-    'KMSError',
-    'CloudFrontError',
-    'EC2Error',
-    'LambdaError',
 ]
 
 # Setting up logger for current module
@@ -141,6 +146,19 @@ class MiradorError(CarlogttLibraryError):
     """
 
 
+class McmError(CarlogttLibraryError):
+    """
+    This is the base exception class to handle MCM
+    (ModeledCmApiService) errors.
+    """
+
+
+class CoralRouterError(CarlogttLibraryError):
+    """
+    This is the base exception class to handle CoralRouter errors.
+    """
+
+
 class PipelinesError(CarlogttLibraryError):
     """
     This is the base exception class to handle Pipelines errors.
@@ -150,6 +168,12 @@ class PipelinesError(CarlogttLibraryError):
 class BindleError(CarlogttLibraryError):
     """
     This is the base exception class to handle Bindle errors.
+    """
+
+
+class OnCallError(CarlogttLibraryError):
+    """
+    This is the base exception class to handle OnCall errors.
     """
 
 
@@ -168,6 +192,12 @@ class CryptographyError(CarlogttLibraryError):
 class LoggerError(CarlogttLibraryError):
     """
     This is the base exception class to handle Logger errors.
+    """
+
+
+class PaginationError(CarlogttLibraryError):
+    """
+    This is the base exception class to handle Paginator errors.
     """
 
 
@@ -235,6 +265,12 @@ class KMSError(CarlogttLibraryError):
 class CloudFrontError(CarlogttLibraryError):
     """
     This is the base exception class to handle CloudFront errors.
+    """
+
+
+class CloudWatchError(CarlogttLibraryError):
+    """
+    This is the base exception class to handle CloudWatch errors.
     """
 
 

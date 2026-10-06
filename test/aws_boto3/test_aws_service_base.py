@@ -40,10 +40,6 @@ from typing import Any
 import botocore.exceptions
 import pytest
 
-# My Library Imports
-from carlogtt_python_library import exceptions
-from carlogtt_python_library.aws_boto3.aws_service_base import AwsServiceBase
-
 # END IMPORTS
 # ======================================================================
 
@@ -83,17 +79,29 @@ class FakeBotoSession:
         return FakeLowLevelClient(service_name=service_name, **client_kw)
 
 
-class DummyAwsError(exceptions.CarlogttLibraryError):
-    """Custom error to verify the mapping logic."""
+@pytest.fixture
+def dummy_aws_error():
+    from carlogtt_python_library import exceptions
+
+    class DummyAwsError(exceptions.CarlogttLibraryError):
+        """Custom error to verify the mapping logic."""
+
+    return DummyAwsError
 
 
-class DummyService(AwsServiceBase[FakeLowLevelClient]):
-    """Bind the generic base to the fake client type."""
+@pytest.fixture
+def dummy_service_cls():
+    from carlogtt_python_library.aws_boto3.aws_service_base import AwsServiceBase
 
-    # expose the protected client for test visibility
-    @property
-    def client(self) -> FakeLowLevelClient:  # type: ignore[override]
-        return self._client
+    class DummyService(AwsServiceBase[FakeLowLevelClient]):
+        """Bind the generic base to the fake client type."""
+
+        # expose the protected client for test visibility
+        @property
+        def client(self) -> FakeLowLevelClient:  # type: ignore[override]
+            return self._client
+
+    return DummyService
 
 
 @pytest.fixture(autouse=True)
@@ -116,11 +124,11 @@ def _patch_boto(monkeypatch):
         True,
     ],
 )
-def test_client_is_returned_and_cached(caching):
-    svc = DummyService(
+def test_client_is_returned_and_cached(caching, dummy_service_cls, dummy_aws_error):
+    svc = dummy_service_cls(
         "eu-west-1",
         aws_service_name="s3",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
         caching=caching,
     )
 
@@ -135,11 +143,11 @@ def test_client_is_returned_and_cached(caching):
         assert first is not second
 
 
-def test_invalidate_client_cache_works():
-    svc = DummyService(
+def test_invalidate_client_cache_works(dummy_service_cls, dummy_aws_error):
+    svc = dummy_service_cls(
         "eu-west-1",
         aws_service_name="s3",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
         caching=True,
     )
 
@@ -150,48 +158,48 @@ def test_invalidate_client_cache_works():
     assert a is not b  # new client after invalidation
 
 
-def test_invalidate_without_cache_raises():
-    svc = DummyService(
+def test_invalidate_without_cache_raises(dummy_service_cls, dummy_aws_error):
+    svc = dummy_service_cls(
         "eu-west-1",
         aws_service_name="s3",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
         caching=False,
     )
 
-    with pytest.raises(DummyAwsError):
+    with pytest.raises(dummy_aws_error):
         svc.invalidate_client_cache()
 
 
-def test_client_error_is_mapped_to_custom_exception():
-    svc = DummyService(
+def test_client_error_is_mapped_to_custom_exception(dummy_service_cls, dummy_aws_error):
+    svc = dummy_service_cls(
         "eu-west-1",
         aws_service_name="raise-aws-error",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
     )
 
-    with pytest.raises(DummyAwsError) as exc:
+    with pytest.raises(dummy_aws_error) as exc:
         _ = svc.client
 
     assert "Unauthorized" in str(exc.value)
 
 
-def test_generic_exception_is_mapped_to_custom_exception():
-    svc = DummyService(
+def test_generic_exception_is_mapped_to_custom_exception(dummy_service_cls, dummy_aws_error):
+    svc = dummy_service_cls(
         "eu-west-1",
         aws_service_name="raise-generic",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
     )
 
-    with pytest.raises(DummyAwsError):
+    with pytest.raises(dummy_aws_error):
         _ = svc.client
 
 
-def test_extra_client_parameters_are_forwarded():
+def test_extra_client_parameters_are_forwarded(dummy_service_cls, dummy_aws_error):
     extra = {"endpoint_url": "http://localhost:9000", "verify": False}
-    svc = DummyService(
+    svc = dummy_service_cls(
         "us-east-1",
         aws_service_name="s3",
-        exception_type=DummyAwsError,
+        exception_type=dummy_aws_error,
         client_parameters=extra,
     )
 

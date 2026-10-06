@@ -136,7 +136,7 @@ class StringUtils:
         :return: The normalized snake_case string.
         """
 
-        result = string_to_normalize
+        result = string_to_normalize.strip()
 
         # Replace whitespace and hyphens with underscores
         result = re.sub(r'[\s\-]+', '_', result)
@@ -159,5 +159,41 @@ class StringUtils:
 
         # Convert to lowercase
         result = result.casefold()
+
+        return result
+
+    def camel_case(self, string_to_normalize: str) -> str:
+        """
+        Normalize the given string to camelCase. The string is first
+        normalized to snake_case and then each word, except the first
+        one, is capitalized.
+
+        :param string_to_normalize: The original string that needs to be
+               normalized.
+        :return: The normalized camelCase string.
+        """
+
+        words = [word for word in self.snake_case_v2(string_to_normalize).split('_') if word]
+
+        if not words:
+            return ""
+
+        result = words[0] + "".join(word.capitalize() for word in words[1:])
+
+        return result
+
+    def pascal_case(self, string_to_normalize: str) -> str:
+        """
+        Normalize the given string to PascalCase. The string is first
+        normalized to snake_case and then each word is capitalized.
+
+        :param string_to_normalize: The original string that needs to be
+               normalized.
+        :return: The normalized PascalCase string.
+        """
+
+        words = [word for word in self.snake_case_v2(string_to_normalize).split('_') if word]
+
+        result = "".join(word.capitalize() for word in words)
 
         return result

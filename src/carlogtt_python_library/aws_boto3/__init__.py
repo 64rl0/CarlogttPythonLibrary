@@ -33,6 +33,7 @@ This module contains the package imports for the current package.
 from .aws_lambda import *
 from .aws_service_base import *
 from .cloud_front import *
+from .cloud_watch import *
 from .ec2 import *
 from .kms import *
 from .s3 import *

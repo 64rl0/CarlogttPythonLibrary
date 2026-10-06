@@ -1741,7 +1741,9 @@ class DynamoDbSerializer:
             return {"S": attribute_value}
 
         elif isinstance(attribute_value, bytes) or isinstance(attribute_value, bytearray):
-            return {"B": attribute_value}
+            # bytes() normalizes bytearray to the immutable bytes
+            # the TypedDict expects (no copy when already bytes).
+            return {"B": bytes(attribute_value)}
 
         elif isinstance(attribute_value, (numbers.Real, decimal.Decimal)):
             return {"N": str(attribute_value)}

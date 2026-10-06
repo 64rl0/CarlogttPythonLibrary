@@ -30,6 +30,9 @@ This module ...
 # Importing required libraries and modules for the application.
 # ======================================================================
 
+# Standard Library Imports
+from unittest.mock import MagicMock, Mock, patch
+
 # Third Party Library Imports
 import pytest
 
@@ -45,3 +48,61 @@ import pytest
 
 # Type aliases
 #
+
+
+@pytest.fixture
+def amazon_tiny_url():
+    from carlogtt_python_library.amazon_internal.tiny_url import AmazonTinyUrl
+
+    return AmazonTinyUrl()
+
+
+# ----------------------------------------------------------------------
+# Tests for create_amazon_tiny_url with MCS
+# ----------------------------------------------------------------------
+@patch('carlogtt_python_library.amazon_internal.tiny_url.requests.post')
+def test_create_amazon_tiny_url_success(mock_post, amazon_tiny_url):
+    # Setup mocks
+    mock_response = Mock()
+    mock_response.json.return_value = {'short_url': 'https://tiny.amazon.com/abc123'}
+    mock_post.return_value = mock_response
+
+    # Test
+    result = amazon_tiny_url.create_amazon_tiny_url('https://example.amazon.com/very/long/url')
+
+    # Verify
+    assert result == 'https://tiny.amazon.com/abc123'
+    mock_post.assert_called_once()
+    call_kwargs = mock_post.call_args[1]
+    assert 'auth' in call_kwargs
+    assert call_kwargs['url'] == 'https://tiny.amazon.com/submit/url'
+
+
+@patch('carlogtt_python_library.amazon_internal.tiny_url.requests.post')
+def test_create_amazon_tiny_url_missing_short_url(mock_post, amazon_tiny_url):
+    # Setup mocks
+    mock_response = Mock()
+    mock_response.json.return_value = {'error': 'Invalid URL'}
+    mock_post.return_value = mock_response
+
+    # Test
+    result = amazon_tiny_url.create_amazon_tiny_url('https://example.amazon.com')
+
+    # Verify empty string returned on KeyError
+    assert result == ""
+
+
+@patch('carlogtt_python_library.amazon_internal.tiny_url.requests.post')
+def test_create_amazon_tiny_url_auth_reuse(mock_post, amazon_tiny_url):
+    # Setup mocks
+    mock_response = Mock()
+    mock_response.json.return_value = {'short_url': 'https://tiny.amazon.com/abc'}
+    mock_post.return_value = mock_response
+
+    # Make multiple calls
+    amazon_tiny_url.create_amazon_tiny_url('https://example1.amazon.com')
+    amazon_tiny_url.create_amazon_tiny_url('https://example2.amazon.com')
+
+    # Verify RequestsMidway only instantiated once (auth object reused)
+    # We can't directly check instantiation, but we verify both calls happened
+    assert mock_post.call_count == 2

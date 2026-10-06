@@ -34,14 +34,12 @@ from __future__ import annotations
 
 # Standard Library Imports
 import logging
-import os
-import pathlib
-import re
-import time
-from typing import Union
+from typing import Optional, Union
 
 # Third Party Library Imports
+import requests
 import selenium.webdriver.chrome.options
+from requests_midway import RequestsMidway
 
 # END IMPORTS
 # ======================================================================
@@ -77,21 +75,22 @@ class MidwaySeleniumDriver:
     with an existing WebDriver to apply Midway authentication.
 
     :param driver: An instance of Selenium WebDriver.
-    :param cookie_filepath: Optional; the filepath to the Midway
-           authentication cookies file. If not provided, the class
-           looks for the cookie file in the default location
-           `~/.midway/cookie`.
     """
 
-    def __init__(self, driver: WebDriver, cookie_filepath: str = "") -> None:
+    def __init__(self, driver: WebDriver) -> None:
         self.driver = driver
-        self._cookie_filepath = cookie_filepath
+        # Type annotation for mypy: _auth can be None or RequestsMidway
+        self._auth: Optional[RequestsMidway] = None
         self._authenticate_midway()
 
+    def _get_auth(self):
+        """Get or create the RequestsMidway auth object."""
+        if self._auth is None:
+            self._auth = RequestsMidway()
+        return self._auth
+
     @classmethod
-    def get_selenium_driver(
-        cls, headless: bool = True, cookie_filepath: str = ""
-    ) -> MidwaySeleniumDriver:
+    def get_selenium_driver(cls, headless: bool = True) -> 'MidwaySeleniumDriver':
         """
         Get a Selenium driver instance.
 
@@ -108,12 +107,12 @@ class MidwaySeleniumDriver:
         chrome_driver = selenium.webdriver.Chrome(options=options)
         chrome_driver.set_page_load_timeout(60)  # seconds
 
-        return cls(chrome_driver, cookie_filepath)
+        return cls(chrome_driver)
 
     def _authenticate_midway(self) -> None:
         """
         Gets `url` handling **midway** authentication.
-        Relies on the midway cookies stored in the home directory.
+        Uses RequestsMidway to authenticate with MCS.
 
         :return: None
         """
@@ -125,36 +124,17 @@ class MidwaySeleniumDriver:
 
     def _get_midway_cookies(self) -> list[dict[str, str]]:
         """
-        Gets the cookies from file in home directory.
-        See https://curl.se/docs/http-cookies.html
+        Gets the cookies using MCS authentication.
 
         :return: the cookies as list
         """
 
-        if self._cookie_filepath == "":
-            home_path = pathlib.Path.home()
-            cookies_file = os.path.join(home_path, ".midway", "cookie")
+        # Use RequestsMidway to make an authenticated request
+        response = requests.get("https://midway-auth.amazon.com/robots.txt", auth=self._get_auth())
 
-        else:
-            cookies_file = self._cookie_filepath
-
+        # Extract cookies from the response
         cookies = []
-
-        with open(cookies_file) as f:
-            for line in f:
-                if line.startswith("#") and not re.search("^#Http", line):
-                    continue
-
-                fields = line.split()
-
-                if len(fields) != 7:
-                    continue
-
-                expire = int(fields[4])
-
-                if round(time.time()) > expire:
-                    raise ValueError("Midway cookie is expired. Run `mwinit`", self.driver)
-
-                cookies.append({"name": fields[5], "value": fields[6]})
+        for cookie_name, cookie_value in response.cookies.items():
+            cookies.append({"name": cookie_name, "value": cookie_value})
 
         return cookies
